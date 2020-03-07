@@ -1,0 +1,28 @@
+import AsyncStorage from '@react-native-community/async-storage';
+
+class AsyncStorageApp {
+  static storeData = async (key, value) => {
+    try {
+      await AsyncStorage.setItem(key, value);
+    } catch (error) {
+      // Error saving data
+      console.log('Error set item');
+    }
+  };
+
+  static _retrieveData = async (key, callback) => {
+    try {
+      const value = await AsyncStorage.getItem(key);
+
+      if (value !== null) {
+        callback(JSON.parse(value));
+      } else {
+        callback(undefined);
+      }
+    } catch (error) {
+      console.log('AsyncStorageApp', error);
+    }
+  };
+}
+
+export default AsyncStorageApp;
