@@ -26,6 +26,9 @@ const width = Dimensions.get('window').width;
 import firebase from 'react-native-firebase';
 import Toolbar from "../../customizes/Toolbar";
 import { StackActions, NavigationActions} from "@react-navigation/native";
+import request from "../../../api/request"
+import URL from "../../../api/URL";
+import ProgressDialog from "../../customizes/ProgressDialog";
 
 class SignupInfoScreen extends Component {
   
@@ -33,8 +36,15 @@ class SignupInfoScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      
-      
+      name:"",
+      mail:"",
+      username:"",
+      pass:"",
+      pass2:"",
+      isError:false,
+      errorMessage: "",
+      isIncorrect:false,
+      isLoading:false
     };
    
   
@@ -43,18 +53,63 @@ class SignupInfoScreen extends Component {
   
   onSignUp =()=>{
    
+    
+    
+   const  { params} = this.props.route;
+    const { name, mail, username,pass,pass2} = this.state;
+    const phone = params.phoneNumber;
+    if(name =="" || mail=="" || username=="" || pass =="" || pass2 == ""){
+      this.setState({
+        isError: true,
+        errorMessage:"Can not be empty"
+      })
+      return;
+    }
 
-    // this.props.navigation.dispatch(
-    //     StackActions.pop(2)
-    //   );
-    //    this.props.navigation.dispatch(
-    //     StackActions.replace("LoginScreen")
-    //     ,{
+    if(pass !== "" && pass2 !=="" && pass !== pass2){
+      this.setState({
+        isIncorrect: true,
+        errorMessage:"Password incorrect"
+      })
+      return;
+    }
 
-    //     }
-    //   );
+    this.setState({
+      isIncorrect:false,
+      isError:false,
+      isLoading:true
+    })
+    
+    const data ={
+      name,
+      mail,
+      phone:"0"+phone,
+      username,
+      pass,
+      pass2
+    }
+   
   
-     // this.props.navigation.navigate("LoginScreen")
+    
+
+    request((res,err)=>{
+      
+      
+      if(res){
+        console.log(res);
+        this.setState({isLoading:false})
+        
+      }else{
+        console.log(err);
+        this.setState({isLoading:false})
+        
+      }
+
+    }).post(URL.UrlSignUp,data)
+
+    
+   
+
   }
   render() {
  
@@ -85,109 +140,96 @@ class SignupInfoScreen extends Component {
           <Layout height={50} bgColor={Colors.white} style={{ elevation:2, paddingHorizontal:12}} radius={30} hidden margin={[20]}>
               
            <NativeBase.Input
-              value={this.state.phoneNumber}
-              onChangeText ={(phoneNumber)=>this.setState({phoneNumber})}
-              maxLength={12}
+              value={this.state.mail}
+              onChangeText ={(mail)=>this.setState({mail})}
+              maxLength={32}
                numberOfLines={1}
                placeholderTextColor={"gray"}
-               placeholder={"Enter your full name"}
+               placeholder={"Email"}
               
                style={{
                  
               }}/>
+          
           </Layout>
+            {this.state.mail ==="" && this.state.isError && (  <NativeBase.Text style={{color:"red", fontSize:12, marginLeft:20}}>
+                {this.state.errorMessage}
+              </NativeBase.Text>)}
           <Layout height={50} bgColor={Colors.white} style={{ elevation:2, paddingHorizontal:12}} radius={30} hidden margin={[20]}>
               
               <NativeBase.Input
-              value={this.state.phoneNumber}
-              onChangeText ={(phoneNumber)=>this.setState({phoneNumber})}
-              maxLength={12}
+              value={this.state.username}
+              onChangeText ={(username)=>this.setState({username})}
+              maxLength={32}
                numberOfLines={1}
                placeholderTextColor={"gray"}
-               placeholder={"Enter your full name"}
+               placeholder={"Username"}
               
                style={{
                  
               }}/>
           </Layout>
-
+          {this.state.username ==="" && this.state.isError && (  <NativeBase.Text style={{color:"red", fontSize:12, marginLeft:20}}>
+          {this.state.errorMessage}
+              </NativeBase.Text>)}
           <Layout height={50} bgColor={Colors.white} style={{ elevation:2, paddingHorizontal:12}} radius={30} hidden margin={[20]}>
               
               <NativeBase.Input
-              value={this.state.phoneNumber}
-              onChangeText ={(phoneNumber)=>this.setState({phoneNumber})}
-              maxLength={12}
+              value={this.state.pass}
+              secureTextEntry ={true}
+              onChangeText ={(pass)=>this.setState({pass})}
+              maxLength={32}
                numberOfLines={1}
                placeholderTextColor={"gray"}
-               placeholder={"Enter your full name"}
+               placeholder={"Password"}
               
                style={{
                  
               }}/>
           </Layout>
-
+          {this.state.pass ==="" && this.state.isError && (  <NativeBase.Text style={{color:"red", fontSize:12, marginLeft:20}}>
+                {this.state.errorMessage}
+              </NativeBase.Text>)}
           <Layout height={50} bgColor={Colors.white} style={{ elevation:2, paddingHorizontal:12}} radius={30} hidden margin={[20]}>
               
               <NativeBase.Input
-              value={this.state.phoneNumber}
-              onChangeText ={(phoneNumber)=>this.setState({phoneNumber})}
-              maxLength={12}
+              value={this.state.pass2}
+              onChangeText ={(pass2)=>this.setState({pass2})}
+              maxLength={32}
                numberOfLines={1}
+               secureTextEntry ={true}
                placeholderTextColor={"gray"}
-               placeholder={"Enter your full name"}
+               placeholder={"Re-Password"}
               
                style={{
                  
               }}/>
           </Layout>
-
+          {this.state.pass2 ==="" && this.state.isError && (  <NativeBase.Text style={{color:"red", fontSize:12, marginLeft:20}}>
+                {this.state.errorMessage}
+              </NativeBase.Text>)}
+              {this.state.isIncorrect && (  <NativeBase.Text style={{color:"red", fontSize:12, marginLeft:20}}>
+                {"Password incorrect"}
+              </NativeBase.Text>)}
           <Layout height={50} bgColor={Colors.white} style={{ elevation:2, paddingHorizontal:12}} radius={30} hidden margin={[20]}>
               
               <NativeBase.Input
-              value={this.state.phoneNumber}
-              onChangeText ={(phoneNumber)=>this.setState({phoneNumber})}
-              maxLength={12}
+              value={this.state.name}
+              onChangeText ={(name)=>this.setState({name})}
+              maxLength={32}
                numberOfLines={1}
                placeholderTextColor={"gray"}
-               placeholder={"Enter your full name"}
+               placeholder={"Full name"}
               
                style={{
                  
               }}/>
           </Layout>
 
-          <Layout height={50} bgColor={Colors.white} style={{ elevation:2, paddingHorizontal:12}} radius={30} hidden margin={[20]}>
-              
-              <NativeBase.Input
-              value={this.state.phoneNumber}
-              onChangeText ={(phoneNumber)=>this.setState({phoneNumber})}
-              maxLength={12}
-               numberOfLines={1}
-               placeholderTextColor={"gray"}
-               placeholder={"Enter your full name"}
-              
-               style={{
-                 
-              }}/>
-          </Layout>
-
-
-          <Layout height={50} bgColor={Colors.white} style={{ elevation:2, paddingHorizontal:12}} radius={30} hidden margin={[20]}>
-              
-              <NativeBase.Input
-              value={this.state.phoneNumber}
-              onChangeText ={(phoneNumber)=>this.setState({phoneNumber})}
-              maxLength={12}
-               numberOfLines={1}
-               placeholderTextColor={"gray"}
-               placeholder={"Enter your full name"}
-              
-               style={{
-                 
-              }}/>
-          </Layout>
-
-           
+          
+          {this.state.name ==="" && this.state.isError && (  <NativeBase.Text style={{color:"red", fontSize:12, marginLeft:20}}>
+          {this.state.errorMessage}
+              </NativeBase.Text>)}
            <Layout bgColor={Colors.white} style={{ elevation:2}} radius={30} hidden margin={[20]}>
               <NativeBase.Button onPress={this.onSignUp} style={{backgroundColor:Colors.primaryColor, justifyContent:"center"}}>
                <NativeBase.Text uppercase={false}>{"Sign Up"}</NativeBase.Text>
@@ -197,7 +239,7 @@ class SignupInfoScreen extends Component {
         
            </NativeBase.Content>
            
-
+              <ProgressDialog isShow={this.state.isLoading}/>
       </Layout>
     );
   }

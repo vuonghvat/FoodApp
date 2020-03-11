@@ -1,5 +1,8 @@
 import axios from 'axios';
 import AsyncStorageApp from '../utils/AsyncStorageApp';
+import qs from "qs"
+ 
+
 
 const methods = {
   GET: 'get',
@@ -28,22 +31,23 @@ const reqf = (method, url, data, options = {}, callback) => {
     const token = res?res.access_token : undefined;
     const headers =  {
         Authorization: 'bearer ' + (token ? token : ''),
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
+       
+        
       }
 
-
+     
     var req = axios({
       method: method,
       url: url,
-      data,
+      data: qs.stringify(data),
       headers: headers,
       options,
     });
 
     req
-      .then(res => {
-        callback(res, undefined);
+      .then(resp => {
+        callback(resp, undefined);
       })
       .catch(err => {
         callback(undefined, err);
