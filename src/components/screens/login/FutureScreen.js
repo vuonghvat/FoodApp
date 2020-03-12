@@ -160,7 +160,7 @@ componentWillUnmount(){
                          margin:10,
                          justifyContent:"center"}}>
                         <NativeBase.Text uppercase={false} style={{textAlign:"center"}}>
-                            Sign In
+                            Đăng nhập
                         </NativeBase.Text>
 
                     </NativeBase.Button>
@@ -172,7 +172,8 @@ componentWillUnmount(){
                          borderRadius:20, 
                          justifyContent:"center"}}>
                         <NativeBase.Text uppercase={false}  style={{textAlign:"center", color:"black"}}>
-                            Create new Account
+                            Tạo tài khoản 
+                            
                         </NativeBase.Text>
 
                     </NativeBase.Button>

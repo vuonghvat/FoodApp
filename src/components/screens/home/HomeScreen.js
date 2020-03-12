@@ -28,6 +28,7 @@ import { FlatList } from "react-native-gesture-handler";
 import BaseItemList from "../../customizes/BaseItemList";
 
 import RBSheet from "react-native-raw-bottom-sheet";
+import AsyncStorageApp from "../../../utils/AsyncStorageApp";
 const data = [
   {
   name: "Chicken",
@@ -71,6 +72,12 @@ address:"Hoang Mai Ha Noi dasdsadas đâsdas"
 }
 
 ];
+import URL from "../../../api/URL";
+import request from "../../../api/request"
+
+import ProgressDialog from "../../customizes/ProgressDialog";
+import Toast from 'react-native-simple-toast';
+
 class HomeScreen extends Component {
   
 
@@ -79,7 +86,10 @@ class HomeScreen extends Component {
     this.state = {
       isLogged:false,
       keySearch:"",
-      location:"Ha Noi"
+      location:"Ha Noi",
+      cities:[],
+      CityID: 1,
+      isLoading:false
    
     };
     this.pageCount=3;
@@ -90,6 +100,60 @@ class HomeScreen extends Component {
     
     selectedDotStyle={{backgroundColor:Colors.Black, width:10, height:10, borderRadius:10, opacity:0.5}}
     pageCount={this.pageCount} />;
+}
+componentDidMount(){
+  this.getProducts(this.state.CityID);
+  this.getCity();
+}
+getProducts = (CityID)=>{
+
+  this.setState({isLoading:true})
+  request((res,err)=>{
+      
+       console.log(URL.UrlGetProducts+`${CityID}/all/all/all/10/1`,res,err);
+       
+        
+    if(res){
+      // const cities = res.data;
+      // console.log(cities);
+      // this.setState({cities:cities?cities||[]:[]})
+       
+    }
+      else{
+        Toast.show("Kiểm tra kết nối", Toast.LONG);
+        this.setState({...this.state,isLoading:false})
+      }
+
+        
+      
+      
+  
+
+  }).get(URL.UrlGetProducts+`${CityID}/all/all/all/10/0`,null)
+
+}
+getCity =()=>{
+  request((res,err)=>{
+      
+       
+        
+    if(res){
+      const cities = res.data;
+      console.log(cities);
+      this.setState({cities:cities?cities||[]:[]})
+       
+    }
+      else{
+        Toast.show("Kiểm tra kết nối", Toast.LONG);
+        this.setState({...this.state,isLoading:false})
+      }
+
+        
+      
+      
+  
+
+  }).get(URL.UrlGetCity,null)
 }
   render() {
  
@@ -107,7 +171,7 @@ class HomeScreen extends Component {
         <Layout flex={1} padding={10} margin={[0,0,0,10]} row radius={20} bgColor={"#e6e6e6"} hidden>
           <FastImage source={ImageAsset.SearchIcon} style={{ width:20, height:20,alignSelf:"center", marginHorizontal:10 }}/>
           <NativeBase.Text style={{fontSize:13, color:Colors.Black , opacity:0.5, flex:1, textAlign:"left", alignSelf:"center"}}>
-          Find places, food, address...
+          Tìm đia điểm, đồ ăn, địa chỉ...
           </NativeBase.Text>
         </Layout>
         </TouchableOpacity>
@@ -315,20 +379,22 @@ class HomeScreen extends Component {
         >
           {this.renderContent()}
         </RBSheet>
+        <ProgressDialog isShow={this.state.isLoading}/>
       </Layout>
     );
   }
   renderLocationItem =()=>{
-    const data= [1,2,3,4,5,6,7,8,10,1,2,3,4,5,6,7,8,9,90,1,2,3,4,54,34,53,5,334,5,345,345];
-    return item = data.map((e,index)=>{
+    const { cities } = this.state;
+    return cities.map((e,index)=>{
       return (
         <TouchableOpacity onPress={()=>{
-          this.setState({location: "location "+ index});
+          this.getProducts(e.CityID)
+          this.setState({location: e.CityName});
           this.bottomSheetRef.close();
         }}>
           <Layout padding={[15,15]}>
         <NativeBase.Text>
-          Location +{index}
+        {e.CityName}
         </NativeBase.Text>
       </Layout>
         </TouchableOpacity>
@@ -371,7 +437,7 @@ class HomeScreen extends Component {
 
 
   renderItem =(item)=>{
-    console.log(item);
+    //console.log(item);
  
     return (
       <Layout style={{height:height/6, width:height/6}} margin={[0,0,0,15]}>

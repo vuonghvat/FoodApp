@@ -25,6 +25,12 @@ const  height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 import firebase from 'react-native-firebase';
 import Toolbar from "../../customizes/Toolbar";
+import URL from "../../../api/URL";
+import request from "../../../api/request"
+
+import ProgressDialog from "../../customizes/ProgressDialog";
+import Toast from 'react-native-simple-toast';
+import AsyncStorageApp from "../../../utils/AsyncStorageApp"
 
 const AuthContext = React.createContext();
 
@@ -35,7 +41,8 @@ class LoginScreen extends Component {
     super(props);
     this.state = {
     username:"",
-    password:""
+    password:"",
+    isLoading:false
       
     };
   
@@ -46,13 +53,64 @@ class LoginScreen extends Component {
     
     // const= useContext(AuthContext);t { signIn 
     const  { username,password} =this.state;
+    if(username == ""){
+      Toast.show("Username cannot be empty!", Toast.LONG);
+      return;
+    }
+    if(password == ""){
+      Toast.show("Password cannot be empty!", Toast.LONG);
+      return;
+    }
     const data ={
         username,
         password
     }
-    console.log("Dispatch");
+    this.setState({isLoading:true})
     
-  this.props.dispatch(loggedIn(true));
+
+    request((res,err)=>{
+      
+      
+      if(res){
+        console.log(res);
+      
+        const data = res.data;
+        if(data.success){
+          const token  = data.token;
+          if(token){
+       console.log(token);
+       
+         AsyncStorageApp.storeData("user_login",JSON.stringify({access_token:token}));
+
+            Toast.show("Đăng nhập thành công", Toast.LONG);
+            this.setState({...this.state,isLoading:false})
+         
+            this.props.dispatch(loggedIn(true));
+          }else{
+            Toast.show("Có lỗi xảy ra thử lại sau", Toast.LONG);
+            this.setState({...this.state,isLoading:false})
+         
+          }
+
+        }else{
+          Toast.show(data.msg, Toast.LONG);
+          this.setState({...this.state,isLoading:false})
+         
+        }
+         
+      }
+        else{
+          Toast.show("Kiểm tra kết nối", Toast.LONG);
+          this.setState({...this.state,isLoading:false})
+        }
+
+          
+        
+        
+    
+
+    }).post(URL.UrlSignIn,data)
+
   }
 
   render() {
@@ -77,18 +135,18 @@ class LoginScreen extends Component {
               
           
         <Layout padding={20} flex={1}>
-        <NativeBase.Text style={{color:Colors.primaryColor, fontSize:26, fontWeight:"bold", textAlign:"left"}}>Sign In to your{"\n"}account</NativeBase.Text>
+        <NativeBase.Text style={{color:Colors.primaryColor, fontSize:26, fontWeight:"bold", textAlign:"left"}}>Đăng nhập{"\n"}tài khoản</NativeBase.Text>
           <Layout  flex={1}>
        
              <Layout height={50} bgColor={Colors.white} style={{ elevation:2, paddingHorizontal:12}} radius={30} hidden margin={[20]}>
                  
                  <NativeBase.Input
-                 value={this.state.phoneNumber}
-                 onChangeText ={(phoneNumber)=>this.setState({phoneNumber})}
+                 value={this.state.username}
+                 onChangeText ={(username)=>this.setState({username})}
                  maxLength={12}
                   numberOfLines={1}
                   placeholderTextColor={"gray"}
-                  placeholder={"Phone"}
+                  placeholder={"Tên tài khoản"}
                  
                   style={{
                     
@@ -97,12 +155,13 @@ class LoginScreen extends Component {
              <Layout height={50} bgColor={Colors.white} style={{ elevation:2, paddingHorizontal:12}} radius={30} hidden margin={[20]}>
               
               <NativeBase.Input
-                 value={this.state.phoneNumber}
-                 onChangeText ={(phoneNumber)=>this.setState({phoneNumber})}
+              secureTextEntry={true}
+                 value={this.state.password}
+                 onChangeText ={(password)=>this.setState({password})}
                  maxLength={12}
                   numberOfLines={1}
                   placeholderTextColor={"gray"}
-                  placeholder={"Password"}
+                  placeholder={"Mật khẩu"}
                  
                   style={{
                     
@@ -112,21 +171,22 @@ class LoginScreen extends Component {
              
            <Layout bgColor={Colors.white} style={{ elevation:2}} radius={30} hidden margin={[20]}>
               <NativeBase.Button onPress={this.onSignIn} style={{backgroundColor:Colors.primaryColor, justifyContent:"center"}}>
-               <NativeBase.Text uppercase={false} style={{fontWeight:"bold"}}>Sign In</NativeBase.Text>
+               <NativeBase.Text uppercase={false} style={{fontWeight:"bold"}}>Đăng nhập</NativeBase.Text>
               </NativeBase.Button>
            </Layout>
           </Layout>
           <Layout content="center" items="center">
               <NativeBase.Text uppercase={false} style={{fontSize:13}}>
-                  Don't have an Account? <NativeBase.Text
+                  Chưa có tài khoản <NativeBase.Text
                   onPress={()=>{
                     this.props.navigation.navigate("VerifyNumberPhoneScreen");
                   }}
-                   style={{color:Colors.primaryColor, fontSize:14, fontWeight:"bold"}}>Sign Up</NativeBase.Text>
+                   style={{color:Colors.primaryColor, fontSize:14, fontWeight:"bold"}}>Đăng ký</NativeBase.Text>
               </NativeBase.Text>
           </Layout>
 
            </Layout>
+           <ProgressDialog isShow={this.state.isLoading}/>
       </Layout>
     );
   }

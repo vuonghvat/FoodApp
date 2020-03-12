@@ -29,7 +29,7 @@ import { StackActions, NavigationActions} from "@react-navigation/native";
 import request from "../../../api/request"
 import URL from "../../../api/URL";
 import ProgressDialog from "../../customizes/ProgressDialog";
-
+import Toast from 'react-native-simple-toast';
 class SignupInfoScreen extends Component {
   
 
@@ -97,7 +97,25 @@ class SignupInfoScreen extends Component {
       
       if(res){
         console.log(res);
-        this.setState({isLoading:false})
+      
+        const data = res.data;
+        if(data.errors){
+          const errors =  data.errors;
+          if(errors.length >0){
+         
+            Toast.show(errors[0].msg, Toast.LONG);
+            this.setState({...this.state,isLoading:false})
+          }
+          
+        }
+        if(data){
+          if(data.affectedRows === 1){
+            Toast.show("Login successfully!", Toast.LONG);
+            this.setState({...this.state,isLoading:false})
+            this.props.navigation.navigate('LoginScreen')
+
+          }
+        }
         
       }else{
         console.log(err);
@@ -135,7 +153,7 @@ class SignupInfoScreen extends Component {
         <NativeBase.Content
         contentContainerStyle={{paddingBottom:30}}
          style={{padding:20}}  >
-        <NativeBase.Text style={{color:Colors.primaryColor, fontSize:26, fontWeight:"bold", textAlign:"left"}}>Create your{"\n"}account</NativeBase.Text>
+        <NativeBase.Text style={{color:Colors.primaryColor, fontSize:26, fontWeight:"bold", textAlign:"left"}}>Tạo tài khoản{"\n"}</NativeBase.Text>
           <Layout  flex={1}>
           <Layout height={50} bgColor={Colors.white} style={{ elevation:2, paddingHorizontal:12}} radius={30} hidden margin={[20]}>
               
@@ -163,7 +181,7 @@ class SignupInfoScreen extends Component {
               maxLength={32}
                numberOfLines={1}
                placeholderTextColor={"gray"}
-               placeholder={"Username"}
+               placeholder={"Tên người dùng"}
               
                style={{
                  
@@ -181,7 +199,7 @@ class SignupInfoScreen extends Component {
               maxLength={32}
                numberOfLines={1}
                placeholderTextColor={"gray"}
-               placeholder={"Password"}
+               placeholder={"Mật khẩu"}
               
                style={{
                  
@@ -199,7 +217,7 @@ class SignupInfoScreen extends Component {
                numberOfLines={1}
                secureTextEntry ={true}
                placeholderTextColor={"gray"}
-               placeholder={"Re-Password"}
+               placeholder={"Nhập lại mật khẩu"}
               
                style={{
                  
@@ -219,7 +237,7 @@ class SignupInfoScreen extends Component {
               maxLength={32}
                numberOfLines={1}
                placeholderTextColor={"gray"}
-               placeholder={"Full name"}
+               placeholder={"Tên đầy đủ"}
               
                style={{
                  
@@ -232,7 +250,7 @@ class SignupInfoScreen extends Component {
               </NativeBase.Text>)}
            <Layout bgColor={Colors.white} style={{ elevation:2}} radius={30} hidden margin={[20]}>
               <NativeBase.Button onPress={this.onSignUp} style={{backgroundColor:Colors.primaryColor, justifyContent:"center"}}>
-               <NativeBase.Text uppercase={false}>{"Sign Up"}</NativeBase.Text>
+               <NativeBase.Text uppercase={false}>{"Đăng ký"}</NativeBase.Text>
               </NativeBase.Button>
            </Layout>
           </Layout>

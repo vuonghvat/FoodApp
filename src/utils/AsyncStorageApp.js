@@ -5,16 +5,18 @@ class AsyncStorageApp {
     try {
       await AsyncStorage.setItem(key, value);
     } catch (error) {
-      // Error saving data
       console.log('Error set item');
     }
   };
 
   static _retrieveData = async (key, callback) => {
+
     try {
       const value = await AsyncStorage.getItem(key);
 
       if (value !== null) {
+        console.log("value",value);
+        
         callback(JSON.parse(value));
       } else {
         callback(undefined);

@@ -84,7 +84,7 @@ onSend =()=>{
      
    
      if(this.timesSend== 0 ){
-         alert("Please try again in 10 minutes")
+         alert("Thử lại sau 10 phút")
 
          return;
      }
@@ -125,7 +125,7 @@ onSend =()=>{
               
           
         <Layout padding={20} flex={1}>
-        <NativeBase.Text style={{color:Colors.primaryColor, fontSize:26, fontWeight:"bold", textAlign:"left"}}>Verify phone{"\n"}number</NativeBase.Text>
+        <NativeBase.Text style={{color:Colors.primaryColor, fontSize:26, fontWeight:"bold", textAlign:"left"}}>Xác minh{"\n"}số điện thoại</NativeBase.Text>
           <Layout  flex={1}>
           <Layout row bgColor={Colors.white} style={{ elevation:2}} radius={30} hidden margin={[20]}>
                <NativeBase.Text style={{alignSelf:"center", color:"gray", fontSize:20, marginLeft:16}}>+84</NativeBase.Text>
@@ -136,7 +136,7 @@ onSend =()=>{
                maxLength={12}
                 numberOfLines={1}
                 placeholderTextColor={"#f1f1f1"}
-                placeholder={"Enter your phone number"}
+                placeholder={"Số điệnt thoại"}
                 keyboardType="phone-pad"
                 style={{
                    fontSize:20,
@@ -145,7 +145,7 @@ onSend =()=>{
                {this.state.confirmResult && (<Layout>
             <Layout row hidden margin={[20]}>
               
-              <NativeBase.Text style={{alignSelf:"center"}}>Enter Code: </NativeBase.Text>
+              <NativeBase.Text style={{alignSelf:"center"}}>Nhập mã: </NativeBase.Text>
 
               <NativeBase.Input
               value={this.state.verificationCode}
@@ -156,20 +156,20 @@ onSend =()=>{
        </Layout>
        <NativeBase.Text 
        
-       style={{fontSize:12, textAlign:"left", marginTop:10}}>You did not receive the code?<NativeBase.Text 
+       style={{fontSize:12, textAlign:"left", marginTop:10}}>Bạn không nhận được mã?<NativeBase.Text 
        onPress={this.onResend}
-       style={{fontWeight:"bold", color:Colors.primaryColor, fontSize:13}}> Try Again</NativeBase.Text> </NativeBase.Text>
+       style={{fontWeight:"bold", color:Colors.primaryColor, fontSize:13}}> Thử lại</NativeBase.Text> </NativeBase.Text>
          
             </Layout>)}
            <Layout bgColor={Colors.white} style={{ elevation:2}} radius={30} hidden margin={[20]}>
               <NativeBase.Button onPress={this.onSend} style={{backgroundColor:Colors.primaryColor, justifyContent:"center"}}>
-               <NativeBase.Text uppercase={false}>{this.state.confirmResult?"Confirm":"Send"}</NativeBase.Text>
+               <NativeBase.Text uppercase={false}>{this.state.confirmResult?"Xác nhận":"Gửi"}</NativeBase.Text>
               </NativeBase.Button>
            </Layout>
           </Layout>
           <Layout content="center" items="center">
               <NativeBase.Text uppercase={false} style={{fontSize:13}}>
-                  Already an Account? <NativeBase.Text style={{color:Colors.primaryColor, fontSize:14, fontWeight:"bold"}}>Sign In</NativeBase.Text>
+                  Đã có tài khoản? <NativeBase.Text style={{color:Colors.primaryColor, fontSize:14, fontWeight:"bold"}}>Đăng nhập</NativeBase.Text>
               </NativeBase.Text>
           </Layout>
 

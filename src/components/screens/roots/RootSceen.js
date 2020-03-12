@@ -127,7 +127,7 @@ componentDidMount(){
         name="MoreScreen"
         component={MoreScreen}
         options={{
-          tabBarLabel: 'Account',
+          tabBarLabel: 'Thêm',
           tabBarIcon: ({ color, size }) => (
             <Image source={ImageAsset.AccountIcon} style={{tintColor:color, height:20, width:20}}/>
           ),
