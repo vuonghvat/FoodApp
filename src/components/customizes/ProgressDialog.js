@@ -13,8 +13,8 @@ export default class ProgressDialog extends PureComponent {
 
 }
    const CustomProgressBar = ({ visible }) => (
-        <Modal onRequestClose={() => null} visible={visible}>
-          <View style={{ flex: 1, backgroundColor: '#dcdcdc', alignItems: 'center', justifyContent: 'center' }}>
+        <Modal transparent  onRequestClose={() => null} visible={visible}>
+          <View style={{ flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.6)', alignItems: 'center', justifyContent: 'center' }}>
             <View style={{ borderRadius: 10, backgroundColor: 'white', padding: 25 }}>
               <Text style={{ fontSize: 20, fontWeight: '200' }}>Loading</Text>
               <ActivityIndicator size="large" />

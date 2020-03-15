@@ -109,11 +109,35 @@ class HomeScreen extends Component {
 }
 componentDidMount(){
 
+  this.getBanner();
   this.getCity();
   this.getProducts(this.state.CityID,"Lastest");
   this.getProducts(this.state.CityID,"MostView");
   this.getProducts(this.state.CityID,"all");
  
+}
+getBanner =()=>{
+  request((res,err)=>{
+      
+       
+    console.log("banner", res,err);
+    if(res){
+      const banners = res.data;
+
+      this.setState({banners})
+       
+    }
+      else{
+        Toast.show("Kiểm tra kết nối", Toast.LONG);
+        this.setState({...this.state,isLoading:false})
+      }
+
+        
+      
+      
+  
+
+  }).get(URL.UrlGetBanner,null)
 }
 getProducts = (CityID, type)=>{
 
@@ -470,7 +494,7 @@ getCity =()=>{
        })
       }}>
         <View>
-      <Layout style={{height:height/5, width:height/6}} margin={[0,0,0,15]}>
+      <Layout style={{height:height/5, width:height/6}} margin={[0,0,0,15]} radius={3} hidden>
         <SmartImage source={ { uri: item.item.Image}} style={{flex:1}} />
         <Layout>
           <NativeBase.Text style={{fontSize:13, fontWeight:"bold"}}>

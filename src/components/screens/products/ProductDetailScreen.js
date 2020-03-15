@@ -79,6 +79,7 @@ import request from "../../../api/request"
 import ProgressDialog from "../../customizes/ProgressDialog";
 import Toast from 'react-native-simple-toast';
 import SmartImage from "../../customizes/SmartImage";
+import StarRating from "react-native-star-rating";
 
 class ProductDetailScreen extends Component {
   
@@ -86,16 +87,10 @@ class ProductDetailScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLogged:false,
-      keySearch:"",
-      location:"Ha Noi",
-      cities:[],
-      CityID: 1,
+      product:undefined,
       isLoading:false,
-      lastestProducts:[],
-      viewMostProducts:[],
-      allProducts:[],
       quantity:1
+    
 
    
     };
@@ -120,15 +115,14 @@ getProductDetails = ()=>{
 
   
   this.setState({isLoading:true})
-  const data ={
-    SourceOfItemsID: params.SourceOfItemsID
-  }
+ 
   request((res,err)=>{
  
-    console.log("-------",URL.UrlViewProduct,res,err);
+    console.log("-----",URL.UrlGetProducts+params.SourceOfItemsID,res,err);
     if(res){
 
-
+     
+ 
       const data = res.data;
   
       if(data.err && data.err =="timeout"){
@@ -139,7 +133,7 @@ getProductDetails = ()=>{
         
       }else{
 
-       
+        this.setState({product:data,isLoading:false})
       
       }
       
@@ -157,7 +151,7 @@ getProductDetails = ()=>{
       
   
 
-  }).post(URL.UrlViewProduct,data)
+  }).get(URL.UrlGetProducts+params.SourceOfItemsID,null)
 
 }
 onQuantityPress =(value)=>{
@@ -170,28 +164,112 @@ onQuantityPress =(value)=>{
 
 }
 
-  render() {
+onStarRatingPress = () => {
+    
+};
+renderReview =()=>{
+  let data =[1,2]
+  return data.map(e=>{
+    return ( <Layout bgColor="white" style={{elevation:4, padding:8, marginTop:10}}>
+    <Layout row> 
+ <Layout flex={1}>
+ <NativeBase.Text style={{flex:1, fontSize:13}} >Name</NativeBase.Text>
+ </Layout>
+
+   <Layout flex={1} content="center" items ="center">
+   <StarRating
+       starStyle={{}}
+       disabled={false}
+       maxStars={5}
+       rating={5}
+       starSize={13}
+       fullStarColor={"#eed816"}
+       halfStarColor={"#eed816"}
+       emptyStarColor={"#eed816"}
+       selectedStar={rating => this.onStarRatingPress(rating)}
+     />
+   </Layout>
+ <Layout flex={1}>
+ <NativeBase.Text style={{fontSize:12, textAlign:"right"}}>
+     {"10/20/2020"}
+   </NativeBase.Text>
+ </Layout>
+
+   </Layout>
+      <NativeBase.Text style={{fontSize:13}}>Mon ngon ge luon</NativeBase.Text>
+ </Layout>
+   
+   )
+  })
  
+}
+  render() {
+
+    let a ={
+      itemName: "item 7",
+      SourceOfItemsID: "sourceofitems0000004",
+      ItemID: "items000000000000008",
+      Summary: 100,
+      Image: "https://firebasestorage.googleapis.com/v0/b/foodapp-5c233.appspot.com/o/images%2Ffood2.jpg?alt=media&token=3008e35c-cc1f-4751-92e8-c16811a199d2",
+      Price: 50000,
+      StartTime: "2020-03-14T01:27:21.000Z",
+      EndTime: "2020-12-31T00:00:00.000Z",
+      Description: "ergdsfgsdfgsdfgdsfgdsfgdsfg",
+      FeeID: null,
+      view: null,
+      PartnerID: "partner0000000000001",
+      CustomerID: "customer000000000002",
+      PartnerName: "NaBe shop1",
+      PartnerAddress: "Xom Ca, Nguyen Xa, Bac Tu Liem",
+      PartnerEmail: "tdhoang96@gmail.com",
+      PartnerPhone: 957463887,
+      PartnerDescription: "chuyen buon ban giay the thao",
+      PartnerImage: "https://www.uplevo.com/img/designbox/hinh-nen-dien-thoai-dep-simpson.jpg",
+      PartnerTypeID: 0,
+      CityID: 1,
+      StatusID: 1,
+      star: null,
+      like: null
+    }
+    const  { product} = this.state;
+    const Image = product?product.Image || "":"";
+    const Price = product?product.Price || 0:0;
+    const Description = product?product.Description || "":"";
+    const view = product?product.view || "":"";
+    const PartnerName = product?product.PartnerName || "":"";
+    const PartnerAddress = product?product.PartnerAddress || "":"";
+    const PartnerEmail = product?product.PartnerEmail || "":"";
+    const PartnerPhone = product?product.PartnerPhone || "":"";
+    const PartnerDescription = product?product.PartnerDescription || "":"";
+    const PartnerImage = product?product.PartnerImage || "":"";
+    const star = product?product.star || 0:0;
+    const like = product?product.like || 0:0;
+    const Name = product?product.ItemName || "":"";
+
+
+    
     return (
       <Layout style={styles.container}>
-
-        <NativeBase.Content contentContainerStyle={{paddingHorizontal:10, paddingBottom:60}}>
-         <Layout height={height/3.2}>
-            <SmartImage source = {{ uri :""}} style={{flex:1}}/>
+      
+        <NativeBase.Content contentContainerStyle={{ paddingBottom:60}}>
+        <Layout height={height/3.2}>
+            <SmartImage source = {{ uri : Image}} style={{flex:1}}/>
 
          </Layout>
+          <Layout style={{paddingHorizontal:15}}>
+         
          <Layout>
 
           <NativeBase.Text style={{fontSize:20, fontWeight:"bold", marginVertical:5}}>
-                Gà rán chien giòn
+                {Name}
                 </NativeBase.Text>
                 <NativeBase.Text style={{fontSize:18, marginVertical:5,opacity:0.5}}>
-                  {numeral(100000).format("0,0") +" ₫"}
+                  {numeral(Price).format("0,0") +" ₫"}
                 </NativeBase.Text>
                 <Layout row>
                   <FastImage resizeMode="contain" source ={ImageAsset.TrackIcon} style={{ height:16, width:16, alignSelf:"center"}} />
-                  <NativeBase.Text style={{ marginVertical:5,opacity:0.5, alignSelf:"center"}}>
-                  {"Ân Thi Hưng Yên"}
+                  <NativeBase.Text style={{ marginVertical:5,opacity:0.5, alignSelf:"center", fontSize:12}}>
+                  {PartnerAddress}
                 </NativeBase.Text>
                 </Layout>
          </Layout>
@@ -247,10 +325,41 @@ onQuantityPress =(value)=>{
       
             <Layout>
               <NativeBase.Text style={{fontWeight:"bold"}}>Mô tả </NativeBase.Text>
-              <NativeBase.Text style={{margin:5, textAlign:"left"}}> Ngon bổ và rẻ vô cùng{"\n"}  maiz o mại zoo</NativeBase.Text>
+              <NativeBase.Text style={{margin:5, textAlign:"left", fontSize:13}}> Ngon bổ và rẻ vô cùng{"\n"}  maiz o mại zoo</NativeBase.Text>
             </Layout>
            </Layout>
-         
+           <Layout>
+          <NativeBase.Text style={{fontWeight:"bold", marginTop:20}}>Đánh giá </NativeBase.Text>
+             {this.renderReview()}
+             <Layout row>
+               <TouchableWithoutFeedback>
+                 <View style={{flex:1, justifyContent:"center"}}>
+                   <NativeBase.Text style={{textAlign:"center", fontSize:13}}>
+                     Thêm đánh giá
+                   </NativeBase.Text>
+                 </View>
+               </TouchableWithoutFeedback>
+               <View style={{ width:1, height:"100%", backgroundColor:"gray"}}/>
+               <TouchableWithoutFeedback>
+             
+               <View style={{flex:1,justifyContent:"center"}}>
+               <NativeBase.Text style={{textAlign:"center", fontSize:13, padding:10}}>
+                     Xem thêm
+                   </NativeBase.Text>
+                 </View>
+               </TouchableWithoutFeedback>
+               
+             </Layout>
+               <View style={{ height:1, width:"100%", backgroundColor:"gray"}}/>
+          </Layout>
+          <Layout>
+          <NativeBase.Text style={{fontWeight:"bold", marginTop:20}}>Câu hỏi </NativeBase.Text>
+             {this.renderReview()}
+            
+          </Layout>
+                  
+          </Layout>
+        
         </NativeBase.Content>
         <Layout row height ={50} style={{position:"absolute", width:"100%", bottom:0, elevation:5 }}>
           <Layout flex={1} content="center" items = "center">
@@ -267,6 +376,20 @@ onQuantityPress =(value)=>{
             </NativeBase.Text>
           </Layout>
         </Layout>
+        <Layout height={50} style={{position:"absolute", top:0, }}>
+                  <TouchableWithoutFeedback onPress={()=>{
+                    this.props.navigation.goBack();
+                  }}>
+                    <View>
+                    <Layout radius={100} content ={"center"} items ="center" bgColor={"rgba(0, 0, 0, 0.6)"} paddimng ={10} margin={10}>
+            <FastImage 
+            tintColor="white"
+            source ={ImageAsset.ArrowBackIcon} style={{ height:18, width:18, margin:5, tintColor:"white"}} resizeMode="contain"/>
+            </Layout>
+                    </View>
+                  </TouchableWithoutFeedback>
+
+          </Layout>
         <ProgressDialog isShow={this.state.isLoading}/>
     </Layout>)
   }
