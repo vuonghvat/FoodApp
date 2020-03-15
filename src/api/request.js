@@ -29,14 +29,16 @@ const request = callback => {
 const reqf = (method, url, data, options = {}, callback) => {
   AsyncStorageApp._retrieveData('user_login', res => {
     const token = res?res.access_token : undefined;
+   
+    
     const headers =  {
-        Authorization: 'bearer ' + (token ? token : ''),
+        Authorization: 'Bearer ' + (token ? token : ''),
         'Content-Type': 'application/x-www-form-urlencoded',
        
         
       }
 
-     
+      console.log(headers);
     var req = axios({
       method: method,
       url: url,
@@ -47,6 +49,10 @@ const reqf = (method, url, data, options = {}, callback) => {
 
     req
       .then(resp => {
+        const data = resp.data;
+        if(data.err && data.err =="timeout"){
+          alert("Phiên hết hạn, vui lòng đăng nhập lại")
+        }
         callback(resp, undefined);
       })
       .catch(err => {

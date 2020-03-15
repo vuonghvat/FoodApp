@@ -22,6 +22,11 @@ class ImageAsset {
     static CloseIcon = require("../images/close.png");
     static LiveTracking = require("../images/livetracking.png");
     static TrackIcon = require("../images/track_location_icon.png");
+    static PlaceHolderImage = require("../images/placeholder.png")
+
+    static Minusicon = require("../images/minus_icon.png")
+    static PlusIcon = require("../images/plus_icon.png")
+    static CardIcon = require("../images/tab_order_icon.png")
     
     
 

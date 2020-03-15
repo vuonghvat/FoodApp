@@ -19,7 +19,6 @@ import { loggedIn } from "../../../redux/app/action";
 import LoginScreen from "../login/LoginScreen"
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import HomeScreen from '../home/HomeScreen';
 import FutureScreen from '../login/FutureScreen'
 
 import ImageAsset from "../../../assets/images/ImageAsset";
@@ -30,41 +29,13 @@ import Colors from "../../../assets/themes/colors";
 import MoreScreen from "../mores/MoreScreen";
 import SearchScreen from "../search/SearchScreen";
 
+import ProductDetailScreen from "../products/ProductDetailScreen";
+import HomeScreen from "../home/HomeScreen";
+
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createStackNavigator();
 
-// function TabScreen() {
-//   return (
-//     <Tab.Navigator 
-//     initialRouteName="HomeScreen"
-//     activeColor={Colors.primaryColor}
-//     inactiveColor="gray"
-//     barStyle={{ backgroundColor: Colors.white }}
-//      >
-//     <Tab.Screen
-//         name="HomeScreen"
-//         component={HomeScreen}
-//         options={{
-//           tabBarLabel: 'Home',
-//           tabBarIcon: ({ color, size }) => (
-//             <Image source={ImageAsset.Home} style={{tintColor:color, height:20, width:20}}/>
-//           ),
-//         }}
-//       />
-  
-//       <Tab.Screen
-//         name="MoreScreen"
-//         component={MoreScreen}
-//         options={{
-//           tabBarLabel: 'Home',
-//           tabBarIcon: ({ color, size }) => (
-//             <Image source={ImageAsset.Home} style={{tintColor:color, height:20, width:20}}/>
-//           ),
-//         }}
-//       />
-//     </Tab.Navigator>
-//   );
-// }
+
 
 class RootSceen extends Component {
   
@@ -146,6 +117,7 @@ componentDidMount(){
             <Stack.Navigator headerMode="none">
               <Stack.Screen name="TabScreen" component={this.TabScreen}/>
               <Stack.Screen name="SearchScreen" component={SearchScreen}/>
+              <Stack.Screen name ="ProductDetailScreen" component ={ProductDetailScreen} />
             </Stack.Navigator>
             
                 

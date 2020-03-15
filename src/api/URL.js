@@ -3,7 +3,8 @@ const Url = "http://45.32.105.81:4000/"
 
     static UrlSignUp = Url+ "user";
     static UrlSignIn = Url+"signin";
-    static UrlGetProducts = Url+"products/";
+    static UrlGetProducts = Url+"user/products/";
     static UrlGetCity = Url+"city";
+    static UrlViewProduct = Url +"user/products/view";
 }
 export default URL;

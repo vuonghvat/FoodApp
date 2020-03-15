@@ -26,6 +26,7 @@ import Colors from "../../../assets/themes/colors";
 import Toolbar from "../../customizes/Toolbar";
 import { FlatList } from "react-native-gesture-handler";
 import BaseItemList from "../../customizes/BaseItemList";
+import numeral from "numeral"
 
 import RBSheet from "react-native-raw-bottom-sheet";
 import AsyncStorageApp from "../../../utils/AsyncStorageApp";
@@ -77,6 +78,7 @@ import request from "../../../api/request"
 
 import ProgressDialog from "../../customizes/ProgressDialog";
 import Toast from 'react-native-simple-toast';
+import SmartImage from "../../customizes/SmartImage";
 
 class HomeScreen extends Component {
   
@@ -89,7 +91,11 @@ class HomeScreen extends Component {
       location:"Ha Noi",
       cities:[],
       CityID: 1,
-      isLoading:false
+      isLoading:false,
+      lastestProducts:[],
+      viewMostProducts:[],
+      allProducts:[]
+
    
     };
     this.pageCount=3;
@@ -102,21 +108,53 @@ class HomeScreen extends Component {
     pageCount={this.pageCount} />;
 }
 componentDidMount(){
-  this.getProducts(this.state.CityID);
+
   this.getCity();
+  this.getProducts(this.state.CityID,"Lastest");
+  this.getProducts(this.state.CityID,"MostView");
+  this.getProducts(this.state.CityID,"all");
+ 
 }
-getProducts = (CityID)=>{
+getProducts = (CityID, type)=>{
 
   this.setState({isLoading:true})
   request((res,err)=>{
       
-       console.log(URL.UrlGetProducts+`${CityID}/all/all/all/10/1`,res,err);
+      
        
         
     if(res){
+
       // const cities = res.data;
       // console.log(cities);
       // this.setState({cities:cities?cities||[]:[]})
+      // err: "auth_fail"
+      // msg: "Xác thực không thành công. Vui lòng đăng nhập lại!"
+      const data = res.data;
+     // console.log("-------",res,err);
+      if(data.err && data.err =="timeout"){
+     
+        this.setState({...this.state,isLoading:false})
+        this.props.dispatch(loggedIn(false))
+        return;
+        
+      }else{
+
+        if(type =="Lastest"){
+       
+          this.setState({lastestProducts:data,isLoading:false})
+        }else if(type == "MostView"){
+      
+          this.setState({viewMostProducts:data,isLoading:false})
+        }else{
+        
+          this.setState({allProducts:data,isLoading:false})
+        }
+      
+      }
+      
+
+    
        
     }
       else{
@@ -129,7 +167,7 @@ getProducts = (CityID)=>{
       
   
 
-  }).get(URL.UrlGetProducts+`${CityID}/all/all/all/10/0`,null)
+  }).get(URL.UrlGetProducts+`${CityID}/all/${type}/all/10/0`,null)
 
 }
 getCity =()=>{
@@ -139,7 +177,7 @@ getCity =()=>{
         
     if(res){
       const cities = res.data;
-      console.log(cities);
+    //  console.log(cities);
       this.setState({cities:cities?cities||[]:[]})
        
     }
@@ -223,16 +261,20 @@ getCity =()=>{
                 </IndicatorViewPager>
             </Layout>
             <Layout height={5} width={width-30} margin={[15,15]} style={{alignSelf:"center", opacity:0.05}} bgColor={Colors.Black}/>
-          <Layout margin={[0,0,15,15]}>
+            
+            
+            
+            {this.state.lastestProducts.length > 0 && (<Layout>
+              <Layout margin={[0,0,15,15]}>
          <Layout row> 
            <NativeBase.Text style={{flex:1}}>
-             Most popular
+             Mới nhất
             </NativeBase.Text>
             <Layout row>
             <NativeBase.Text onPress={()=>{
               alert("View more");
             }} style={{ fontSize:12, alignSelf:"center"}}>
-              More
+              Thêm
             </NativeBase.Text>
             <FastImage style={{width:15, height:15, alignSelf:"center"}} resizeMode="contain" source={ImageAsset.ArrowNextIcon}/>
             </Layout>
@@ -244,7 +286,7 @@ getCity =()=>{
               marginTop:10
           
             }}
-            data={data}
+            data={this.state.lastestProducts}
             showsHorizontalScrollIndicator={false}
             renderItem={item => (
               <BaseItemList renderView={this.renderItem(item)} />
@@ -253,16 +295,21 @@ getCity =()=>{
             />
           </Layout>
           <Layout height={5} width={width-30} margin={[15,15]} style={{alignSelf:"center", opacity:0.05}} bgColor={Colors.Black}/>
-          <Layout margin={[0,0,15,15]}>
+            </Layout>)}
+
+
+
+              {this.state.viewMostProducts.length  >0 && (<Layout>
+                <Layout margin={[0,0,15,15]}>
          <Layout row> 
            <NativeBase.Text style={{flex:1}}>
-             Most popular
+             Xem nhiều nhất
             </NativeBase.Text>
             <Layout row>
             <NativeBase.Text onPress={()=>{
               alert("View more");
             }} style={{ fontSize:12, alignSelf:"center"}}>
-              More
+              Thêm
             </NativeBase.Text>
             <FastImage style={{width:15, height:15, alignSelf:"center"}} resizeMode="contain" source={ImageAsset.ArrowNextIcon}/>
             </Layout>
@@ -275,7 +322,7 @@ getCity =()=>{
               marginTop:10
              
             }}
-            data={data}
+            data={this.state.viewMostProducts}
             showsHorizontalScrollIndicator={false}
             renderItem={item => (
               <BaseItemList renderView={this.renderItem(item)} />
@@ -284,16 +331,21 @@ getCity =()=>{
             />
           </Layout>
           <Layout height={5} width={width-30} margin={[15,15]} style={{alignSelf:"center", opacity:0.05}} bgColor={Colors.Black}/>
+              </Layout>)}
+
+
+              {this.state.allProducts.length>0 && (<Layout>
+                    
           <Layout margin={[0,0,15,15]}>
          <Layout row> 
            <NativeBase.Text style={{flex:1}}>
-             Most popular
+             Tất cả 
             </NativeBase.Text>
             <Layout row>
             <NativeBase.Text onPress={()=>{
               alert("View more");
             }} style={{ fontSize:12, alignSelf:"center"}}>
-              More
+              Thêm
             </NativeBase.Text>
             <FastImage style={{width:15, height:15, alignSelf:"center"}} resizeMode="contain" source={ImageAsset.ArrowNextIcon}/>
             </Layout>
@@ -307,7 +359,7 @@ getCity =()=>{
               marginTop:10
            
             }}
-            data={data}
+            data={this.state.allProducts}
             showsHorizontalScrollIndicator={false}
             renderItem={item => (
               <BaseItemList renderView={this.renderItem(item)} />
@@ -316,37 +368,9 @@ getCity =()=>{
             />
           </Layout>
           <Layout height={5} width={width-30} margin={[15,15]} style={{alignSelf:"center", opacity:0.05}} bgColor={Colors.Black}/>
-          <Layout margin={[0,0,15,15]}>
-         <Layout row> 
-           <NativeBase.Text style={{flex:1}}>
-             Most popular
-            </NativeBase.Text>
-            <Layout row>
-            <NativeBase.Text onPress={()=>{
-              alert("View more");
-            }} style={{ fontSize:12, alignSelf:"center"}}>
-              More
-            </NativeBase.Text>
-            <FastImage style={{width:15, height:15, alignSelf:"center"}} resizeMode="contain" source={ImageAsset.ArrowNextIcon}/>
-            </Layout>
-            </Layout>
-            <FlatList
-            contentContainerStyle={{}}
-            horizontal
-            style={{
-             
-
-              marginTop:10
-             
-            }}
-            data={data}
-            showsHorizontalScrollIndicator={false}
-            renderItem={item => (
-              <BaseItemList renderView={this.renderItem(item)} />
-            )}
-            keyExtractor={(item, index) => index.toString()}
-            />
-          </Layout>
+              </Layout>)}
+         
+         
             </NativeBase.Content>
             {/* <BottomSheet
             ref={(bottomSheetRef)=>{
@@ -437,16 +461,25 @@ getCity =()=>{
 
 
   renderItem =(item)=>{
-    //console.log(item);
- 
+   console.log(item);
+
     return (
-      <Layout style={{height:height/6, width:height/6}} margin={[0,0,0,15]}>
-        <FastImage resizeMode="cover" source={item.item.image} style={{flex:1}} />
+      <TouchableWithoutFeedback onPress={()=>{
+       this.props.navigation.navigate("ProductDetailScreen",{
+        SourceOfItemsID: item.item.SourceOfItemsID
+       })
+      }}>
+        <View>
+      <Layout style={{height:height/5, width:height/6}} margin={[0,0,0,15]}>
+        <SmartImage source={ { uri: item.item.Image}} style={{flex:1}} />
         <Layout>
           <NativeBase.Text style={{fontSize:13, fontWeight:"bold"}}>
-            {item.item.name}
+            {item.item.ItemName}
           </NativeBase.Text>
-     
+    <NativeBase.Text style={{
+      fontSize:12, color:"black", opacity:0.4,
+      marginVertical:3
+    }}>{numeral(item.item.Price).format("0,0")+" ₫"}</NativeBase.Text>
           <NativeBase.Text  numberOfLines={1}
            ellipsizeMode="tail"
            style={{fontSize:13,color:Colors.Black, opacity:0.3,}}>
@@ -455,6 +488,9 @@ getCity =()=>{
         
         </Layout>
       </Layout>
+      </View>
+      </TouchableWithoutFeedback>
+
     )
   }
 }
