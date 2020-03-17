@@ -31,6 +31,7 @@ import request from "../../../api/request"
 import ProgressDialog from "../../customizes/ProgressDialog";
 import Toast from 'react-native-simple-toast';
 import AsyncStorageApp from "../../../utils/AsyncStorageApp"
+import StaticUser from "../../../utils/StaticUser";
 
 const AuthContext = React.createContext();
 
@@ -77,10 +78,29 @@ class LoginScreen extends Component {
         const data = res.data;
         if(data.success){
           const token  = data.token;
+          const user = data.user;
           if(token){
        console.log(token);
+      //  user:
+      //  CustomerID: "customer000000000006"
+      //  CustomerName: "Vuong Nguyen"
+      //  CustomerUsername: "vuong0978"
+      //  CustomerAddress: null
+      //  CustomerPhone: "0967100365"
+      //  CustomerEmail: "vuonghvat@gmail.com"
+      //  StatusID: 1
+        
+             StaticUser.currentUser.userName = user.CustomerUsername;
+             StaticUser.currentUser.phone = user.CustomerPhone;
+             StaticUser.currentUser.email = user.CustomerEmail;
+             StaticUser.currentUser.name = user.CustomerName
+            // console.log(StaticUser.getCurrentUser(),"----------------------------------");
+             
        
-         AsyncStorageApp.storeData("user_login",JSON.stringify({access_token:token}));
+
+
+         AsyncStorageApp.storeData("user_login",JSON.stringify({access_token:token, user }));
+
 
             Toast.show("Đăng nhập thành công", Toast.LONG);
             this.setState({...this.state,isLoading:false})

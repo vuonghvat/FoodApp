@@ -80,6 +80,8 @@ import ProgressDialog from "../../customizes/ProgressDialog";
 import Toast from 'react-native-simple-toast';
 import SmartImage from "../../customizes/SmartImage";
 import StarRating from "react-native-star-rating";
+import CustomModal from "../../customizes/CustomModal";
+import StaticUser from "../../../utils/StaticUser";
 
 class ProductDetailScreen extends Component {
   
@@ -89,7 +91,11 @@ class ProductDetailScreen extends Component {
     this.state = {
       product:undefined,
       isLoading:false,
-      quantity:1
+      quantity:1,
+      isShowPopupReview:false,
+      star:0,
+      comment:"",
+      isRating:false
     
 
    
@@ -106,7 +112,47 @@ class ProductDetailScreen extends Component {
 componentDidMount(){
 
  this.getProductDetails();
+
  
+}
+hasRating =(data) =>{
+
+ request((res,err)=>{
+ 
+  console.log("-----",URL.UrlCheckHasRating,res,err);
+  if(res){
+
+   
+
+    const data = res.data;
+
+    if(data.err && data.err =="timeout"){
+   
+      this.setState({...this.state,isLoading:false})
+      this.props.dispatch(loggedIn(false))
+      return;
+      
+    }else{
+
+      this.setState({isRating:data,isLoading:false})
+    
+    }
+    
+
+  
+     
+  }
+    else{
+      Toast.show("Kiểm tra kết nối", Toast.LONG);
+      this.setState({...this.state,isLoading:false})
+    }
+
+      
+    
+    
+
+
+}).post(URL.UrlCheckHasRating,data)
 }
 getProductDetails = ()=>{
 
@@ -127,13 +173,17 @@ getProductDetails = ()=>{
   
       if(data.err && data.err =="timeout"){
      
-        this.setState({...this.state,isLoading:false})
+        this.setState({...this.state})
         this.props.dispatch(loggedIn(false))
         return;
         
       }else{
-
-        this.setState({product:data,isLoading:false})
+        const dataCheck =  {
+          SourceOfItemsID:data.SourceOfItemsID,
+          CustomerID:data.CustomerID
+         }
+        this.hasRating(dataCheck);
+        this.setState({product:data})
       
       }
       
@@ -143,7 +193,7 @@ getProductDetails = ()=>{
     }
       else{
         Toast.show("Kiểm tra kết nối", Toast.LONG);
-        this.setState({...this.state,isLoading:false})
+        this.setState({...this.state})
       }
 
         
@@ -167,13 +217,14 @@ onQuantityPress =(value)=>{
 onStarRatingPress = () => {
     
 };
-renderReview =()=>{
-  let data =[1,2]
-  return data.map(e=>{
+renderReview =(data)=>{
+
+  return data.map((e,index)=>{
+    if(index < 2)
     return ( <Layout bgColor="white" style={{elevation:4, padding:8, marginTop:10}}>
     <Layout row> 
  <Layout flex={1}>
- <NativeBase.Text style={{flex:1, fontSize:13}} >Name</NativeBase.Text>
+  <NativeBase.Text style={{flex:1, fontSize:13}} >{e.CustomerName}</NativeBase.Text>
  </Layout>
 
    <Layout flex={1} content="center" items ="center">
@@ -181,12 +232,12 @@ renderReview =()=>{
        starStyle={{}}
        disabled={false}
        maxStars={5}
-       rating={5}
+       rating={e.rate}
        starSize={13}
        fullStarColor={"#eed816"}
        halfStarColor={"#eed816"}
        emptyStarColor={"#eed816"}
-       selectedStar={rating => this.onStarRatingPress(rating)}
+      //  selectedStar={rating => this.onStarRatingPress(rating)}
      />
    </Layout>
  <Layout flex={1}>
@@ -196,7 +247,7 @@ renderReview =()=>{
  </Layout>
 
    </Layout>
-      <NativeBase.Text style={{fontSize:13}}>Mon ngon ge luon</NativeBase.Text>
+  <NativeBase.Text style={{fontSize:13}}>{e.Comment}</NativeBase.Text>
  </Layout>
    
    )
@@ -245,6 +296,7 @@ renderReview =()=>{
     const star = product?product.star || 0:0;
     const like = product?product.like || 0:0;
     const Name = product?product.ItemName || "":"";
+    const rate = product?product.rate || []:[];
 
 
     
@@ -330,31 +382,40 @@ renderReview =()=>{
            </Layout>
            <Layout>
           <NativeBase.Text style={{fontWeight:"bold", marginTop:20}}>Đánh giá </NativeBase.Text>
-             {this.renderReview()}
+             { rate.length > 0 ? this.renderReview(rate):(<NativeBase.Text style={{fontSize:13, marginVertical:15}}>Không có đánh giá</NativeBase.Text>)}
+             <View style={{ height:0.5, width:"100%", backgroundColor:"gray"}}/>
              <Layout row>
-               <TouchableWithoutFeedback>
-                 <View style={{flex:1, justifyContent:"center"}}>
+                  {this.state.isRating &&  (  <TouchableWithoutFeedback onPress={()=>{
+                 this.setState({isShowPopupReview:true})
+               }}>
+                 <View style={{flex:1, justifyContent:"center",padding:10}}>
                    <NativeBase.Text style={{textAlign:"center", fontSize:13}}>
                      Thêm đánh giá
                    </NativeBase.Text>
                  </View>
-               </TouchableWithoutFeedback>
-               <View style={{ width:1, height:"100%", backgroundColor:"gray"}}/>
-               <TouchableWithoutFeedback>
+               </TouchableWithoutFeedback>)}
+               { rate.length > 2 && (<View style={{ width:1, height:"100%", backgroundColor:"gray"}}/>)}
+                {rate.length > 2  && ( <TouchableWithoutFeedback
+                onPress ={()=>{
+                  this.props.navigation.navigate("ReviewScreen",{
+                    SourceOfItemsID: product.SourceOfItemsID
+                  })
+                }}
+                >
              
-               <View style={{flex:1,justifyContent:"center"}}>
-               <NativeBase.Text style={{textAlign:"center", fontSize:13, padding:10}}>
-                     Xem thêm
-                   </NativeBase.Text>
-                 </View>
-               </TouchableWithoutFeedback>
+             <View style={{flex:1,justifyContent:"center"}}>
+             <NativeBase.Text style={{textAlign:"center", fontSize:13, padding:10}}>
+                   Xem thêm
+                 </NativeBase.Text>
+               </View>
+             </TouchableWithoutFeedback>)}
                
              </Layout>
-               <View style={{ height:1, width:"100%", backgroundColor:"gray"}}/>
+               <View style={{ height:0.5, width:"100%", backgroundColor:"gray"}}/>
           </Layout>
           <Layout>
           <NativeBase.Text style={{fontWeight:"bold", marginTop:20}}>Câu hỏi </NativeBase.Text>
-             {this.renderReview()}
+             {this.renderReview(rate)}
             
           </Layout>
                   
@@ -362,7 +423,7 @@ renderReview =()=>{
         
         </NativeBase.Content>
         <Layout row height ={50} style={{position:"absolute", width:"100%", bottom:0, elevation:5 }}>
-          <Layout flex={1} content="center" items = "center">
+          <Layout flex={1} content="center" items = "center" bgColor="white">
             <NativeBase.Text>
               Thêm vào giỏ
             </NativeBase.Text>
@@ -390,10 +451,142 @@ renderReview =()=>{
                   </TouchableWithoutFeedback>
 
           </Layout>
+          {this.renderModalReview()}
         <ProgressDialog isShow={this.state.isLoading}/>
     </Layout>)
   }
+  rateStar =(star)=>{
+  
+    this.setState({star})
+  }
+  
+  onSubmitReview = ()=>{
 
+      const { star, comment,product} = this.state;
+      if(star ==0){
+        Toast.show("Vui lòng chọn Star Rating", Toast.LONG);
+        return;
+      }
+      const data = {
+        CustomerID: product.CustomerID ,
+        SourceOfItemsID: product.SourceOfItemsID,
+        Rate: star,
+        Comment: comment
+      }
+
+      this.setState({isLoading:true})
+request((res,err)=>{
+ 
+  console.log("-----",URL.UrlCreateReview,res,err);
+  if(res){
+
+   
+
+    const data = res.data;
+
+    if(data.err && data.err =="timeout"){
+   
+      this.setState({...this.state,isLoading:false})
+      this.props.dispatch(loggedIn(false))
+      return;
+      
+    }else{
+      
+      this.setState({isShowPopupReview:false,isLoading:false})
+
+      this.getProductDetails();
+    
+    }
+    
+
+  
+     
+  }
+    else{
+      Toast.show("Kiểm tra kết nối", Toast.LONG);
+      this.setState({...this.state,isLoading:false})
+    }
+
+      
+    
+    
+
+
+}).post(URL.UrlCreateReview,data)
+      
+    
+  }
+  renderModalReview =()=>{
+    return ( <CustomModal
+    isShow={this.state.isShowPopupReview}
+    renderContent={
+      <View style={{ padding: 20 }}>
+      
+        <View style={{ flexDirection: "row" }}>
+       
+          <View style={{  }}>
+            <NativeBase.Text style={{fontSize:18, fontWeight:"bold"}}>
+              Đánh giá
+            </NativeBase.Text>
+    <NativeBase.Text style={{fontSize:13}}>{StaticUser.getCurrentUser().name}</NativeBase.Text>
+          </View>
+        </View>
+        <View style={{ alignItems: "center", padding: 10 }}>
+          <StarRating
+            starStyle={{}}
+            disabled={false}
+            maxStars={5}
+            rating={this.state.star}
+            starSize={20}
+            fullStarColor={"#eed816"}
+            halfStarColor={"#eed816"}
+            emptyStarColor={"#eed816"}
+            selectedStar={rating => this.rateStar(rating)}
+          />
+        </View>
+        <View
+          style={{ height: 156, backgroundColor: "white", borderRadius: 6 }}
+        >
+          <NativeBase.Input
+            multiline={true}
+            placeholder={"Bình luận"}
+            style={[
+             
+              {
+                textAlignVertical: "top",
+                fontSize:13
+              },
+            ]}
+            onChangeText={comment => this.setState({comment})}
+          />
+        </View>
+      
+        <NativeBase.Button
+          onPress={this.onSubmitReview}
+          style={{ backgroundColor: Colors.primaryColor, justifyContent:"center" , alignItems:"center"}}
+        >
+          <NativeBase.Text>Gửi</NativeBase.Text>
+        </NativeBase.Button>
+        <TouchableOpacity
+          onPress={() =>{
+            this.setState({isShowPopupReview:false})
+          }}
+          style={{ position: "absolute", top: 6, right: 6 }}
+        >
+          <Image
+            style={{
+              width: 24,
+              height: 24,
+            }}
+            source={ImageAsset.CloseIcon}
+          />
+        </TouchableOpacity>
+        
+      </View>
+    }
+  />
+);
+  }
 
 }
 

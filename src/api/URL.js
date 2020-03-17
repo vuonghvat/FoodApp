@@ -7,6 +7,8 @@ const Url = "http://45.32.105.81:4000/"
     static UrlGetCity = Url+"city";
     static UrlViewProduct = Url +"user/view";
     static UrlGetBanner = Url +"user/banner";
-    
+    static UrlCheckHasRating = Url +"user/products/isRate"
+    static UrlCreateReview = Url +"user/products/createRate"
+    static UrlGetAllReviews = Url+"user/products/ratedetail/"
 }
 export default URL;
