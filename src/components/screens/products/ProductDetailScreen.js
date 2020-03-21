@@ -254,6 +254,57 @@ renderReview =(data)=>{
   })
  
 }
+  addToCard =()=>{
+    
+    const { product} = this.state;
+    console.log(product);
+    const data ={
+      CustomerID:product.CustomerID,
+      SourceOfItemsID:product.SourceOfItemsID,
+      amount:this.state.quantity
+    }
+ request((res,err)=>{
+ 
+  console.log("-----",URL.UrlAddToCart,res,err);
+  if(res){
+
+   
+
+    const data = res.data;
+
+    if(data.err && data.err =="timeout"){
+   
+      this.setState({...this.state,isLoading:false})
+      this.props.dispatch(loggedIn(false))
+      return;
+      
+    }else{
+      this.setState({isLoading:false})
+      Toast.show("Thêm thành công", Toast.LONG);
+      this.props.navigation.navigate("CardScreen",{
+        CustomerID: product.CustomerID
+      })
+
+
+    
+    }
+    
+
+  
+     
+  }
+    else{
+      Toast.show("Kiểm tra kết nối", Toast.LONG);
+      this.setState({...this.state,isLoading:false})
+    }
+
+      
+    
+    
+
+
+}).post(URL.UrlAddToCart,data)
+  }
   render() {
 
     let a ={
@@ -423,11 +474,15 @@ renderReview =(data)=>{
         
         </NativeBase.Content>
         <Layout row height ={50} style={{position:"absolute", width:"100%", bottom:0, elevation:5 }}>
-          <Layout flex={1} content="center" items = "center" bgColor="white">
+        <TouchableWithoutFeedback onPress={this.addToCard}>
+          <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
+          <Layout>
             <NativeBase.Text>
               Thêm vào giỏ
             </NativeBase.Text>
           </Layout>
+          </View>
+        </TouchableWithoutFeedback>
           <Layout row flex={1} content="center" items ="center" bgColor={Colors.primaryColor} style={{elevation:5}}>
             <FastImage
             tintColor={"white"}
@@ -475,25 +530,19 @@ renderReview =(data)=>{
       }
 
       this.setState({isLoading:true})
-request((res,err)=>{
- 
+     request((res,err)=>{
   console.log("-----",URL.UrlCreateReview,res,err);
   if(res){
 
-   
-
     const data = res.data;
-
     if(data.err && data.err =="timeout"){
-   
+  
       this.setState({...this.state,isLoading:false})
       this.props.dispatch(loggedIn(false))
       return;
       
     }else{
-      
       this.setState({isShowPopupReview:false,isLoading:false})
-
       this.getProductDetails();
     
     }

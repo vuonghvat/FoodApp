@@ -32,6 +32,7 @@ import SearchScreen from "../search/SearchScreen";
 import ProductDetailScreen from "../products/ProductDetailScreen";
 import HomeScreen from "../home/HomeScreen";
 import ReviewScreen from "../products/ReviewScreen";
+import CardScreen from "../products/CardScreen";
 
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -120,6 +121,7 @@ componentDidMount(){
               <Stack.Screen name="SearchScreen" component={SearchScreen}/>
               <Stack.Screen name ="ProductDetailScreen" component ={ProductDetailScreen} />
               <Stack.Screen name="ReviewScreen" component= {ReviewScreen}/>
+              <Stack.Screen name="CardScreen" component= {CardScreen}/>
             </Stack.Navigator>
             
                 

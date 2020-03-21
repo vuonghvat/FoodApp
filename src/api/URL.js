@@ -10,5 +10,7 @@ const Url = "http://45.32.105.81:4000/"
     static UrlCheckHasRating = Url +"user/products/isRate"
     static UrlCreateReview = Url +"user/products/createRate"
     static UrlGetAllReviews = Url+"user/products/ratedetail/"
+    static UrlAddToCart = Url +"user/product/addToCart"
+    static UrlGetItemCard = Url +"user/cart/"
 }
 export default URL;
