@@ -23,6 +23,7 @@ class ImageAsset {
     static LiveTracking = require("../images/livetracking.png");
     static TrackIcon = require("../images/track_location_icon.png");
     static PlaceHolderImage = require("../images/placeholder.png")
+    static TrashIcon = require("../images/trash_icon.png")
 
     static Minusicon = require("../images/minus_icon.png")
     static PlusIcon = require("../images/plus_icon.png")

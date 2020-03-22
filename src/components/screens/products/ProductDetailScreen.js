@@ -217,6 +217,7 @@ onQuantityPress =(value)=>{
 onStarRatingPress = () => {
     
 };
+
 renderReview =(data)=>{
 
   return data.map((e,index)=>{

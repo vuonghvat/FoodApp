@@ -5,7 +5,7 @@ class AsyncStorageApp {
     try {
       await AsyncStorage.setItem(key, value);
     } catch (error) {
-      console.log('Error set item');
+      console.log('Error set item',error);
     }
   };
 

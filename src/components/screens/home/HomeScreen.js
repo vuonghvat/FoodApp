@@ -79,6 +79,7 @@ import request from "../../../api/request"
 import ProgressDialog from "../../customizes/ProgressDialog";
 import Toast from 'react-native-simple-toast';
 import SmartImage from "../../customizes/SmartImage";
+import StaticUser from "../../../utils/StaticUser";
 
 class HomeScreen extends Component {
   
@@ -226,14 +227,23 @@ getCity =()=>{
         
         </Layout >
         <Layout margin={[10,0,15,15]} style={{ alignSelf: "center"}} row>
-    
+          <Layout content="center" padding={[0,0,5,5]} >
+            <TouchableOpacity onPress={()=>{
+              this.props.navigation.navigate("CardScreen",{
+                CustomerID: StaticUser.getCurrentUser().CustomerID
+              })
+            }}>
+            <FastImage source ={ImageAsset.CardIcon} style={{height:30, width:30, alignSelf:"center"}} resizeMode="contain"/>
+            </TouchableOpacity>
+       
+          </Layout>
         <TouchableOpacity style={{flex:1, flexDirection:"row"}} onPress ={()=>{
           this.props.navigation.navigate("SearchScreen")
         }}>
         <Layout flex={1} padding={10} margin={[0,0,0,10]} row radius={20} bgColor={"#e6e6e6"} hidden>
           <FastImage source={ImageAsset.SearchIcon} style={{ width:20, height:20,alignSelf:"center", marginHorizontal:10 }}/>
           <NativeBase.Text style={{fontSize:13, color:Colors.Black , opacity:0.5, flex:1, textAlign:"left", alignSelf:"center"}}>
-          Tìm đia điểm, đồ ăn, địa chỉ...
+          Tìm kiếm
           </NativeBase.Text>
         </Layout>
         </TouchableOpacity>

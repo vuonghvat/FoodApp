@@ -5,7 +5,8 @@ export default class StaticUser {
       token_type: "",
       userName: "",
       phone:"",
-      email:""
+      email:"",
+      CustomerID:""  
     };
   
     static getCurrentUser() {

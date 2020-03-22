@@ -94,6 +94,7 @@ class CardScreen extends Component {
       isShowPopupReview:false,
       page:1,
       TotalPrice:0,
+      isCheckAll:false
 
     
 
@@ -164,6 +165,17 @@ totalHandle=(data)=>{
 onStarRatingPress = () => {
     
 };
+changeCheck =(index)=>{
+  let { items} = this.state;
+
+    if(items[index].isChecked){
+      items[index].isChecked =false
+    }else{
+      items[index].isChecked =true
+    }
+    this.setState({items})
+
+}
 renderItem=()=>{
     const {items} = this.state;
     const a={
@@ -185,7 +197,7 @@ renderItem=()=>{
             <TouchableWithoutFeedback>
                 <View style={{flexDirection:"row", marginTop:14}}>
              
-                    <NativeBase.CheckBox style={{marginRight:20, marginTop:20}} checked={false} color={Colors.primaryColor}/>
+                    <NativeBase.CheckBox onPress={()=>this.changeCheck(index)} style={{marginRight:20, marginTop:20}} checked={e.isChecked?e.isChecked:false} color={Colors.primaryColor}/>
                 
                     <Layout>
                         <SmartImage source={{uri: e.Image}} style={{ height:65, width:65}}/>
@@ -226,6 +238,35 @@ changeQuantity =(value,index)=>{
   
   }
   
+  checkAll =()=>{
+    let { items, isCheckAll} = this.state;
+   
+      var cloneData = JSON.parse(JSON.stringify(items));
+    
+    if(isCheckAll){
+      cloneData.map(e=>{
+   
+        e.isChecked = false;
+        return e;
+      
+    })
+    
+  
+
+    this.setState({items:cloneData, isCheckAll: false});
+  }else{
+   cloneData.map(e=>{
+     
+      e.isChecked =true;
+      return e;
+  
+  })
+ 
+  
+  this.setState({items:cloneData, isCheckAll: true});
+  }
+
+  }
   render() {
 
     
@@ -257,19 +298,19 @@ changeQuantity =(value,index)=>{
           <Layout flex={1}>
 
         <Layout row> 
-         <NativeBase.CheckBox/>
+         <NativeBase.CheckBox onPress={()=>this.checkAll()} checked={this.state.isCheckAll}/>
           <NativeBase.Text style={{fontSize:13, marginLeft:15}}>Chọn tất cả</NativeBase.Text></Layout>
           <Layout row >
          <NativeBase.Text style={{marginLeft:10}}>Tổng tiền:</NativeBase.Text>
-        <NativeBase.Text>{numeral(this.state.TotalPrice).format("0,0") +" ₫"}</NativeBase.Text>
+        <NativeBase.Text style={{fontWeight:"bold"}}>{numeral(this.state.TotalPrice).format("0,0") +" ₫"}</NativeBase.Text>
          </Layout>
           </Layout>
         
           <Layout row>
-       
-       
-         <TouchableOpacity style={{justifyContent:"center", alignItems:"center", marginLeft:15}}>
-             <Layout style={{backgroundColor:Colors.primaryColor,padding:10}}>
+         <TouchableOpacity
+         onPress={this.onOrderPress}
+          style={{justifyContent:"center", alignItems:"center", marginLeft:15}}>
+             <Layout style={{backgroundColor:Colors.primaryColor,padding:10,}} radius={6} hidden>
                  <NativeBase.Text style={{fontWeight:"bold", color:"white"}}>Mua hàng</NativeBase.Text>
              </Layout>
          </TouchableOpacity>
@@ -280,11 +321,93 @@ changeQuantity =(value,index)=>{
         <ProgressDialog isShow={this.state.isLoading}/>
     </Layout>)
   }
+
+  checkHasProduct = ()=>{
+    const { items} = this.state;
+    let isChecked = false;
+    items.forEach(e=>{
+        if(e.isChecked){
+          
+          isChecked =  true;
+          
+        }
+    })
+    return isChecked;
+  }
+
+  onOrderPress = ()=>{
+    let { items} = this.state;
+   // let orderItems = [];
+    if(this.checkHasProduct()){
+      items = items.filter(e=>{
+        return e.isChecked == true;
+      })
+     // alert();
+      AsyncStorageApp.storeData("order_product",JSON.stringify(items));
+      console.log("ITEMS ORDER: ", items);
+   
+
+      this.props.navigation.navigate("OrderScreen");
+      return;
+    }
+  
+
+    Toast.show("Vui lòng chọn sản phẩm cần mua", Toast.LONG);
+
+
+
+
+
+    //     const { star, comment,product} = this.state;
+    //     if(star ==0){
+    //       Toast.show("Vui lòng chọn Star Rating", Toast.LONG);
+    //       return;
+    //     }
+    //     const data = {
+            
+    //         ustomerID:"customer000000000001",
+    //         OrderNote:"dm vuong",
+    //         OrderPayment:"1",
+    //         orderDetail:[
+    //           {
+    //             SourceOfItemsID:"sourceofitems0000001",
+    //             Total:"3",
+    //             Price:"50000",
+    //             Ship:"1",
+    //             Description:"nhieu tuong ot"
+    //           }
+    //         ]  
+    //     }
+    //     this.setState({isLoading:true})
+    // request((res,err)=>{
+
+    // console.log("-----",URL.UrlCreateReview,res,err);
+    // if(res){
+    //   const data = res.data;
+
+    //   if(data.err && data.err =="timeout"){
+    
+    //     this.setState({...this.state,isLoading:false})
+    //     this.props.dispatch(loggedIn(false))
+    //     return;
+        
+    //   }else{
+    //     this.setState({isShowPopupReview:false,isLoading:false})
+    //     this.getProductDetails();
+    //   }  
+    // }
+    //   else{
+    //     Toast.show("Kiểm tra kết nối", Toast.LONG);
+    //     this.setState({...this.state,isLoading:false})
+    //   }
+    // }).post(URL.UrlOrder,data)
+  }
+
   rateStar =(star)=>{
   
     this.setState({star})
   }
-  
+
   onSubmitReview = ()=>{
 
       const { star, comment,product} = this.state;
@@ -300,12 +423,10 @@ changeQuantity =(value,index)=>{
       }
 
       this.setState({isLoading:true})
-request((res,err)=>{
- 
-  console.log("-----",URL.UrlCreateReview,res,err);
-  if(res){
-
-   
+      request((res,err)=>{
+    
+      console.log("-----",URL.UrlCreateReview,res,err);
+      if(res){
 
     const data = res.data;
 
@@ -314,18 +435,10 @@ request((res,err)=>{
       this.setState({...this.state,isLoading:false})
       this.props.dispatch(loggedIn(false))
       return;
-      
     }else{
-      
       this.setState({isShowPopupReview:false,isLoading:false})
-
       this.getProductDetails();
-    
-    }
-    
-
-  
-     
+    }   
   }
     else{
       Toast.show("Kiểm tra kết nối", Toast.LONG);
@@ -337,10 +450,10 @@ request((res,err)=>{
     
 
 
-}).post(URL.UrlCreateReview,data)
-      
-    
+  }).post(URL.UrlCreateReview,data)
   }
+
+
   renderModalReview =()=>{
     return ( <CustomModal
     isShow={this.state.isShowPopupReview}
