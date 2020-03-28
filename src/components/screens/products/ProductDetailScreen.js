@@ -260,7 +260,7 @@ renderReview =(data)=>{
     const { product} = this.state;
     console.log(product);
     const data ={
-      CustomerID:product.CustomerID,
+      CustomerID:StaticUser.getCurrentUser().CustomerID,
       SourceOfItemsID:product.SourceOfItemsID,
       amount:this.state.quantity
     }
@@ -283,7 +283,7 @@ renderReview =(data)=>{
       this.setState({isLoading:false})
       Toast.show("Thêm thành công", Toast.LONG);
       this.props.navigation.navigate("CardScreen",{
-        CustomerID: product.CustomerID
+        CustomerID: StaticUser.getCurrentUser().CustomerID
       })
 
 
@@ -305,6 +305,34 @@ renderReview =(data)=>{
 
 
 }).post(URL.UrlAddToCart,data)
+  }
+  onOrderPress =()=>{
+  
+    const { product} = this.state;
+
+    let items =[];
+    const item = {
+      "Description":product.Description,
+      "EndTime":product.EndTime,
+      "FeeID":product.FeeID,
+      "Image":product.Image,
+      "ItemID":product.ItemID,
+      "ItemName":product.ItemName,
+      "Price":product.Price,
+      "SourceOfItemsID":product.SourceOfItemsID,
+      "StartTime":product.StartTime,
+      "Summary":product.Summary,
+      "amount":this.state.quantity,
+      "isChecked":true,
+      "view":product.view
+   }
+     items.push(item)
+
+    AsyncStorageApp.storeData("order_product",JSON.stringify(items));
+    //console.log("ITEMS ORDER: ", items);
+ 
+
+    this.props.navigation.navigate("OrderScreen");
   }
   render() {
 
@@ -476,7 +504,7 @@ renderReview =(data)=>{
         </NativeBase.Content>
         <Layout row height ={50} style={{position:"absolute", width:"100%", bottom:0, elevation:5 }}>
         <TouchableWithoutFeedback onPress={this.addToCard}>
-          <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
+          <View style={{flex:1, justifyContent:"center", alignItems:"center", backgroundColor:"white"}}>
           <Layout>
             <NativeBase.Text>
               Thêm vào giỏ
@@ -484,15 +512,20 @@ renderReview =(data)=>{
           </Layout>
           </View>
         </TouchableWithoutFeedback>
-          <Layout row flex={1} content="center" items ="center" bgColor={Colors.primaryColor} style={{elevation:5}}>
+        <TouchableWithoutFeedback onPress={this.onOrderPress}>
+          <View 
+           style={{elevation:5,flexDirection:"row", alignItems:"center", justifyContent:"center", flex:1, backgroundColor:Colors.primaryColor}}>
             <FastImage
             tintColor={"white"}
              source={ImageAsset.CardIcon} style={{ alignSelf:"center", width:20, height:20, tintColor:"white", marginRight:6 }}/>
             <NativeBase.Text style={{fontWeight:"bold", color:"white"}}>
               Đặt hàng
             </NativeBase.Text>
-          </Layout>
+          </View>
+          </TouchableWithoutFeedback>
         </Layout>
+        
+
         <Layout height={50} style={{position:"absolute", top:0, }}>
                   <TouchableWithoutFeedback onPress={()=>{
                     this.props.navigation.goBack();

@@ -94,7 +94,8 @@ class OrderScreen extends Component {
       isShowPopupReview:false,
       page:1,
       isShip: false,
-      TotalPrice:0
+      TotalPrice:0,
+      note:""
    
     };
    
@@ -205,6 +206,12 @@ totalHandle=(data)=>{
       
         <NativeBase.Content contentContainerStyle={{ paddingBottom:60, paddingHorizontal:15}}>
           {this.renderProducts()}
+          <Layout margin={[20]}>
+            {/* <Layout row>
+              <NativeBase.Text style={{fontSize:13, fontWeight:"bold"}}>Địa chỉ: </NativeBase.Text>
+              <NativeBase.Text  style={{flex:1,alignSelf:"flex-end", textAlign:"right", fontSize:13, }}>Hong van an thi hung Yen sdkjaskd j ksjadsakjd</NativeBase.Text>
+            </Layout> */}
+          </Layout>
             <Layout row margin={[20]}> 
          <NativeBase.CheckBox 
            color={Colors.primaryColor}
@@ -224,13 +231,32 @@ totalHandle=(data)=>{
           </Layout>
          <Layout height={100} radius={6} hidden bgColor={"white"} margin={[15]}>
              <NativeBase.Input 
-            placeholder="Địa chỉ"
-            
+            placeholder="Nhập địa chỉ"
+
              textAlignVertical="top"
-             style={{textAlignVertical:"top", padding:10, fontSize:13}}
+             style={{textAlignVertical:"top", padding:10, fontSize:12}}
              style={{flex:1}}
              editable ={this.state.isShip}
              />
+         </Layout>
+         <Layout>
+           <NativeBase.Text style={{fontSize:13, fontWeight:"bold", marginTop:20}}>Ghi chú</NativeBase.Text>
+           <Layout height={100} radius={6} hidden bgColor={"white"} margin={[15]}>
+             <NativeBase.Input 
+            placeholder="Ghi chú"
+            value={this.state.note}
+              onChangeText={note=>this.setState({note})}
+             textAlignVertical="top"
+             style={{textAlignVertical:"top", padding:10, fontSize:13}}
+             style={{flex:1}}
+        
+             />
+         </Layout>
+         </Layout>
+         <Layout row>
+           <NativeBase.Text style={{fontSize:13,flex:1, fontWeight:"bold", marginTop:20}}>Phương thức thanh toán</NativeBase.Text>
+           <NativeBase.Text style={{fontSize:14, marginTop:20}}>Thanh toán khi nhận hàng</NativeBase.Text>
+          
          </Layout>
         </NativeBase.Content>
         <Layout row style={{padding:15, backgroundColor:"#f3f3f3"}}>
@@ -266,53 +292,63 @@ totalHandle=(data)=>{
 //       Toast.show("Vui lòng chọn Star Rating", Toast.LONG);
 //       return;
 //     }
-//     const data = {
-      	
-//         ustomerID:"customer000000000001",
-//         OrderNote:"dm vuong",
-//         OrderPayment:"1",
-//         orderDetail:[
-//           {
-//             SourceOfItemsID:"sourceofitems0000001",
-//             Total:"3",
-//             Price:"50000",
-//             Ship:"1",
-//             Description:"nhieu tuong ot"
-//           }
-//         ]  
-//     }
-//     this.setState({isLoading:true})
-// request((res,err)=>{
 
-// console.log("-----",URL.UrlCreateReview,res,err);
-// if(res){
-//   const data = res.data;
-
-//   if(data.err && data.err =="timeout"){
+    const {items} = this.state;
+    let itemsClone = [...items];
+    let orderDetail =[];
+    itemsClone.forEach(e=>{
  
-//     this.setState({...this.state,isLoading:false})
-//     this.props.dispatch(loggedIn(false))
-//     return;
-    
-//   }else{
-    
-//     this.setState({isShowPopupReview:false,isLoading:false})
+      let product = {
+        SourceOfItemsID:e.SourceOfItemsID,
+        Total:e.amount,
+        Price:e.Price,
+        Ship:"1",
+        Description:e.Description
+      }
+      orderDetail.push(product);
+    })
+    const data = {
+        ustomerID:StaticUser.getCurrentUser().CustomerID,
+        OrderNote:this.state.note,
+        OrderPayment:"1",
+        orderDetail:orderDetail
+    }
+    this.setState({isLoading:true})
+ console.log(data);
+ 
+request((res,err)=>{
 
-//     this.getProductDetails();
+  console.log(res,err);
+
   
-//   }  
-// }
-//   else{
-//     Toast.show("Kiểm tra kết nối", Toast.LONG);
-//     this.setState({...this.state,isLoading:false})
-//   }
+if(res){
+  const data = res.data;
+
+  if(data.err && data.err =="timeout"){
+ 
+    this.setState({...this.state,isLoading:false})
+    this.props.dispatch(loggedIn(false))
+    return;
+    
+  }else{
+    
+    this.setState({isLoading:false})
+
+   // this.getProductDetails();
+  
+  }  
+}
+  else{
+    Toast.show("Kiểm tra kết nối", Toast.LONG);
+    this.setState({...this.state,isLoading:false})
+  }
 
     
   
   
 
 
-// }).post(URL.UrlOrder,data)
+}).post(URL.UrlOrder,JSON.stringify(data))
   }
 
 
