@@ -34,6 +34,7 @@ import HomeScreen from "../home/HomeScreen";
 import ReviewScreen from "../products/ReviewScreen";
 import CardScreen from "../products/CardScreen";
 import OrderScreen from "../products/OrderScreen";
+import HistoryScreen from "../products/HistoryScreen";
 
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -124,6 +125,7 @@ componentDidMount(){
               <Stack.Screen name="ReviewScreen" component= {ReviewScreen}/>
               <Stack.Screen name="CardScreen" component= {CardScreen}/>
               <Stack.Screen name="OrderScreen" component= {OrderScreen}/>
+              <Stack.Screen name="HistoryScreen" component= {HistoryScreen}/>
             </Stack.Navigator>
             
                 

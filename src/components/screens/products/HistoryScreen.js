@@ -13,7 +13,6 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   TouchableNativeFeedback,
-  Alert
 } from "react-native";
 const  height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
@@ -31,7 +30,49 @@ import numeral from "numeral"
 
 import RBSheet from "react-native-raw-bottom-sheet";
 import AsyncStorageApp from "../../../utils/AsyncStorageApp";
+const data = [
+  {
+  name: "Chicken",
+  image: ImageAsset.Food1,
+  address:"Ha Noi Viet Nam"
+},
+{
+  name: "Hambeger",
+image: ImageAsset.Food2,
+address:"Hung Yen Viet Nam"
+},
+{
+  name: "Eggs",
+image: ImageAsset.Food3,
+address:"Hai Dhong Viet Nam"
+},
+{
+  name: "Sheet Cake",
+image: ImageAsset.Food4,
+address:"Nam Dinh Viet Nam"
+},
+{
+  name: "Hot dog",
+image: ImageAsset.Food1,
+address:"Ca Mau Viet Nam"
+},
+{
+name: "Xuc xich",
+image: ImageAsset.Food2,
+address:"Kien Giang Viet Nam"
+},
+{
+name: "Chicken",
+image: ImageAsset.Food3,
+address:"Ha Noi Viet Nam"
+},
+{
+name: "Chicken",
+image: ImageAsset.Food4,
+address:"Hoang Mai Ha Noi dasdsadas đâsdas"
+}
 
+];
 import URL from "../../../api/URL";
 import request from "../../../api/request"
 
@@ -42,7 +83,7 @@ import StarRating from "react-native-star-rating";
 import CustomModal from "../../customizes/CustomModal";
 import StaticUser from "../../../utils/StaticUser";
 
-class OrderScreen extends Component {
+class HistoryScreen extends Component {
   
 
   constructor(props) {
@@ -54,8 +95,7 @@ class OrderScreen extends Component {
       page:1,
       isShip: false,
       TotalPrice:0,
-      note:"",
-      isFromDetail:false
+      note:""
    
     };
    
@@ -125,16 +165,6 @@ class OrderScreen extends Component {
 componentDidMount(){
 
 //  this.getAllItems(this.state.page);
-const { params} = this.props.route;
-console.log(this.props);
-if(params){
-  if(params.isFromDetail){
-    this.setState({isFromDetail : params.isFromDetail})
-  }
-}
-
-
-//isFromDetail
 AsyncStorageApp._retrieveData("order_product",res=>{
     if(res){
         const TotalPrice = this.totalHandle(res);
@@ -175,59 +205,7 @@ totalHandle=(data)=>{
         />
       
         <NativeBase.Content contentContainerStyle={{ paddingBottom:60, paddingHorizontal:15}}>
-          {this.renderProducts()}
-          <Layout margin={[20]}>
-            {/* <Layout row>
-              <NativeBase.Text style={{fontSize:13, fontWeight:"bold"}}>Địa chỉ: </NativeBase.Text>
-              <NativeBase.Text  style={{flex:1,alignSelf:"flex-end", textAlign:"right", fontSize:13, }}>Hong van an thi hung Yen sdkjaskd j ksjadsakjd</NativeBase.Text>
-            </Layout> */}
-          </Layout>
-            <Layout row margin={[20]}> 
-         <NativeBase.CheckBox 
-           color={Colors.primaryColor}
-         onPress={()=>{
-             this.setState({isShip: false})
-         }} checked={!this.state.isShip}/>
-          <NativeBase.Text style={{fontSize:13, marginLeft:15}}>Nhận tại cửa hàng</NativeBase.Text>
-          </Layout>
-
-          <Layout row margin={[10]}> 
-         <NativeBase.CheckBox 
-        color={Colors.primaryColor}
-         onPress={()=>{
- this.setState({isShip: true})
-         }} checked={this.state.isShip}/>
-          <NativeBase.Text style={{fontSize:13, marginLeft:15}}>Ship tận nơi</NativeBase.Text>
-          </Layout>
-         <Layout height={100} radius={6} hidden bgColor={"white"} margin={[15]}>
-             <NativeBase.Input 
-            placeholder="Nhập địa chỉ"
-
-             textAlignVertical="top"
-             style={{textAlignVertical:"top", padding:10, fontSize:12}}
-             style={{flex:1}}
-             editable ={this.state.isShip}
-             />
-         </Layout>
-         <Layout>
-           <NativeBase.Text style={{fontSize:13, fontWeight:"bold", marginTop:20}}>Ghi chú</NativeBase.Text>
-           <Layout height={100} radius={6} hidden bgColor={"white"} margin={[15]}>
-             <NativeBase.Input 
-            placeholder="Ghi chú"
-            value={this.state.note}
-              onChangeText={note=>this.setState({note})}
-             textAlignVertical="top"
-             style={{textAlignVertical:"top", padding:10, fontSize:13}}
-             style={{flex:1}}
-        
-             />
-         </Layout>
-         </Layout>
-         <Layout row>
-           <NativeBase.Text style={{fontSize:13,flex:1, fontWeight:"bold", marginTop:20}}>Phương thức thanh toán</NativeBase.Text>
-           <NativeBase.Text style={{fontSize:14, marginTop:20}}>Thanh toán khi nhận hàng</NativeBase.Text>
-          
-         </Layout>
+          <NativeBase.Text>HistoryScreen</NativeBase.Text>
         </NativeBase.Content>
         <Layout row style={{padding:15, backgroundColor:"#f3f3f3"}}>
           <Layout flex={1} content={"center"} items ="center">
@@ -303,16 +281,12 @@ if(res){
   }else{
     
     this.setState({isLoading:false});
-    if(!this.state.isFromDetail)
-    this.deleteCard();
     Alert.alert(
       '',
       'Đặt hàng thành công',
       [
        
-        {text: 'OK', onPress: () => {
-          this.props.navigation.navigate("ProductDetailScreen")
-        }},
+        {text: 'OK', onPress: () => console.log('OK Pressed')},
       ],
       { cancelable: false }
     )
@@ -335,52 +309,9 @@ if(res){
     ContentType: 'application/json'
 })
   }
-//  CustomerID, SourceOfItemsID, amount
 
-  deleteCard = ()=>{
-    const {items} = this.state;
-    items.forEach(e=>{
-      const data ={
-        CustomerID: StaticUser.getCurrentUser().CustomerID,
-        SourceOfItemsID: e.SourceOfItemsID,
-        amount: e.amount
-      }
-      request((res,err)=>{
-        console.log(res,err);
-        
-      if(res){
-        const data = res.data;
-      
-        if(data.err && data.err =="timeout"){
-       
-          this.setState({...this.state,isLoading:false})
-          this.props.dispatch(loggedIn(false))
-          return;
-          
-        }else{
-          
-          this.setState({isLoading:false});
 
-          this.deleteCard();
-         
-         // this.getProductDetails();
-        
-        }  
-      }
-        else{
-         // Toast.show("Kiểm tra kết nối", Toast.LONG);
-          this.setState({...this.state,isLoading:false})
-        }
-      
-          
-        
-        
-      
-      
-      }).post(URL.UrlDeleteCard,data)
 
-    })
-  }
 
 }
 
@@ -395,4 +326,4 @@ const mapStateToProps = state =>{
     isLogged : state.appReducer.isLogged
   }
 }
-export default connect(mapStateToProps)(OrderScreen);
+export default connect(mapStateToProps)(HistoryScreen);

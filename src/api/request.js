@@ -17,8 +17,8 @@ const request = callback => {
   return {
     get: (url, data, options = {}) =>
       reqf(methods.GET, url, data, (options = {}), callback),
-    post: (url, data, options = {}) =>
-      reqf(methods.POST, url, data, (options = {}), callback),
+    post: (url, data, options) =>
+      reqf(methods.POST, url, data, options, callback),
     put: (url, data, options = {}) =>
       reqf(methods.PUT, url, data, (options = {}), callback),
     delete: (url, data, options = {}) =>
@@ -26,36 +26,51 @@ const request = callback => {
   };
 };
 
-const reqf = (method, url, data, options = {}, callback) => {
+const reqf = (method, url, data, options, callback) => {
   AsyncStorageApp._retrieveData('user_login', res => {
     const token = res?res.access_token : undefined;
    
-    
+    let ContentType = options?options.ContentType ||  'application/x-www-form-urlencoded' :  'application/x-www-form-urlencoded'
     const headers =  {
         Authorization: 'Bearer ' + (token ? token : ''),
-        'Content-Type': 'application/x-www-form-urlencoded',
-       
-        
+        'Content-Type': ContentType,
       }
 
-      console.log(headers);
+      // console.log({
+      //   method: method,
+      //   url: url,
+      //   data: qs.stringify(data),
+      //   headers: headers,
+      //   options,
+      // });
     var req = axios({
       method: method,
       url: url,
-      data: qs.stringify(data),
+      data:  ContentType === 'application/x-www-form-urlencoded'?qs.stringify(data):data,
       headers: headers,
       options,
     });
+    console.log({
+      method: method,
+      url: url,
+      data:  ContentType === 'application/x-www-form-urlencoded'?qs.stringify(data):data,
+      headers: headers,
+      options,
+    });
+    
 
     req
       .then(resp => {
+
         const data = resp.data;
+       
         if(data.err && data.err =="timeout"){
           alert("Phiên hết hạn, vui lòng đăng nhập lại")
         }
         callback(resp, undefined);
       })
       .catch(err => {
+      
         callback(undefined, err);
       });
   });

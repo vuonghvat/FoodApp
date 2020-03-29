@@ -332,7 +332,9 @@ renderReview =(data)=>{
     //console.log("ITEMS ORDER: ", items);
  
 
-    this.props.navigation.navigate("OrderScreen");
+    this.props.navigation.navigate("OrderScreen", {
+      isFromDetail:true
+    });
   }
   render() {
 
