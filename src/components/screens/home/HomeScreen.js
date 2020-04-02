@@ -238,7 +238,9 @@ getCity =()=>{
        
           </Layout>
         <TouchableOpacity style={{flex:1, flexDirection:"row"}} onPress ={()=>{
-          this.props.navigation.navigate("SearchScreen")
+          this.props.navigation.navigate("SearchScreen",{
+            CityID: this.state.CityID
+          })
         }}>
         <Layout flex={1} padding={10} margin={[0,0,0,10]} row radius={20} bgColor={"#e6e6e6"} hidden>
           <FastImage source={ImageAsset.SearchIcon} style={{ width:20, height:20,alignSelf:"center", marginHorizontal:10 }}/>
@@ -500,12 +502,13 @@ getCity =()=>{
     return (
       <TouchableWithoutFeedback onPress={()=>{
        this.props.navigation.navigate("ProductDetailScreen",{
-        SourceOfItemsID: item.item.SourceOfItemsID
+        SourceOfItemsID: item.item.SourceOfItemsID,
+       
        })
       }}>
         <View>
       <Layout style={{height:height/5, width:height/6}} margin={[0,0,0,15]} radius={3} hidden>
-        <SmartImage source={ { uri: item.item.Image}} style={{flex:1}} />
+        <SmartImage source={ { uri: item.item.Image}} style={{height:90, width:"100%"}} />
         <Layout>
           <NativeBase.Text style={{fontSize:13, fontWeight:"bold"}}>
             {item.item.ItemName}
