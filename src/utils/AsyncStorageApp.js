@@ -9,6 +9,17 @@ class AsyncStorageApp {
     }
   };
 
+  static clearAll = async(key)=>{
+  
+      try {
+          await AsyncStorage.removeItem(key);
+          return true;
+      }
+      catch(exception) {
+          return false;
+      }
+  
+  }
   static _retrieveData = async (key, callback) => {
 
     try {
@@ -22,7 +33,9 @@ class AsyncStorageApp {
         callback(undefined);
       }
     } catch (error) {
+      callback(undefined);
       console.log('AsyncStorageApp', error);
+
     }
   };
 }

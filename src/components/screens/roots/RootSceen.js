@@ -34,7 +34,10 @@ import HomeScreen from "../home/HomeScreen";
 import ReviewScreen from "../products/ReviewScreen";
 import CardScreen from "../products/CardScreen";
 import OrderScreen from "../products/OrderScreen";
-import HistoryScreen from "../products/HistoryScreen";
+import HistoryScreen from "../history/HistoryScreen";
+import AsyncStorageApp from "../../../utils/AsyncStorageApp";
+import StaticUser from "../../../utils/StaticUser";
+
 
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -48,7 +51,7 @@ class RootSceen extends Component {
     super(props);
     this.state = {
      userToken:"",
-     isLogged:false
+     isLogged:undefined
     };
     this.bootstrapAsync()
   }
@@ -76,8 +79,34 @@ componentWillReceiveProps=(props)=>{
     this.setState({isLogged:false});
   }
 }
+componentWillMount(){
+  AsyncStorageApp._retrieveData("user_login",res=>{
+   
+
+    const token = res?res.access_token || undefined:undefined;
+    const user =  res?res.user || undefined:undefined;
+    console.log("res");
+    if(res){
+  
+      if(token &&  user){
+        StaticUser.currentUser.userName = user.CustomerUsername;
+        StaticUser.currentUser.phone = user.CustomerPhone;
+        StaticUser.currentUser.email = user.CustomerEmail;
+        StaticUser.currentUser.name = user.CustomerName;
+        StaticUser.currentUser.CustomerID = user.CustomerID
+        this.props.dispatch(loggedIn(true))
+        this.setState({isLogged:true})
+      }
+    }else{
+     
+      this.setState({isLogged:false})
+    }
+  
+  })
+}
 componentDidMount(){
-  this.setState({isLogged:this.props.isLogged});
+  
+
 }
   TabScreen = ()=> {
   return (
@@ -99,6 +128,16 @@ componentDidMount(){
       />
   
       <Tab.Screen
+        name="HistoryScreen"
+        component={HistoryScreen}
+        options={{
+          tabBarLabel: 'Lịch Sử',
+          tabBarIcon: ({ color, size }) => (
+            <Image source={ImageAsset.TimeIcon} style={{tintColor:color, height:20, width:20}}/>
+          ),
+        }}
+      />
+      <Tab.Screen
         name="MoreScreen"
         component={MoreScreen}
         options={{
@@ -114,7 +153,9 @@ componentDidMount(){
 
   
   render() {
-   
+    if(this.state.isLogged ===undefined){
+      return null;
+    }
     if(this.state.isLogged)
     return (
       <NavigationContainer>
@@ -131,7 +172,7 @@ componentDidMount(){
                 
       </NavigationContainer>
     );
-
+      if(!this.state.isLogged)
     return (
       <NavigationContainer>
       <Stack.Navigator  headerMode="none">
@@ -145,6 +186,7 @@ componentDidMount(){
       </Stack.Navigator>
       </NavigationContainer>
     );
+  
   }
 }
 

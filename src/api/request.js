@@ -61,7 +61,8 @@ const reqf = (method, url, data, options, callback) => {
 
     req
       .then(resp => {
-
+        console.log(resp,"resssssssss");
+        
         const data = resp.data;
        
         if(data.err && data.err =="timeout"){
@@ -70,7 +71,7 @@ const reqf = (method, url, data, options, callback) => {
         callback(resp, undefined);
       })
       .catch(err => {
-      
+        console.log(err,"errrr");
         callback(undefined, err);
       });
   });

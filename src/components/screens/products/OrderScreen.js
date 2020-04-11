@@ -13,7 +13,8 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   TouchableNativeFeedback,
-  Alert
+  Alert,
+  PermissionsAndroid
 } from "react-native";
 const  height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
@@ -31,6 +32,7 @@ import numeral from "numeral"
 
 import RBSheet from "react-native-raw-bottom-sheet";
 import AsyncStorageApp from "../../../utils/AsyncStorageApp";
+import Geocoder from 'react-native-geocoder';
 
 import URL from "../../../api/URL";
 import request from "../../../api/request"
@@ -41,6 +43,7 @@ import SmartImage from "../../customizes/SmartImage";
 import StarRating from "react-native-star-rating";
 import CustomModal from "../../customizes/CustomModal";
 import StaticUser from "../../../utils/StaticUser";
+import Geolocation from '@react-native-community/geolocation';
 
 class OrderScreen extends Component {
   
@@ -55,7 +58,9 @@ class OrderScreen extends Component {
       isShip: false,
       TotalPrice:0,
       note:"",
-      isFromDetail:false
+      isFromDetail:false,
+      partner:undefined,
+      address:""
    
     };
    
@@ -131,6 +136,11 @@ if(params){
   if(params.isFromDetail){
     this.setState({isFromDetail : params.isFromDetail})
   }
+  if(params.partner){
+   
+    
+    this.setState({partner:params.partner})
+  }
 }
 
 
@@ -191,21 +201,54 @@ totalHandle=(data)=>{
           <NativeBase.Text style={{fontSize:13, marginLeft:15}}>Nhận tại cửa hàng</NativeBase.Text>
           </Layout>
 
-          <Layout row margin={[10]}> 
+         {this.state.partner && this.state.partner.ship===1 && (  <Layout row margin={[10]}> 
          <NativeBase.CheckBox 
         color={Colors.primaryColor}
          onPress={()=>{
- this.setState({isShip: true})
+          this.setState({isShip: true})
          }} checked={this.state.isShip}/>
-          <NativeBase.Text style={{fontSize:13, marginLeft:15}}>Ship tận nơi</NativeBase.Text>
-          </Layout>
+          <NativeBase.Text style={{fontSize:13, marginLeft:15}}>Nhận hang tại địa chỉ</NativeBase.Text>
+          </Layout>)}
+        
          <Layout height={100} radius={6} hidden bgColor={"white"} margin={[15]}>
+         {/* <NativeBase.Button onPress={async ()=>{
+            const granted = await PermissionsAndroid.request(
+              PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+            );
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+             
+              Geolocation.getCurrentPosition(info =>{
+                console.log(info)
+         
+                const NY ={
+                  lat:info.coords.latitude,
+                   lng: info.coords.longitude
+                }
+                Geocoder.geocodePosition(NY).then(res=>{
+                  console.log(res,NY);
+                  this.setState({
+                    address: res[0].formattedAddress
+                  })
+                }).catch(err=>{
+                  console.log(err,NY);
+                  
+                })
+              });
+        
+            }
+    
+           
+          }}>
+            <NativeBase.Text>Định vị</NativeBase.Text>
+          </NativeBase.Button> */}
              <NativeBase.Input 
             placeholder="Nhập địa chỉ"
 
              textAlignVertical="top"
              style={{textAlignVertical:"top", padding:10, fontSize:12}}
              style={{flex:1}}
+             value={this.state.address}
+             onChangeText={address=>this.setState({address})}
              editable ={this.state.isShip}
              />
          </Layout>

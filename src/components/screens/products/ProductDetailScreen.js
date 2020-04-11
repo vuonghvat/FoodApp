@@ -262,7 +262,8 @@ renderReview =(data)=>{
     const data ={
       CustomerID:StaticUser.getCurrentUser().CustomerID,
       SourceOfItemsID:product.SourceOfItemsID,
-      amount:this.state.quantity
+      amount:this.state.quantity,
+      PartnerID: product.PartnerID
     }
  request((res,err)=>{
  
@@ -331,9 +332,25 @@ renderReview =(data)=>{
     AsyncStorageApp.storeData("order_product",JSON.stringify(items));
     //console.log("ITEMS ORDER: ", items);
  
+    const partner ={
+     
+        PartnerID: product.PartnerID,
+        CustomerID: product.CustomerID,
+        PartnerName: product.PartnerName,
+        PartnerAddress: product.PartnerAddress,
+        PartnerEmail:product.PartnerEmail,
+        PartnerPhone:product.PartnerPhone,
+        PartnerDescription: product.PartnerDescription,
+        PartnerImage: product.PartnerImage,
+        PartnerTypeID:  product.PartnerTypeID,
+        CityID: product.CityID,
+        ship:  product.ship,
+        StatusID: product.StatusID,
 
+    }
     this.props.navigation.navigate("OrderScreen", {
-      isFromDetail:true
+      isFromDetail:true,
+      partner 
     });
   }
   render() {

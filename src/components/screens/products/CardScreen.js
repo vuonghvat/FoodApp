@@ -94,7 +94,8 @@ class CardScreen extends Component {
       isShowPopupReview:false,
       page:1,
       TotalPrice:0,
-      isCheckAll:false
+      isCheckAll:false,
+      partner:undefined
 
     
 
@@ -120,11 +121,12 @@ getAllItems =(page) =>{
  request((res,err)=>{
 
  
-  console.log("-----",URL.UrlGetItemCard,res,err);
+  //console.log("-----",URL.UrlGetItemCard,res,err);
+  this.setState({...this.state,isLoading:false})
   if(res){
 
    
-
+   
     const data = res.data;
 
     if(data.err && data.err =="timeout"){
@@ -134,8 +136,13 @@ getAllItems =(page) =>{
       return;
       
     }else{
-      const TotalPrice =  this.totalHandle(data);
-      this.setState({items:data,isLoading:false, TotalPrice})
+     
+     const  partner =data.Partner
+     let TotalPrice =0;
+      if(data.ListItems)
+       TotalPrice =  data.ListItems.length >0 ?this.totalHandle(data.ListItems):0;
+  
+      this.setState({items:data.ListItems,partner,isLoading:false, TotalPrice:TotalPrice})
     
     }
     
@@ -344,10 +351,12 @@ changeQuantity =(value,index)=>{
       })
      // alert();
       AsyncStorageApp.storeData("order_product",JSON.stringify(items));
-      console.log("ITEMS ORDER: ", items);
+      console.log("ITEMS ORDER: ",  this.state.partner);
    
 
-      this.props.navigation.navigate("OrderScreen");
+      this.props.navigation.navigate("OrderScreen",{
+        partner : this.state.partner
+      });
       return;
     }
   

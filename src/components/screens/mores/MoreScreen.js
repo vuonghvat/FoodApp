@@ -23,6 +23,9 @@ import ImageAsset from "../../../assets/images/ImageAsset";
 const  height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 import firebase from 'react-native-firebase';
+import AsyncStorageApp from "../../../utils/AsyncStorageApp";
+import Toolbar from "../../customizes/Toolbar";
+import StaticUser from "../../../utils/StaticUser";
 
 class MoreScreen extends Component {
   
@@ -43,9 +46,30 @@ class MoreScreen extends Component {
  
     return (
       <Layout style={styles.container}>
-          <NativeBase.Button onPress={()=>{
+           <Toolbar
+      
+            title="Thêm"
+            toolbarColor={"white"}
+            titleStyle={{fontWeight:"bold"}}
+    
+    />
+    <Layout padding={15}>
+
+ 
+          <Layout row>
+            <FastImage source={ImageAsset.AvatarIcon}  style={{ height:80, width:80,}}/>
+            <NativeBase.Text style={{fontWeight:"bold", alignSelf:"center", marginLeft:15}}>
+              {StaticUser.getCurrentUser().userName}
+            </NativeBase.Text>
+          </Layout>
+            <Layout margin ={[20,0,10,0]}>
+            <TouchableOpacity
+           onPress={()=>{
+            AsyncStorageApp.clearAll("user_login")
             this.props.dispatch(loggedIn(false));
-          }}><NativeBase.Text>Log out</NativeBase.Text></NativeBase.Button>
+          }}><NativeBase.Text style={{fontWeight:"bold"}}>Log out</NativeBase.Text></TouchableOpacity>
+            </Layout>
+             </Layout>
       </Layout>
     );
   }

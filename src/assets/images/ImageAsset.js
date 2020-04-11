@@ -28,7 +28,8 @@ class ImageAsset {
     static Minusicon = require("../images/minus_icon.png")
     static PlusIcon = require("../images/plus_icon.png")
     static CardIcon = require("../images/tab_order_icon.png")
-    
+    static TimeIcon = require("../images/time_icon.png")
+    static AvatarIcon = require("../images/avatar_icon.png")
     
 
 

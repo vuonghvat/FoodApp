@@ -1,4 +1,4 @@
-const Url = "http://45.32.105.81:4000/"
+const Url = "http://34.92.167.188:4000/"
  class URL {
     static UrlSignUp = Url+ "user";
     static UrlSignIn = Url+"signin";
@@ -13,5 +13,12 @@ const Url = "http://45.32.105.81:4000/"
     static UrlGetItemCard = Url +"user/cart/"
     static UrlOrder = Url +"user/order"
     static UrlDeleteCard = Url + "user/product/minusToCart"
+    
+    static UrlGetHistory = Url +"user/history/";
+    static UrlHistoryDetail  = Url +"user/historyDetail/";
+    static UrlCancelOrder = Url +"user/reject/";
+  
+    
+
 }
 export default URL;
