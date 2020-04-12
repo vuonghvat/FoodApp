@@ -2,7 +2,8 @@ import * as types from "./actionTypes";
 
 var initialState = {
   language: "en",
-  isLogged: false
+  isLogged: false,
+  isUpdate:false
 };
 
 var appReducer = (state = initialState, action) => {
@@ -14,6 +15,12 @@ var appReducer = (state = initialState, action) => {
     case types.LOGGED_IN:{
       return {
         isLogged: action.isLogged
+      }
+    }
+    case types.UPDATE_SCREEN:{
+      return {
+        ...state,
+        isUpdate: action.isUpdate
       }
     }
   

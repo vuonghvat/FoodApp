@@ -12,3 +12,10 @@ export const loggedIn = (isLogged)=>{
     isLogged
   };
 }
+
+export const updateScreen = (isUpdate)=>{
+  return {
+    type: types.UPDATE_SCREEN,
+    isUpdate
+  };
+}

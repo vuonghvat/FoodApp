@@ -20,7 +20,7 @@ const  height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 import { connect} from "react-redux"
 import Layout from "../../layouts/Layout"
-import {loggedIn} from "../../../redux/app/action"
+import {loggedIn, updateScreen} from "../../../redux/app/action"
 import {PagerTabIndicator, IndicatorViewPager, PagerTitleIndicator, PagerDotIndicator} from 'react-native-best-viewpager';
 import ImageAsset from "../../../assets/images/ImageAsset";
 import FastImage from "react-native-fast-image";
@@ -309,22 +309,27 @@ totalHandle=(data)=>{
     const {items} = this.state;
     let itemsClone = [...items];
     let orderDetail =[];
+    console.log(itemsClone);
+    
     itemsClone.forEach(e=>{
  
       let product = {
         SourceOfItemsID:e.SourceOfItemsID,
         Total:e.amount,
         Price:e.Price,
-        Ship:"1",
+        Ship:1,
         Description:e.Description
       }
       orderDetail.push(product);
     })
     const data = {
-        ustomerID:StaticUser.getCurrentUser().CustomerID,
+        CustomerID:StaticUser.getCurrentUser().CustomerID,
         OrderNote:this.state.note,
         OrderPayment:"1",
+        Ship:this.state.isShip?1:0,
+        shipAddress:this.state.address,
         orderDetail:orderDetail
+
     }
     this.setState({isLoading:true})
  console.log(data);
@@ -348,9 +353,11 @@ if(res){
     this.setState({isLoading:false});
     if(!this.state.isFromDetail)
     this.deleteCard();
+    this.props.dispatch(updateScreen(true))
+    
     Alert.alert(
       '',
-      'Đặt hàng thành công',
+      `Bạn đã đặt hàng thành công. Mã đơn hàng của bạn là ${data.message}. Vui lòng cung cấp mã đơn hàng khi đến cửa hàng lấy đồ!`,
       [
        
         {text: 'OK', onPress: () => {

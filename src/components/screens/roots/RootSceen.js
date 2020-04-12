@@ -37,6 +37,7 @@ import OrderScreen from "../products/OrderScreen";
 import HistoryScreen from "../history/HistoryScreen";
 import AsyncStorageApp from "../../../utils/AsyncStorageApp";
 import StaticUser from "../../../utils/StaticUser";
+import HistoryDetailScreen from "../history/HistoryDetailScreen";
 
 
 const Tab = createMaterialBottomTabNavigator();
@@ -167,6 +168,7 @@ componentDidMount(){
               <Stack.Screen name="CardScreen" component= {CardScreen}/>
               <Stack.Screen name="OrderScreen" component= {OrderScreen}/>
               <Stack.Screen name="HistoryScreen" component= {HistoryScreen}/>
+              <Stack.Screen name="HistoryDetailScreen" component= {HistoryDetailScreen}/>
             </Stack.Navigator>
             
                 

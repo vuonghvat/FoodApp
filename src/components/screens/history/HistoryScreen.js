@@ -15,7 +15,7 @@ import {
 } from "react-native";
 import { connect} from "react-redux"
 import Layout from "../../layouts/Layout"
-import {loggedIn} from "../../../redux/app/action"
+import {loggedIn, updateScreen} from "../../../redux/app/action"
 import Colors from "../../../assets/themes/colors";
 import FastImage from "react-native-fast-image"
 import {PagerTabIndicator, IndicatorViewPager, PagerTitleIndicator, PagerDotIndicator} from 'react-native-best-viewpager';
@@ -30,6 +30,7 @@ import ProgressDialog from "../../customizes/ProgressDialog";
 import Toolbar from "../../customizes/Toolbar";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import SmartImage from "../../customizes/SmartImage";
+import moment from "moment";
 
 class HistoryScreen extends Component {
   
@@ -45,8 +46,19 @@ class HistoryScreen extends Component {
   }
  
 
-
+  componentWillReceiveProps = (props)=>{
+    console.log(props);
+    
+    if(props.isUpdate){
+    
+      this.getHistory()
+      this.props.dispatch(updateScreen(false))
+    }
+  }
 componentDidMount(){
+ this.getHistory();
+}
+getHistory =()=>{
   request((res,err)=>{
       
        
@@ -107,16 +119,31 @@ componentDidMount(){
       </Layout>
     );
   }
+ 
   renderItem =()=>{
     const {data} = this.state;
+//     OrderID: "6y478l2s0k8x2r2bi"
+// StatusID: 1
+// CreateDate: "2020-04-12T13:19:06.000Z"
+// ship: 0
+// shipAddress: "Hung Yen Viet nam"
+// OrderNote: "Hang ok"
+// OrderPayment: 1
     return data.map((e,index)=>{
       return (
-        <TouchableWithoutFeedback>
-          <View style={{flexDirection:"row"}}>
-            <SmartImage style={{height:60, width:60}}/>
-            <Layout>
-              <NativeBase.Text>Ten sp</NativeBase.Text>
+        <TouchableWithoutFeedback 
+        onPress={()=>{
+          this.props.navigation.navigate("HistoryDetailScreen",{
+            OrderID:e.OrderID
+          })
+        }} style={{padding:10}}>
+          <View style={{backgroundColor:"white",elevation:2, padding:10}}>
+        
+            <Layout row>
+              <NativeBase.Text>Mã đơn hàng: </NativeBase.Text>
+      <NativeBase.Text style={{fontWeight:"bold", marginLeft:8}}>{e.OrderID}</NativeBase.Text>
             </Layout>
+      <NativeBase.Text style={{fontSize:12}}>{moment(e.CreateDate).format("DD/MM/YYYY")}</NativeBase.Text>
           </View>
         </TouchableWithoutFeedback>
       );
@@ -131,5 +158,10 @@ const styles = StyleSheet.create({
     backgroundColor:Colors.BackgroundColor
   },
 });
+const mapProps =  state =>{
+  return {
+    isUpdate:state.appReducer.isUpdate
+  }
+}
+export default connect(mapProps)(HistoryScreen);
 
-export default connect()(HistoryScreen);
