@@ -308,7 +308,11 @@ getCity =()=>{
             </NativeBase.Text>
             <Layout row>
             <NativeBase.Text onPress={()=>{
-              alert("View more");
+        
+               this.props.navigation.navigate("ListAllProduct",{
+                 type: "Lastest",
+                 CityID:this.state.CityID
+               })
             }} style={{ fontSize:12, alignSelf:"center"}}>
               Thêm
             </NativeBase.Text>
@@ -343,7 +347,11 @@ getCity =()=>{
             </NativeBase.Text>
             <Layout row>
             <NativeBase.Text onPress={()=>{
-              alert("View more");
+              
+                this.props.navigation.navigate("ListAllProduct",{
+                  type: "MostView",
+                  CityID:this.state.CityID
+                })
             }} style={{ fontSize:12, alignSelf:"center"}}>
               Thêm
             </NativeBase.Text>
@@ -379,7 +387,11 @@ getCity =()=>{
             </NativeBase.Text>
             <Layout row>
             <NativeBase.Text onPress={()=>{
-              alert("View more");
+       
+              this.props.navigation.navigate("ListAllProduct",{
+                type: "all",
+                CityID:this.state.CityID
+              })
             }} style={{ fontSize:12, alignSelf:"center"}}>
               Thêm
             </NativeBase.Text>
