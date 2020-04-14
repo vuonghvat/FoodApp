@@ -95,7 +95,8 @@ class HomeScreen extends Component {
       isLoading:false,
       lastestProducts:[],
       viewMostProducts:[],
-      allProducts:[]
+      allProducts:[],
+      banners:[]
 
    
     };
@@ -265,34 +266,26 @@ getCity =()=>{
            <NativeBase.Content style={{marginTop:15}}>
            <Layout>
             <IndicatorViewPager
-        
+                autoPlayEnable
                 initialPage={0}
                 ref={this.viewPager}
               
                     style={{height:height/4}}
                     indicator={this._renderDotIndicator()}
                 >
-                  <Layout  style={{backgroundColor:Colors.BackgroundColor}}  content="center" items="center">
-                        <FastImage
-                          resizeMode="cover"
-                         source={ImageAsset.Banner1} style={{width:width-30, height:height/4, marginVertical:20}}/>
-                        
+
+                  {this.state.banners.map(e=>{
+                    return (     
+                         <Layout  style={{backgroundColor:Colors.BackgroundColor}}  content="center" items="center">
+                    <FastImage
+                      resizeMode="cover"
+                     source={{uri:e}} style={{width:width-30, height:height/4, marginVertical:20}}/>
                     
-                    </Layout>
-                    <Layout  style={{backgroundColor:Colors.BackgroundColor}}  content="center" items="center">
-                        <FastImage
-                          resizeMode="cover"
-                         source={ImageAsset.Banner2} style={{width:width-30, height:height/4}}/>
-                        
-                    
-                    </Layout>
-                    <Layout   style={{backgroundColor:Colors.BackgroundColor}}  content="center" items="center">
-                        <FastImage
-                          resizeMode="cover"
-                         source={ImageAsset.Banner3} style={{width:width-30, height:height/4}}/>
-                        
-                    
-                    </Layout>
+                
+                </Layout>)
+                  })}
+          
+                   
                     
                 </IndicatorViewPager>
             </Layout>

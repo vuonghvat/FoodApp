@@ -126,7 +126,7 @@ getProducts = (CityID, type)=>{
       }
       leftAction={() => {
         this.props.navigation.goBack();
-      }}
+      }}                                                                                                                                                                                                                                                              
           title="Xem thêm"
           toolbarColor={"white"}
           titleStyle={{fontWeight:"bold"}}

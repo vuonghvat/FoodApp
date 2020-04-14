@@ -41,6 +41,7 @@ import HistoryDetailScreen from "../history/HistoryDetailScreen";
 import ListAllProduct from "../home/ListAllProduct";
 
 
+
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createStackNavigator();
 
@@ -107,7 +108,7 @@ componentWillMount(){
   })
 }
 componentDidMount(){
-  
+
 
 }
   TabScreen = ()=> {
@@ -143,7 +144,7 @@ componentDidMount(){
         name="MoreScreen"
         component={MoreScreen}
         options={{
-          tabBarLabel: 'Thêm',
+          tabBarLabel: 'Tài khoản',
           tabBarIcon: ({ color, size }) => (
             <Image source={ImageAsset.AccountIcon} style={{tintColor:color, height:20, width:20}}/>
           ),

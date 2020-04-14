@@ -211,12 +211,13 @@ totalHandle=(data)=>{
           </Layout>)}
         
          <Layout height={100} radius={6} hidden bgColor={"white"} margin={[15]}>
-         {/* <NativeBase.Button onPress={async ()=>{
-            const granted = await PermissionsAndroid.request(
-              PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-            );
-            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-             
+         <NativeBase.Button onPress={async ()=>{
+
+          if (Platform.OS === 'android') {
+            // https://github.com/facebook/react-native/issues/22535
+            const permission = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
+
+            if (permission === PermissionsAndroid.RESULTS.GRANTED) {
               Geolocation.getCurrentPosition(info =>{
                 console.log(info)
          
@@ -235,12 +236,22 @@ totalHandle=(data)=>{
                 })
               });
         
+            } else {
+              
             }
+
+            // const granted = await PermissionsAndroid.request(
+            //   PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+            // );
+            // if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+             
+            
+             }
     
            
           }}>
             <NativeBase.Text>Định vị</NativeBase.Text>
-          </NativeBase.Button> */}
+          </NativeBase.Button>
              <NativeBase.Input 
             placeholder="Nhập địa chỉ"
 
@@ -359,14 +370,18 @@ if(res){
       '',
       `Bạn đã đặt hàng thành công. Mã đơn hàng của bạn là ${data.message}. Vui lòng cung cấp mã đơn hàng khi đến cửa hàng lấy đồ!`,
       [
-       
-        {text: 'OK', onPress: () => {
-          this.props.navigation.navigate("ProductDetailScreen")
+        {text: 'Chi tiết', onPress: () => {
+          this.props.navigation.replace("HistoryDetailScreen", {
+            OrderID : data.message
+          })
+        }},
+   
+        {text: 'Quay về Home', onPress: () => {
+          this.props.navigation.navigate("TabScreen")
         }},
       ],
       { cancelable: false }
     )
- 
    // this.getProductDetails();
   
   }  
