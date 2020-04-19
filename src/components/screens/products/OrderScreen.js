@@ -16,8 +16,10 @@ import {
   Alert,
   PermissionsAndroid
 } from "react-native";
+
 const  height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
+
 import { connect} from "react-redux"
 import Layout from "../../layouts/Layout"
 import {loggedIn, updateScreen} from "../../../redux/app/action"
@@ -26,8 +28,11 @@ import ImageAsset from "../../../assets/images/ImageAsset";
 import FastImage from "react-native-fast-image";
 import Colors from "../../../assets/themes/colors";
 import Toolbar from "../../customizes/Toolbar";
+import {checkPermission, requestPermission} from 'react-native-android-permissions';
 import { FlatList } from "react-native-gesture-handler";
+
 import BaseItemList from "../../customizes/BaseItemList";
+
 import numeral from "numeral"
 
 import RBSheet from "react-native-raw-bottom-sheet";
@@ -60,12 +65,56 @@ class OrderScreen extends Component {
       note:"",
       isFromDetail:false,
       partner:undefined,
-      address:""
+      address:"",
+      listRecommend:[]
    
     };
    
   }
-
+  getListRecommend = ()=>{
+    request((res,err)=>{
+   
+     // console.log("-----",URL.UrlGetProducts+params.SourceOfItemsID,res,err);
+      if(res){
+  
+       
+          console.log(res);
+          
+        const data = res.data;
+    
+        if(data.err && data.err =="timeout"){
+       
+          this.setState({...this.state})
+          this.props.dispatch(loggedIn(false))
+          return;
+          
+        }else{
+          // const dataCheck =  {
+          //   SourceOfItemsID:data.SourceOfItemsID,
+          //   CustomerID:data.CustomerID
+          //  }
+          // this.hasRating(dataCheck);
+          // this.setState({product:data})
+          this.setState({listRecommend:data, isLoading:false})
+        
+        }
+        
+  
+      
+         
+      }
+        else{
+          Toast.show("Kiểm tra kết nối", Toast.LONG);
+          this.setState({...this.state})
+        }
+  
+          
+        
+        
+    
+  
+    }).get(URL.UrlGetRecommend+StaticUser.getCurrentUser().CustomerID,null)
+  }
   renderProducts = ()=>{
       let {items} = this.state;
 //       ItemName: "item 5"
@@ -130,6 +179,7 @@ class OrderScreen extends Component {
 componentDidMount(){
 
 //  this.getAllItems(this.state.page);
+this.getListRecommend()
 const { params} = this.props.route;
 console.log(this.props);
 if(params){
@@ -160,6 +210,38 @@ totalHandle=(data)=>{
     });
     return TotalPrice;
 }
+
+getCurrentPosition = () => {
+  Geolocation.getCurrentPosition(info => {
+      // this.setLocation(info)
+      console.log(info);
+      var NY = {
+        lat: info.coords.latitude,
+        lng: info.coords.longitude
+      };
+      
+      Geocoder.geocodePosition(NY).then(res => {
+        console.log(res);
+        this.setState({address: res[0].formattedAddress})
+        
+      })
+      .catch(err => console.log(err))
+
+      },
+      error => {
+          console.log('error', error);
+          if (Platform.ios !== 'ios') {
+              console.log('error', error);
+              RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({ interval: 1500, fastInterval: 1500 })
+                  .then(data => {
+                     this.getCurrentPosition();
+                  }).catch(err => {
+                  });
+          }
+      },
+      { enableHighAccuracy: true, timeout: 5000, maximumAge: 10000 }
+  );
+};
   render() {
 
     
@@ -213,41 +295,19 @@ totalHandle=(data)=>{
          <Layout height={100} radius={6} hidden bgColor={"white"} margin={[15]}>
          <NativeBase.Button onPress={async ()=>{
 
-          if (Platform.OS === 'android') {
-            // https://github.com/facebook/react-native/issues/22535
-            const permission = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
+            checkPermission("android.permission.ACCESS_FINE_LOCATION").then((result) => {
+              this.getCurrentPosition()
+            }, (result) => {
+              requestPermission("android.permission.ACCESS_FINE_LOCATION").then((result) => {
 
-            if (permission === PermissionsAndroid.RESULTS.GRANTED) {
-              Geolocation.getCurrentPosition(info =>{
-                console.log(info)
-         
-                const NY ={
-                  lat:info.coords.latitude,
-                   lng: info.coords.longitude
-                }
-                Geocoder.geocodePosition(NY).then(res=>{
-                  console.log(res,NY);
-                  this.setState({
-                    address: res[0].formattedAddress
-                  })
-                }).catch(err=>{
-                  console.log(err,NY);
-                  
-                })
-              });
-        
-            } else {
+              this.getCurrentPosition()
               
-            }
+              }, (result) => {
+                console.log("Not Granted!");
+                console.log(result);
+              });
+            });
 
-            // const granted = await PermissionsAndroid.request(
-            //   PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-            // );
-            // if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-             
-            
-             }
-    
            
           }}>
             <NativeBase.Text>Định vị</NativeBase.Text>
@@ -282,6 +342,23 @@ totalHandle=(data)=>{
            <NativeBase.Text style={{fontSize:14, marginTop:20}}>Thanh toán khi nhận hàng</NativeBase.Text>
           
          </Layout>
+         <Layout>
+          <NativeBase.Text style={{fontWeight:"bold", marginTop:20}}>Sản phẩm liên quan </NativeBase.Text>
+          <FlatList
+            contentContainerStyle={{}}
+            horizontal
+            style={{
+              marginTop:10
+          
+            }}
+            data={this.state.listRecommend}
+            showsHorizontalScrollIndicator={false}
+            renderItem={item => (
+              <BaseItemList renderView={this.renderItem(item)} />
+            )}
+            keyExtractor={(item, index) => index.toString()}
+            />
+          </Layout>
         </NativeBase.Content>
         <Layout row style={{padding:15, backgroundColor:"#f3f3f3"}}>
           <Layout flex={1} content={"center"} items ="center">
@@ -310,6 +387,40 @@ totalHandle=(data)=>{
         <ProgressDialog isShow={this.state.isLoading}/>
     </Layout>)
   }
+  renderItem =(item)=>{
+    return (
+      <TouchableWithoutFeedback onPress={()=>{
+        console.log(this.props);
+        
+       this.props.navigation.push("ProductDetailScreen",{
+        SourceOfItemsID: item.item.SourceOfItemsID,
+       
+       })
+      }}>
+        <View>
+      <Layout style={{height:height/5, width:height/6}} margin={[0,0,0,15]} radius={3} hidden>
+        <SmartImage source={ { uri: item.item.Image}} style={{height:90, width:"100%"}} />
+        <Layout>
+          <NativeBase.Text style={{fontSize:13, fontWeight:"bold"}}>
+            {item.item.ItemName}
+          </NativeBase.Text>
+    <NativeBase.Text style={{
+      fontSize:12, color:"black", opacity:0.4,
+      marginVertical:3
+    }}>{numeral(item.item.Price).format("0,0")+" ₫"}</NativeBase.Text>
+          <NativeBase.Text  numberOfLines={1}
+           ellipsizeMode="tail"
+           style={{fontSize:13,color:Colors.Black, opacity:0.3,}}>
+            {item.item.address}
+          </NativeBase.Text>
+        
+        </Layout>
+      </Layout>
+      </View>
+      </TouchableWithoutFeedback>
+
+    )
+  }
   onOrderPress = ()=>{
 //     const { star, comment,product} = this.state;
 //     if(star ==0){
@@ -317,10 +428,10 @@ totalHandle=(data)=>{
 //       return;
 //     }
 
-    const {items} = this.state;
+    const {items,partner} = this.state;
     let itemsClone = [...items];
     let orderDetail =[];
-    console.log(itemsClone);
+    console.log(partner);
     
     itemsClone.forEach(e=>{
  
@@ -330,6 +441,7 @@ totalHandle=(data)=>{
         Price:e.Price,
         Ship:1,
         Description:e.Description
+      
       }
       orderDetail.push(product);
     })
@@ -339,7 +451,8 @@ totalHandle=(data)=>{
         OrderPayment:"1",
         Ship:this.state.isShip?1:0,
         shipAddress:this.state.address,
-        orderDetail:orderDetail
+        orderDetail:orderDetail,
+        PartnerID:partner.PartnerID
 
     }
     this.setState({isLoading:true})

@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   TouchableNativeFeedback,
+  PermissionsAndroid,
 } from "react-native";
 const  height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
@@ -80,7 +81,11 @@ import ProgressDialog from "../../customizes/ProgressDialog";
 import Toast from 'react-native-simple-toast';
 import SmartImage from "../../customizes/SmartImage";
 import StaticUser from "../../../utils/StaticUser";
+import Geolocation from "@react-native-community/geolocation";
+import Geocoder from "react-native-geocoder";
 
+import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
+import CustomModal from "../../customizes/CustomModal";
 class HomeScreen extends Component {
   
 
@@ -89,14 +94,16 @@ class HomeScreen extends Component {
     this.state = {
       isLogged:false,
       keySearch:"",
-      location:"Ha Noi",
+      location:"Hà Nội",
       cities:[],
       CityID: 1,
       isLoading:false,
       lastestProducts:[],
       viewMostProducts:[],
       allProducts:[],
-      banners:[]
+      banners:[],
+      address:"",
+      isShowModalLocation:true
 
    
     };
@@ -109,20 +116,73 @@ class HomeScreen extends Component {
     selectedDotStyle={{backgroundColor:Colors.Black, width:10, height:10, borderRadius:10, opacity:0.5}}
     pageCount={this.pageCount} />;
 }
-componentDidMount(){
+renderModalLocation =()=>{
+  return ( <CustomModal
+  isShow={this.state.isShowModalLocation}
+  renderContent={
+    <View style={{ padding: 20 }}>
+      <NativeBase.Text>
+        Chọn thành phố
+      </NativeBase.Text>
+      <TouchableOpacity 
+      onPress={()=>{
+        this.setState({isShowModalLocation:false, CityID:1,location:"Hà Nội"})
+        this.getProductData(1);
+      }}
+       style={{backgroundColor:Colors.primaryColor, marginTop:10, padding:4}}>
+      <NativeBase.Text style={{textAlign:"center", color:"white", fontWeight:"bold"}}>
+        Hà Nội
+      </NativeBase.Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+         onPress={()=>{
+          this.setState({isShowModalLocation:false, CityID:2,location:"Hồ Chí Minh"})
+          this.getProductData(2);
+        }}
+       style={{backgroundColor:Colors.primaryColor, marginTop:10, padding:4}}>
+      <NativeBase.Text style={{textAlign:"center", color:"white", fontWeight:"bold"}}>
+        Hồ Chí Minh
+      </NativeBase.Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+         onPress={()=>{
+          this.setState({isShowModalLocation:false, CityID:2,location:"Đà Nẵng"})
+          this.getProductData(2);
+        }}
+       style={{backgroundColor:Colors.primaryColor, marginTop:10, padding:4}}>
+      <NativeBase.Text style={{textAlign:"center", color:"white", fontWeight:"bold"}}>
+        Đà Nẵng
+      </NativeBase.Text>
+      </TouchableOpacity>
+      
+      
+    </View>
+  }
+/>
+);
+}
+
+getProductData = (CityID)=>{
+  
+  this.getProducts(CityID,"Lastest");
+  this.getProducts(CityID,"MostView");
+  this.getProducts(CityID,"all");
+ }
+async componentDidMount(){
 
   this.getBanner();
   this.getCity();
-  this.getProducts(this.state.CityID,"Lastest");
-  this.getProducts(this.state.CityID,"MostView");
-  this.getProducts(this.state.CityID,"all");
+  this.getProductData(this.state.CityID);
+
+ 
+
  
 }
 getBanner =()=>{
   request((res,err)=>{
       
        
-    console.log("banner", res,err);
+   // console.log("banner", res,err);
     if(res){
       const banners = res.data;
 
@@ -443,8 +503,10 @@ getCity =()=>{
           }}
         >
           {this.renderContent()}
+
         </RBSheet>
         <ProgressDialog isShow={this.state.isLoading}/>
+        {this.renderModalLocation()}
       </Layout>
     );
   }
@@ -453,7 +515,7 @@ getCity =()=>{
     return cities.map((e,index)=>{
       return (
         <TouchableOpacity onPress={()=>{
-          this.getProducts(e.CityID)
+          this.getProductData(e.CityID)
           this.setState({location: e.CityName});
           this.bottomSheetRef.close();
         }}>
@@ -502,7 +564,7 @@ getCity =()=>{
 
 
   renderItem =(item)=>{
-   console.log(item);
+  // console.log(item);
 
     return (
       <TouchableWithoutFeedback onPress={()=>{

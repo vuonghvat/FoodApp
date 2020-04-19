@@ -17,6 +17,10 @@ const Url = "http://34.92.167.188:4000/"
     static UrlGetHistory = Url +"user/history/";
     static UrlHistoryDetail  = Url +"user/historyDetail/";
     static UrlCancelOrder = Url +"user/reject/";
+    static UrlGetRecommend = Url +"recommend/";
+    static UrlDeleteAllCArd = Url +"user/cart/";
+    e
+ 
   
     
 

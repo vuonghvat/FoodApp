@@ -143,7 +143,11 @@ getHistory =()=>{
               <NativeBase.Text>Mã đơn hàng: </NativeBase.Text>
       <NativeBase.Text style={{fontWeight:"bold", marginLeft:8}}>{e.OrderID}</NativeBase.Text>
             </Layout>
-      <NativeBase.Text style={{fontSize:12}}>{moment(e.CreateDate).format("DD/MM/YYYY")}</NativeBase.Text>
+            <Layout row>
+              <NativeBase.Text>Tên cửa hàng: </NativeBase.Text>
+      <NativeBase.Text style={{fontWeight:"bold", marginLeft:8}}>{e.PartnerName}</NativeBase.Text>
+            </Layout>
+      <NativeBase.Text style={{fontSize:12}}>{moment(e.CreateDate).format("DD/MM/YYYY HH:mm:ss")}</NativeBase.Text>
           </View>
         </TouchableWithoutFeedback>
       );

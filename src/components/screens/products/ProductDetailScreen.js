@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   TouchableNativeFeedback,
+  Alert,
 } from "react-native";
 const  height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
@@ -95,7 +96,8 @@ class ProductDetailScreen extends Component {
       isShowPopupReview:false,
       star:0,
       comment:"",
-      isRating:false
+      isRating:false,
+      listRecommend:[1,2,3]
     
 
    
@@ -112,8 +114,53 @@ class ProductDetailScreen extends Component {
 componentDidMount(){
 
  this.getProductDetails();
+ this.getListRecommend();
 
  
+}
+getListRecommend = ()=>{
+  request((res,err)=>{
+ 
+   // console.log("-----",URL.UrlGetProducts+params.SourceOfItemsID,res,err);
+    if(res){
+
+     
+        console.log(res);
+        
+      const data = res.data;
+  
+      if(data.err && data.err =="timeout"){
+     
+        this.setState({...this.state})
+        this.props.dispatch(loggedIn(false))
+        return;
+        
+      }else{
+        // const dataCheck =  {
+        //   SourceOfItemsID:data.SourceOfItemsID,
+        //   CustomerID:data.CustomerID
+        //  }
+        // this.hasRating(dataCheck);
+        // this.setState({product:data})
+        this.setState({listRecommend:data, isLoading:false})
+      
+      }
+      
+
+    
+       
+    }
+      else{
+        Toast.show("Kiểm tra kết nối", Toast.LONG);
+        this.setState({...this.state})
+      }
+
+        
+      
+      
+  
+
+  }).get(URL.UrlGetRecommend+StaticUser.getCurrentUser().CustomerID,null)
 }
 hasRating =(data) =>{
 
@@ -205,12 +252,22 @@ getProductDetails = ()=>{
 
 }
 onQuantityPress =(value)=>{
-  let { quantity } = this.state;
+  let { quantity , product } = this.state;
+    if(value > 0 && product.Summary == 0)
+    {
+      Toast.show("Không thể đặt thêm", Toast.LONG);
+      return;
+    }
+
   if(value <0 && quantity <= 1){
     value = 0;
   }
+ 
+
   quantity +=  value;
-  this.setState({quantity})
+  product.Summary -= value;
+
+  this.setState({quantity,product})
 
 }
 
@@ -258,7 +315,7 @@ renderReview =(data)=>{
   addToCard =()=>{
     
     const { product} = this.state;
-    console.log(product);
+   
     const data ={
       CustomerID:StaticUser.getCurrentUser().CustomerID,
       SourceOfItemsID:product.SourceOfItemsID,
@@ -281,11 +338,35 @@ renderReview =(data)=>{
       return;
       
     }else{
+
+
       this.setState({isLoading:false})
-      Toast.show("Thêm thành công", Toast.LONG);
-      this.props.navigation.navigate("CardScreen",{
-        CustomerID: StaticUser.getCurrentUser().CustomerID
-      })
+      if(data.status){
+        Toast.show("Thêm thành công", Toast.LONG);
+        this.props.navigation.navigate("CardScreen",{
+          CustomerID: StaticUser.getCurrentUser().CustomerID
+        })
+      }else if(data.message == "repeate"){
+        Alert.alert(
+          '',
+          `Bạn có muốn hủy bỏ sản phẩm đã chọn trong giỏ hàng để tiếp tục?`,
+          [
+            {text: 'Hủy', onPress: () => {
+              // this.props.navigation.replace("HistoryDetailScreen", {
+              //   OrderID : data.message
+              // })
+            }},
+       
+            {text: 'Có', onPress: () => {
+             this.deleteAllCard();
+            }},
+          ],
+          { cancelable: false }
+        )
+      
+       }
+     
+     
 
 
     
@@ -306,6 +387,44 @@ renderReview =(data)=>{
 
 
 }).post(URL.UrlAddToCart,data)
+  }
+
+
+  deleteAllCard =()=>{
+    request((res,err)=>{
+ 
+    
+      if(res){
+  
+        const data = res.data;
+          console.log(res);
+          
+        if(data.err && data.err =="timeout"){
+       
+          this.setState({...this.state,isLoading:false})
+          this.props.dispatch(loggedIn(false))
+          return;
+          
+        }else{
+          this.setState({isLoading:false})
+          
+          this.addToCard();
+    
+      
+         
+      }
+    }
+        else{
+          Toast.show("Kiểm tra kết nối", Toast.LONG);
+          this.setState({...this.state,isLoading:false})
+        }
+    
+          
+        
+        
+    
+    
+    }).get(URL.UrlDeleteAllCArd+`${StaticUser.getCurrentUser().CustomerID}/delete`,null)
   }
   onOrderPress =()=>{
   
@@ -396,6 +515,7 @@ renderReview =(data)=>{
     const like = product?product.like || 0:0;
     const Name = product?product.ItemName || "":"";
     const rate = product?product.rate || []:[];
+    const Summary = product?product.Summary || 0:0
 
 
     
@@ -431,7 +551,7 @@ renderReview =(data)=>{
               Còn lại: 
              </NativeBase.Text>
                   <NativeBase.Text style={{fontWeight:"bold"}}>
-                    {12}
+                    {Summary}
                   </NativeBase.Text>
            </Layout>
            <Layout row>
@@ -517,6 +637,24 @@ renderReview =(data)=>{
              {this.renderReview(rate)}
             
           </Layout>
+          <Layout>
+          <NativeBase.Text style={{fontWeight:"bold", marginTop:20}}>Sản phẩm liên quan </NativeBase.Text>
+          <FlatList
+            contentContainerStyle={{}}
+            horizontal
+            style={{
+              marginTop:10
+          
+            }}
+            data={this.state.listRecommend}
+            showsHorizontalScrollIndicator={false}
+            renderItem={item => (
+              <BaseItemList renderView={this.renderItem(item)} />
+            )}
+            keyExtractor={(item, index) => index.toString()}
+            />
+          </Layout>
+                  
                   
           </Layout>
         
@@ -566,6 +704,38 @@ renderReview =(data)=>{
   rateStar =(star)=>{
   
     this.setState({star})
+  }
+  renderItem =(item)=>{
+    return (
+      <TouchableWithoutFeedback onPress={()=>{
+       this.props.navigation.replace("ProductDetailScreen",{
+        SourceOfItemsID: item.item.SourceOfItemsID,
+       
+       })
+      }}>
+        <View>
+      <Layout style={{height:height/5, width:height/6}} margin={[0,0,0,15]} radius={3} hidden>
+        <SmartImage source={ { uri: item.item.Image}} style={{height:90, width:"100%"}} />
+        <Layout>
+          <NativeBase.Text style={{fontSize:13, fontWeight:"bold"}}>
+            {item.item.ItemName}
+          </NativeBase.Text>
+    <NativeBase.Text style={{
+      fontSize:12, color:"black", opacity:0.4,
+      marginVertical:3
+    }}>{numeral(item.item.Price).format("0,0")+" ₫"}</NativeBase.Text>
+          <NativeBase.Text  numberOfLines={1}
+           ellipsizeMode="tail"
+           style={{fontSize:13,color:Colors.Black, opacity:0.3,}}>
+            {item.item.address}
+          </NativeBase.Text>
+        
+        </Layout>
+      </Layout>
+      </View>
+      </TouchableWithoutFeedback>
+
+    )
   }
   
   onSubmitReview = ()=>{
