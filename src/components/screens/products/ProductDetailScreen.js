@@ -97,7 +97,9 @@ class ProductDetailScreen extends Component {
       star:0,
       comment:"",
       isRating:false,
-      listRecommend:[1,2,3]
+      listRecommend:[],
+      qas:[]
+
     
 
    
@@ -115,8 +117,54 @@ componentDidMount(){
 
  this.getProductDetails();
  this.getListRecommend();
+ this.getQA();
 
  
+}
+getQA =()=>{
+  
+  const { params } = this.props.route;
+
+  
+
+ 
+
+
+  request((res,err)=>{
+ 
+    
+    if(res){
+
+      const qas = res.data;
+        console.log(res);
+        
+      if(data.err && data.err =="timeout"){
+     
+        this.setState({...this.state,isLoading:false})
+        this.props.dispatch(loggedIn(false))
+        return;
+        
+      }else{
+        this.setState({qas,isLoading:false})
+        
+       // this.addToCard();
+  
+    
+       
+    }
+  }
+      else{
+        Toast.show("Kiểm tra kết nối", Toast.LONG);
+        this.setState({...this.state,isLoading:false})
+      }
+  
+        
+      
+      
+  
+  
+  }).get(URL.UrlGetQA+`${params.SourceOfItemsID}/2/0`,null)
+
 }
 getListRecommend = ()=>{
   request((res,err)=>{
@@ -275,9 +323,9 @@ onStarRatingPress = () => {
     
 };
 
-renderReview =(data)=>{
-
-  return data.map((e,index)=>{
+renderQA=()=>{
+  const {qas} = this.state;
+  return qas.map((e,index)=>{
     if(index < 2)
     return ( <Layout bgColor="white" style={{elevation:4, padding:8, marginTop:10}}>
     <Layout row> 
@@ -632,11 +680,47 @@ renderReview =(data)=>{
              </Layout>
                <View style={{ height:0.5, width:"100%", backgroundColor:"gray"}}/>
           </Layout>
-          <Layout>
-          <NativeBase.Text style={{fontWeight:"bold", marginTop:20}}>Câu hỏi </NativeBase.Text>
-             {this.renderReview(rate)}
-            
-          </Layout>
+             
+                <Layout>
+                <NativeBase.Text style={{fontWeight:"bold", marginTop:20}}>Câu hỏi </NativeBase.Text>
+                    {this.state.qas.length === 0 && (
+                      <NativeBase.Text style={{fontSize:13, marginVertical:15}}>Không có câu hỏi nào</NativeBase.Text>
+                    )}
+                   {this.renderQA()}
+                   <View style={{ height:0.5, width:"100%", backgroundColor:"gray"}}/>
+                   <Layout row>
+                    <TouchableWithoutFeedback onPress={()=>{
+                 this.setState({isShowPopupReview:true})
+               }}>
+                 <View style={{flex:1, justifyContent:"center",padding:10}}>
+                   <NativeBase.Text style={{textAlign:"center", fontSize:13}}>
+                     Thêm Câu hỏi
+                   </NativeBase.Text>
+                 </View>
+               </TouchableWithoutFeedback>
+                {this.state.qas.length>2 && (<View style={{ width:0.5, height:"100%", backgroundColor:"gray"}}/>) } 
+
+                {this.state.qas.length>2 && (
+                   <TouchableWithoutFeedback
+                   onPress ={()=>{
+                     this.props.navigation.navigate("ReviewScreen",{
+                       SourceOfItemsID: product.SourceOfItemsID
+                     })
+                   }}
+                   >
+                
+                <View style={{flex:1,justifyContent:"center"}}>
+                <NativeBase.Text style={{textAlign:"center", fontSize:13, padding:10}}>
+                      Xem thêm
+                    </NativeBase.Text>
+                  </View>
+                </TouchableWithoutFeedback>
+                )}
+               
+             </Layout>
+                  
+                </Layout>
+           
           <Layout>
           <NativeBase.Text style={{fontWeight:"bold", marginTop:20}}>Sản phẩm liên quan </NativeBase.Text>
           <FlatList

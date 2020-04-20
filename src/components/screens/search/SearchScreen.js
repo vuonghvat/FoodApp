@@ -57,6 +57,10 @@ class SearchScreen extends Component {
   onSearchHandler =(keySearch)=>{
    
 
+  const data ={
+    SearchText:keySearch ,
+    CityID:this.state.CityID
+  }
   
    request((res,err)=>{
       
@@ -81,7 +85,9 @@ class SearchScreen extends Component {
       
   
 
-  }).get(URL.UrlGetProducts+`${keySearch}/${this.state.CityID}`,null)
+  }).post(URL.UrlSearch,data,{
+    ContentType: 'application/json'
+})
 
   }
   render() {
@@ -121,10 +127,11 @@ class SearchScreen extends Component {
       
        </Layout>
          
-          
+             {this.state.products.length ===0 && (<NativeBase.Text style={{fontSize:13, alignSelf:"center", flex:1, textAlign:"center"}}>Không có sản phẩm nào</NativeBase.Text>)}
           <NativeBase.Content contentContainerStyle={{paddingHorizontal:15}}>
             {this.renderItem()}
           </NativeBase.Content>
+
      
          {this.state.isLoading && ( <ActivityIndicator style={{position:"absolute", top:0, bottom:0, right:0, left:0}} size="small" color={Colors.primaryColor} />)}
       </Layout>

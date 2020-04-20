@@ -3,6 +3,7 @@ const Url = "http://34.92.167.188:4000/"
     static UrlSignUp = Url+ "user";
     static UrlSignIn = Url+"signin";
     static UrlGetProducts = Url+"user/products/";
+    static UrlSearch =  Url + "user/products/search"
     static UrlGetCity = Url+"city";
     static UrlViewProduct = Url +"user/view";
     static UrlGetBanner = Url +"user/banner";
@@ -19,7 +20,8 @@ const Url = "http://34.92.167.188:4000/"
     static UrlCancelOrder = Url +"user/reject/";
     static UrlGetRecommend = Url +"recommend/";
     static UrlDeleteAllCArd = Url +"user/cart/";
-    e
+    
+    static UrlGetQA = Url +"user/products/qnadetail/"
  
   
     

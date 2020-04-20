@@ -178,6 +178,7 @@ async componentDidMount(){
 
  
 }
+
 getBanner =()=>{
   request((res,err)=>{
       
@@ -326,7 +327,8 @@ getCity =()=>{
            <NativeBase.Content style={{marginTop:15}}>
            <Layout>
             <IndicatorViewPager
-                autoPlayEnable
+                // autoPlayEnable
+           
                 initialPage={0}
                 ref={this.viewPager}
               
