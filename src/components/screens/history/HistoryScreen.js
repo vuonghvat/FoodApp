@@ -31,7 +31,7 @@ import Toolbar from "../../customizes/Toolbar";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import SmartImage from "../../customizes/SmartImage";
 import moment from "moment";
-
+import Toast from 'react-native-simple-toast';
 class HistoryScreen extends Component {
   
 

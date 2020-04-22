@@ -136,7 +136,7 @@ getQA =()=>{
     if(res){
 
       const qas = res.data;
-        console.log(res);
+        console.log(res,"qaaaaaaaaaaaaaaaaaaaa");
         
       if(data.err && data.err =="timeout"){
      
@@ -173,7 +173,7 @@ getListRecommend = ()=>{
     if(res){
 
      
-        console.log(res);
+      //  console.log(res);
         
       const data = res.data;
   
@@ -214,7 +214,7 @@ hasRating =(data) =>{
 
  request((res,err)=>{
  
-  console.log("-----",URL.UrlCheckHasRating,res,err);
+  //console.log("-----",URL.UrlCheckHasRating,res,err);
   if(res){
 
    
@@ -251,7 +251,7 @@ hasRating =(data) =>{
 }
 getProductDetails = ()=>{
 
-  console.log(this.props);
+ // console.log(this.props);
   const { params } = this.props.route;
 
   
@@ -259,7 +259,7 @@ getProductDetails = ()=>{
  
   request((res,err)=>{
  
-    console.log("-----",URL.UrlGetProducts+params.SourceOfItemsID,res,err);
+   // console.log("-----",URL.UrlGetProducts+params.SourceOfItemsID,res,err);
     if(res){
 
      
@@ -325,7 +325,50 @@ onStarRatingPress = () => {
 
 renderQA=()=>{
   const {qas} = this.state;
+ // const cauhoi = 
+//   cauhoi:
+// CreateDate: "2020-04-19T14:51:33.000Z"
+// CustomerName: "tran duc hoang"
+// CustomerUsername: "hoangtd"
+// ID: "1"
+// question: "Câu hỏi 1"
+// __proto__: Object
+// traloi: []
+
   return qas.map((e,index)=>{
+    const cauhoi = e.cauhoi;
+    const traloi = e.traloi
+    if(index < 2)
+    return ( <TouchableOpacity onPress={()=>{
+      this.props.navigation.navigate("QAScreen",{
+        QA:e
+      })
+    }}>
+      <Layout bgColor="white" style={{elevation:4, padding:8, marginTop:10}}>
+      <Layout>
+
+        <NativeBase.Text style={{fontSize:13, fontWeight:"bold"}}>{cauhoi.CustomerName}</NativeBase.Text>
+  <NativeBase.Text style={{fontSize:12,marginTop:5}}>{cauhoi.question}</NativeBase.Text>
+      </Layout>
+        {traloi.length >0 && (
+          <Layout row style={{marginTop:5}}>
+          <View style={{width:0.5, height:"100%", alignSelf:"center", backgroundColor:"gray", marginEnd:15}}/>
+          <Layout flex={1} style={{ height:"100%"}}>
+        <NativeBase.Text style={{fontSize:12,textAlign:"left", color:"gray"}}>{traloi[0].anser}</NativeBase.Text>
+          </Layout>
+          
+        </Layout>
+        )}
+ </Layout>
+    </TouchableOpacity>
+   
+   )
+  })
+ 
+}
+renderReview=(data)=>{
+
+  return data.map((e,index)=>{
     if(index < 2)
     return ( <Layout bgColor="white" style={{elevation:4, padding:8, marginTop:10}}>
     <Layout row> 
@@ -372,7 +415,7 @@ renderQA=()=>{
     }
  request((res,err)=>{
  
-  console.log("-----",URL.UrlAddToCart,res,err);
+ // console.log("-----",URL.UrlAddToCart,res,err);
   if(res){
 
    
@@ -445,7 +488,7 @@ renderQA=()=>{
       if(res){
   
         const data = res.data;
-          console.log(res);
+        //  console.log(res);
           
         if(data.err && data.err =="timeout"){
        
@@ -838,7 +881,7 @@ renderQA=()=>{
 
       this.setState({isLoading:true})
      request((res,err)=>{
-  console.log("-----",URL.UrlCreateReview,res,err);
+ // console.log("-----",URL.UrlCreateReview,res,err);
   if(res){
 
     const data = res.data;

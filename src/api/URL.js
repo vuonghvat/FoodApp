@@ -22,6 +22,7 @@ const Url = "http://34.92.167.188:4000/"
     static UrlDeleteAllCArd = Url +"user/cart/";
     
     static UrlGetQA = Url +"user/products/qnadetail/"
+    static UrlComment = Url +"user/products/createqnadetail"
  
   
     

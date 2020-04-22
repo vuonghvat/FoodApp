@@ -11,8 +11,10 @@ import {
   Dimensions,
   ImageBackground,
   TouchableOpacity,
+  Alert,
 
 } from "react-native";
+import Toast from 'react-native-simple-toast';
 import numeral from "numeral"
 import { connect} from "react-redux"
 import Layout from "../../layouts/Layout"
@@ -120,6 +122,7 @@ componentDidMount(){
         const PartnerEmail= Partner?Partner.PartnerEmail || "":""
         const PartnerPhone= Partner?Partner.PartnerPhone || "":""
         const PartnerDescription= Partner?Partner.PartnerDescription || "":""
+        const StatusID =  Partner?Partner.StatusID || "":""
         
 
 
@@ -178,14 +181,7 @@ componentDidMount(){
             {PartnerPhone}
             </NativeBase.Text>
             </Layout>
-            <Layout row margin={[10]}>
-            <NativeBase.Text style={{fontSize:13, flex:1}}>
-            Tên cửa hàng:
-            </NativeBase.Text>
-            <NativeBase.Text style={{fontSize:13,textAlign:"right", maxHeight:2*height/3}}>
-            {PartnerName}
-            </NativeBase.Text>
-            </Layout>
+           
             <Layout row margin={[10]}>
             <NativeBase.Text style={{fontSize:13, flex:1}}>
             Mô tả:
@@ -206,10 +202,21 @@ componentDidMount(){
             Tình trạng:
             </NativeBase.Text>
             <NativeBase.Text style={{fontSize:13,textAlign:"right",fontWeight:"bold", maxHeight:2*height/3}}>
-            {"Đã đặt"}
+            {this.getStatus(StatusID)}
             </NativeBase.Text>
             </Layout>
-
+              <Layout row content="flex-end" items="flex-end">
+              {StatusID === 6 && (
+                  <TouchableOpacity 
+                  onPress={this.cancelOrder}
+                  style={{alignSelf:"flex-end", marginTop:15}}>
+                     <NativeBase.Text style={{fontSize:12, fontWeight:"bold"}}>
+                         Hủy đơn
+                     </NativeBase.Text>
+  
+                  </TouchableOpacity>
+              )}
+              </Layout>
             </Layout>
             <NativeBase.Content contentContainerStyle={{padding:15}}>
               { this.renderItem()}
@@ -220,10 +227,91 @@ componentDidMount(){
       </Layout>
     );
   }
-  renderItem =()=>{
-      const {ListItems}= this.state;
-      console.log(ListItems,"ListItems");
+  getStatus =(StatusID)=>{
+    switch(StatusID){
+      case 0:
+        return "Chờ phê duyệt";
+        case 1:
+          return "Đang hoạt động";
+          case 2:
+            return "Ngưng hoạt động";
+            case 3:
+              return "Đã hủy";
+              case 4:
+                return "Hoàn thành";
+                case 5:
+                  return "Thất bại";
+                  case 6:
+                    return "Chờ lấy hàng";
+                   default :
+                    return "Unknown";
+    }
+  }
+  cancelOrder =()=>{
+
+
+    Alert.alert(
+      '',
+      `Bạn có chắc chắn muốn hủy đơn hàng này không?`,
+      [
+        {text: 'Hủy', onPress: () => {
+       
+        }},
+   
+        {text: 'Xác nhận', onPress: () => {
+          const {params} = this.props.route;
+          const OrderID = params?params.OrderID|| undefined:undefined
       
+        request((res,err)=>{
+            
+             
+          console.log("history detail", res,err);
+          if(res){
+            const data = res.data;
+           // console.log("-------",res,err);
+            if(data.err && data.err =="timeout"){
+           
+              this.setState({isLoading:false})
+              this.props.dispatch(loggedIn(false))
+              return;
+              
+            }else{
+              if(data.status){
+                let {Partner} = this.state;
+                Partner.StatusID = 3;
+                this.setState({Partner})
+                Toast.show("Hủy thành công", Toast.LONG);
+              }else{
+                Toast.show("Hủy không thành công", Toast.LONG);
+              }
+             
+            
+            }
+             
+          }
+            else{
+              Toast.show("Kiểm tra kết nối", Toast.LONG);
+              this.setState({...this.state,isLoading:false})
+            }
+      
+              
+            
+            
+        
+           
+        }).get(URL.UrlCancelOrder+`${OrderID}`,null)
+        }},
+      ],
+      { cancelable: false }
+    )
+
+    
+  }
+  renderItem =()=>{
+
+      const {ListItems,Partner}= this.state;
+      console.log(ListItems,"ListItems");
+        const StatusID =  Partner?Partner.StatusID || "":""
     return ListItems.map((e,index)=>{
         return (
             <TouchableWithoutFeedback style={{}}>
@@ -247,16 +335,7 @@ componentDidMount(){
 
         
                 </Layout>
-                <TouchableOpacity 
-                onPress={()=>{
-               
-                }}
-                style={{position:"absolute", right:0, top:0}}>
-                   <NativeBase.Text style={{fontSize:12}}>
-                       Hủy đơn
-                   </NativeBase.Text>
-
-                </TouchableOpacity>
+             
             </View>
         </TouchableWithoutFeedback>
           );
