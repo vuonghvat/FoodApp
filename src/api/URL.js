@@ -23,6 +23,7 @@ const Url = "http://34.92.167.188:4000/"
     
     static UrlGetQA = Url +"user/products/qnadetail/"
     static UrlComment = Url +"user/products/createqnadetail"
+    static UrlAddQuestion = Url +"user/products/createqna"
  
   
     

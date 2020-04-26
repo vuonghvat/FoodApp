@@ -36,13 +36,7 @@ const reqf = (method, url, data, options, callback) => {
         'Content-Type': ContentType,
       }
 
-      // console.log({
-      //   method: method,
-      //   url: url,
-      //   data: qs.stringify(data),
-      //   headers: headers,
-      //   options,
-      // });
+  
     var req = axios({
       method: method,
       url: url,
@@ -50,6 +44,7 @@ const reqf = (method, url, data, options, callback) => {
       headers: headers,
       options,
     });
+   // alert(ContentType)
     console.log({
       method: method,
       url: url,

@@ -206,7 +206,7 @@ componentDidMount(){
             </NativeBase.Text>
             </Layout>
               <Layout row content="flex-end" items="flex-end">
-              {StatusID === 6 && (
+              {(StatusID == 6 || StatusID == 1)  && (
                   <TouchableOpacity 
                   onPress={this.cancelOrder}
                   style={{alignSelf:"flex-end", marginTop:15}}>

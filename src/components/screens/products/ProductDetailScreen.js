@@ -19,7 +19,7 @@ const  height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 import { connect} from "react-redux"
 import Layout from "../../layouts/Layout"
-import {loggedIn} from "../../../redux/app/action"
+import {loggedIn, updateScreen} from "../../../redux/app/action"
 import {PagerTabIndicator, IndicatorViewPager, PagerTitleIndicator, PagerDotIndicator} from 'react-native-best-viewpager';
 import ImageAsset from "../../../assets/images/ImageAsset";
 import FastImage from "react-native-fast-image";
@@ -94,11 +94,13 @@ class ProductDetailScreen extends Component {
       isLoading:false,
       quantity:1,
       isShowPopupReview:false,
+      isShowPopupQA:false,
       star:0,
       comment:"",
       isRating:false,
       listRecommend:[],
-      qas:[]
+      qas:[],
+      question:""
 
     
 
@@ -112,6 +114,14 @@ class ProductDetailScreen extends Component {
     
     selectedDotStyle={{backgroundColor:Colors.Black, width:10, height:10, borderRadius:10, opacity:0.5}}
     pageCount={this.pageCount} />;
+}
+componentWillReceiveProps =(props)=>{
+  if(props.isUpdate){
+    this.getProductDetails();
+    this.getListRecommend();
+    this.getQA();
+    this.props.dispatch(updateScreen(false))
+  }
 }
 componentDidMount(){
 
@@ -733,7 +743,7 @@ renderReview=(data)=>{
                    <View style={{ height:0.5, width:"100%", backgroundColor:"gray"}}/>
                    <Layout row>
                     <TouchableWithoutFeedback onPress={()=>{
-                 this.setState({isShowPopupReview:true})
+                 this.setState({isShowPopupQA:true})
                }}>
                  <View style={{flex:1, justifyContent:"center",padding:10}}>
                    <NativeBase.Text style={{textAlign:"center", fontSize:13}}>
@@ -825,6 +835,7 @@ renderReview=(data)=>{
 
           </Layout>
           {this.renderModalReview()}
+          {this.renderModalQA()}
         <ProgressDialog isShow={this.state.isLoading}/>
     </Layout>)
   }
@@ -915,6 +926,55 @@ renderReview=(data)=>{
       
     
   }
+  addQuestion = ()=>{
+
+    const { question,product} = this.state;
+    if(question ==""){
+      Toast.show("Vui lòng nhập câu hỏi", Toast.LONG);
+      return;
+    }
+    const data = {
+      CustomerID: product.CustomerID ,
+      SourceOfItemsID: product.SourceOfItemsID,
+      question,
+    }
+    
+    this.setState({isLoading:true})
+   request((res,err)=>{
+// console.log("-----",URL.UrlCreateReview,res,err);
+if(res){
+
+  const data = res.data;
+  if(data.err && data.err =="timeout"){
+
+    this.setState({...this.state,isLoading:false})
+    this.props.dispatch(loggedIn(false))
+    return;
+    
+  }else{
+    this.setState({isShowPopupQA:false,isLoading:false})
+    this.getProductDetails();
+  
+  }
+  
+
+
+   
+}
+  else{
+    Toast.show("Kiểm tra kết nối", Toast.LONG);
+    this.setState({...this.state,isLoading:false})
+  }
+
+    
+  
+  
+
+
+}).post(URL.UrlAddQuestion,data)
+    
+  
+}
   renderModalReview =()=>{
     return ( <CustomModal
     isShow={this.state.isShowPopupReview}
@@ -986,7 +1046,66 @@ renderReview=(data)=>{
   />
 );
   }
-
+  renderModalQA =()=>{
+    return ( <CustomModal
+    isShow={this.state.isShowPopupQA}
+    renderContent={
+      <View style={{ padding: 20 }}>
+      
+        <View style={{ flexDirection: "row" }}>
+       
+          <View style={{  }}>
+            <NativeBase.Text style={{fontSize:18, fontWeight:"bold"}}>
+              Thêm câu hỏi
+            </NativeBase.Text>
+    <NativeBase.Text style={{fontSize:13}}>{StaticUser.getCurrentUser().name}</NativeBase.Text>
+          </View>
+        </View>
+       
+        <View
+          style={{ height: 156, backgroundColor: "white", borderRadius: 6 }}
+        >
+          <NativeBase.Input
+            multiline={true}
+            value={this.state.question}
+            placeholder={"Đặt câu hỏi"}
+            style={[
+             
+              {
+                textAlignVertical: "top",
+                fontSize:13
+              },
+            ]}
+            onChangeText={question => this.setState({question})}
+          />
+        </View>
+      
+        <NativeBase.Button
+          onPress={this.addQuestion}
+          style={{ backgroundColor: Colors.primaryColor, justifyContent:"center" , alignItems:"center"}}
+        >
+          <NativeBase.Text>Gửi</NativeBase.Text>
+        </NativeBase.Button>
+        <TouchableOpacity
+          onPress={() =>{
+            this.setState({isShowPopupQA:false})
+          }}
+          style={{ position: "absolute", top: 6, right: 6 }}
+        >
+          <Image
+            style={{
+              width: 24,
+              height: 24,
+            }}
+            source={ImageAsset.CloseIcon}
+          />
+        </TouchableOpacity>
+        
+      </View>
+    }
+  />
+);
+  }
 }
 
 const styles = StyleSheet.create({
@@ -997,7 +1116,8 @@ const styles = StyleSheet.create({
 });
 const mapStateToProps = state =>{
   return {
-    isLogged : state.appReducer.isLogged
+    isLogged : state.appReducer.isLogged,
+    isUpdate: state.appReducer.isUpdate,
   }
 }
 export default connect(mapStateToProps)(ProductDetailScreen);

@@ -18,7 +18,7 @@ const  height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 import { connect} from "react-redux"
 import Layout from "../../layouts/Layout"
-import {loggedIn} from "../../../redux/app/action"
+import {loggedIn, updateScreen} from "../../../redux/app/action"
 import {PagerTabIndicator, IndicatorViewPager, PagerTitleIndicator, PagerDotIndicator} from 'react-native-best-viewpager';
 import ImageAsset from "../../../assets/images/ImageAsset";
 import FastImage from "react-native-fast-image";
@@ -89,7 +89,7 @@ class QAScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-     QA : undefined,
+      QA : undefined,
       isLoading:false,
       comment:"",
 
@@ -105,6 +105,8 @@ componentDidMount(){
     const {params} = this.props.route;
     if(params){
         if(params.QA){
+          console.log(params.QA);
+          
             this.setState({QA:params.QA})
         }
     }
@@ -128,8 +130,6 @@ addComment =() =>{
   //console.log("-----",URL.UrlGetAllReviews,res,err);
   if(res){
     console.log(res);
-    
-   
 
     const data = res.data;
 
@@ -140,8 +140,17 @@ addComment =() =>{
       return;
       
     }else{
-
-     // this.setState({data,isLoading:false})
+      let {QA} = this.state;
+      const as ={
+      CreateDate: new Date(),
+      CustomerUsername: "",
+      anser: this.state.comment,
+      }
+      if(QA.traloi)
+      QA.traloi.push(as);
+      this.setState({isLoading:false,QA,comment:""})
+      
+      this.props.dispatch(updateScreen(true))
     
     }
     
@@ -159,7 +168,7 @@ addComment =() =>{
     
 
  //SourceOfItemsID/:limit/:offset
-}).get(URL.UrlComment ,data,{
+}).post(URL.UrlComment ,data,{
     ContentType: 'application/json'
 })
 }
@@ -172,6 +181,8 @@ addComment =() =>{
     const {QA} = this.state;
     const cauhoi =QA? QA.cauhoi :undefined;
     const traloi = QA?QA.traloi:[]
+   // console.log(traloi);
+    
     return (
       <Layout style={styles.container}>
             <Toolbar
@@ -189,25 +200,19 @@ addComment =() =>{
           toolbarColor={"white"}
         
         />
-           <Layout bgColor="white" style={{ padding:15, marginTop:10}}>
-      <Layout>
+      <Layout bgColor="white" style={{ padding:15, marginTop:10, flex:1}}>
+      <NativeBase.Text style={{fontSize:13, fontWeight:"bold"}}>{cauhoi?cauhoi.CustomerName :""}</NativeBase.Text>
+        <Layout style={{borderRadius:6, marginTop:15,padding:10, backgroundColor:"#b3e0ff"}}>
 
-        <NativeBase.Text style={{fontSize:13, fontWeight:"bold"}}>{cauhoi?cauhoi.CustomerName :""}</NativeBase.Text>
-  <NativeBase.Text style={{fontSize:12,marginTop:5}}>{cauhoi?cauhoi.question:""}</NativeBase.Text>
+       
+      <NativeBase.Text style={{fontSize:12,marginTop:5}}>{cauhoi?cauhoi.question:""}</NativeBase.Text>
       </Layout>
-      <NativeBase.Content style={{flex:1}}>
-      {traloi.length >0 && (
-          traloi.map(e=>{
-            return (<Layout row style={{marginTop:5}}>
-              <View style={{width:0.5, height:"100%", alignSelf:"center", backgroundColor:"gray", marginEnd:15}}/>
-              <Layout flex={1} style={{ height:"100%"}}>
-            <NativeBase.Text style={{fontSize:12,textAlign:"left", color:"gray"}}>{e.anser}</NativeBase.Text>
-              </Layout>
-              
-            </Layout>)
-        })
-      )}
-      </NativeBase.Content>
+    
+      <FlatList
+        data={traloi.reverse()}
+       style={{flex:1}}
+         renderItem={(item)=>this.renderAS(item)}
+      />
        
         <Layout row margin={[20]}>
         <Layout style={{height:40, flex:1}} >
@@ -231,7 +236,22 @@ addComment =() =>{
   }
  
   
+renderAS = (item)=>{
 
+
+
+    return (<Layout content="flex-end" items="flex-end" row style={{marginTop:5, width:"100%"}}>
+      
+      <Layout  style={{alignSelf:"flex-end",padding:10, borderRadius:10, backgroundColor:"#d9d9d9"}}>
+        {item.item.CustomerUsername !=="" && (
+          <NativeBase.Text style={{fontSize:12, fontWeight:"bold"}}>{item.item.CustomerUsername}</NativeBase.Text>
+        )}
+    <NativeBase.Text style={{fontSize:12,textAlign:"left", color:"gray"}}>{item.item.anser}</NativeBase.Text>
+      </Layout>
+      
+    </Layout>)
+
+}
 }
 
 const styles = StyleSheet.create({
