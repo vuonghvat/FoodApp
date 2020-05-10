@@ -273,6 +273,7 @@ getProductDetails = ()=>{
     if(res){
 
      
+ console.log(res);
  
       const data = res.data;
   
@@ -604,6 +605,11 @@ renderReview=(data)=>{
     const  { product} = this.state;
     const Image = product?product.Image || "":"";
     const Price = product?product.Price || 0:0;
+    
+    const typeid = product?product.typeid || 0:0
+    if(typeid && typeid >0 )
+    var DiscountPrice =Price -  (Price * typeid / 100);
+    else DiscountPrice =undefined;
     const Description = product?product.Description || "":"";
     const view = product?product.view || "":"";
     const PartnerName = product?product.PartnerName || "":"";
@@ -635,9 +641,21 @@ renderReview=(data)=>{
           <NativeBase.Text style={{fontSize:20, fontWeight:"bold", marginVertical:5}}>
                 {Name}
                 </NativeBase.Text>
-                <NativeBase.Text style={{fontSize:18, marginVertical:5,opacity:0.5}}>
-                  {numeral(Price).format("0,0") +" ₫"}
-                </NativeBase.Text>
+                 <Layout row>
+            {DiscountPrice && ( <NativeBase.Text style={{
+                fontSize:12, color:Colors.primaryColor, fontWeight:"bold",marginEnd:10,
+                marginVertical:3
+              }}>{numeral(DiscountPrice).format("0,0")+" ₫"}</NativeBase.Text>)}
+                        <NativeBase.Text style={{
+                  
+                fontSize:DiscountPrice?10:12, 
+                color:DiscountPrice?"black":Colors.primaryColor,
+                fontWeight:DiscountPrice?undefined:"bold", 
+                opacity:DiscountPrice?0.4:1,
+                marginVertical:3,
+                textDecorationLine: DiscountPrice?'line-through': "none", textDecorationStyle: 'solid', alignSelf:"center"
+              }}>{numeral(Price).format("0,0")+" ₫"}</NativeBase.Text>
+            </Layout>
                 <Layout row>
                   <FastImage resizeMode="contain" source ={ImageAsset.TrackIcon} style={{ height:16, width:16, alignSelf:"center"}} />
                   <NativeBase.Text style={{ marginVertical:5,opacity:0.5, alignSelf:"center", fontSize:12}}>
@@ -953,7 +971,7 @@ if(res){
     
   }else{
     this.setState({isShowPopupQA:false,isLoading:false})
-    this.getProductDetails();
+    this.getQA()
   
   }
   

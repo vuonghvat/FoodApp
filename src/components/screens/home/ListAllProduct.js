@@ -152,7 +152,13 @@ getProducts = (CityID, type)=>{
  
   renderItem =()=>{
     const {products} = this.state;
+    
   return  products.map((e,index)=>{
+    const Price =e.Price || 0;
+    const typeid = e.typeid || 0
+    if(typeid && typeid >0 )
+    var DiscountPrice =Price -  (Price * typeid / 100);
+    else DiscountPrice =undefined;
       return (
         <TouchableWithoutFeedback 
         onPress={()=>{
@@ -171,10 +177,21 @@ getProducts = (CityID, type)=>{
              <NativeBase.Text   style={{fontSize:13, fontWeight:"bold"}}>
                {e.ItemName}
              </NativeBase.Text>
-             <NativeBase.Text  style={{fontSize:13, color:"red"}}>
-             {numeral(e.Price).format("0,0")+" ₫"}
-
-             </NativeBase.Text>
+             <Layout row>
+            {DiscountPrice && ( <NativeBase.Text style={{
+      fontSize:12, color:Colors.primaryColor, fontWeight:"bold",marginEnd:10,
+      marginVertical:3
+    }}>{numeral(DiscountPrice).format("0,0")+" ₫"}</NativeBase.Text>)}
+               <NativeBase.Text style={{
+         
+      fontSize:DiscountPrice?10:12, 
+      color:DiscountPrice?"black":Colors.primaryColor,
+      fontWeight:DiscountPrice?undefined:"bold", 
+      opacity:DiscountPrice?0.4:1,
+      marginVertical:3,
+      textDecorationLine: DiscountPrice?'line-through': "none", textDecorationStyle: 'solid', alignSelf:"center"
+    }}>{numeral(Price).format("0,0")+" ₫"}</NativeBase.Text>
+            </Layout>
              <NativeBase.Text style={{fontSize:13}}>
                {e.Description}
              </NativeBase.Text>

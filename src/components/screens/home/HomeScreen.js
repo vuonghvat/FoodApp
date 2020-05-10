@@ -186,7 +186,8 @@ getBanner =()=>{
    // console.log("banner", res,err);
     if(res){
       const banners = res.data;
-
+      console.log(res,"banner");
+      
       this.setState({banners})
        
     }
@@ -567,6 +568,16 @@ getCity =()=>{
 
   renderItem =(item)=>{
   // console.log(item);
+  // conditionid: "20"
+  // conditionname: "Tổng giá trị hóa đơn từ 200.000 vnd"
+  // typeid: "20"
+  // typename: "Giảm 20%"
+  //Price: 5000
+  const Price =item.item.Price || 0;
+  const typeid = item.item.typeid || 0
+  if(typeid && typeid >0 )
+  var DiscountPrice =Price -  (Price * typeid / 100);
+  else DiscountPrice =undefined;
 
     return (
       <TouchableWithoutFeedback onPress={()=>{
@@ -576,16 +587,24 @@ getCity =()=>{
        })
       }}>
         <View>
-      <Layout style={{height:height/5, width:height/6}} margin={[0,0,0,15]} radius={3} hidden>
+      <Layout style={{width:height/6}} margin={[0,0,0,15]} radius={3} hidden>
         <SmartImage source={ { uri: item.item.Image}} style={{height:90, width:"100%"}} />
         <Layout>
-          <NativeBase.Text style={{fontSize:13, fontWeight:"bold"}}>
+          <NativeBase.Text numberOfLines={2} ellipsizeMode="tail" style={{fontSize:13, fontWeight:"bold", height:50}}>
             {item.item.ItemName}
           </NativeBase.Text>
-    <NativeBase.Text style={{
-      fontSize:12, color:"black", opacity:0.4,
+            <Layout row>
+            {DiscountPrice && ( <NativeBase.Text style={{
+      fontSize:12, color:Colors.primaryColor, fontWeight:"bold",marginEnd:10,
       marginVertical:3
-    }}>{numeral(item.item.Price).format("0,0")+" ₫"}</NativeBase.Text>
+    }}>{numeral(DiscountPrice).format("0,0")+" ₫"}</NativeBase.Text>)}
+               <NativeBase.Text style={{
+         
+      fontSize:DiscountPrice?10:12, color:DiscountPrice?"black":Colors.primaryColor,fontWeight:DiscountPrice?undefined:"bold", opacity:DiscountPrice?0.4:1,
+      marginVertical:3,textDecorationLine: DiscountPrice?'line-through': "none", textDecorationStyle: 'solid', alignSelf:"center"
+    }}>{numeral(Price).format("0,0")+" ₫"}</NativeBase.Text>
+            </Layout>
+    
           <NativeBase.Text  numberOfLines={1}
            ellipsizeMode="tail"
            style={{fontSize:13,color:Colors.Black, opacity:0.3,}}>

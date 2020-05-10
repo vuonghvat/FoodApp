@@ -41,7 +41,7 @@ class LoginScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-    username:"vuong0978",
+   phone:"0967100365",
     password:"123456",
     isLoading:false
       
@@ -53,8 +53,8 @@ class LoginScreen extends Component {
   onSignIn=()=>{
     
     // const= useContext(AuthContext);t { signIn 
-    const  { username,password} =this.state;
-    if(username == ""){
+    const  { phone,password} =this.state;
+    if(phone == ""){
       Toast.show("Username cannot be empty!", Toast.LONG);
       return;
     }
@@ -63,7 +63,7 @@ class LoginScreen extends Component {
       return;
     }
     const data ={
-        username,
+      phone,
         password
     }
     this.setState({isLoading:true})
@@ -162,12 +162,12 @@ class LoginScreen extends Component {
              <Layout height={50} bgColor={Colors.white} style={{ elevation:2, paddingHorizontal:12}} radius={30} hidden margin={[20]}>
                  
                  <NativeBase.Input
-                 value={this.state.username}
-                 onChangeText ={(username)=>this.setState({username})}
+                 value={this.state.phone}
+                 onChangeText ={(phone)=>this.setState({phone})}
                  maxLength={12}
                   numberOfLines={1}
                   placeholderTextColor={"gray"}
-                  placeholder={"Tên tài khoản"}
+                  placeholder={"Số điện thoại"}
                  
                   style={{
                     
