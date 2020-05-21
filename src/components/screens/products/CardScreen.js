@@ -185,21 +185,14 @@ changeCheck =(index)=>{
 }
 renderItem=()=>{
     const {items} = this.state;
-    const a={
-        ItemName: "item 5",
-            amount: 5,
-            SourceOfItemsID: "sourceofitems0000001",
-            ItemID: "items000000000000006",
-            Summary: 5,
-            Image: "https://firebasestorage.googleapis.com/v0/b/foodapp-5c233.appspot.com/o/images%2Ffood4.jpg?alt=media&token=cead3aa7-4dbb-4735-8bb6-d966200e4e59",
-            Price: 5000,
-            StartTime: "2020-03-14T01:27:21.000Z",
-            EndTime: "2020-12-31T00:00:00.000Z",
-            Description: "mô tả",
-            FeeID: 0,
-            view: 6,
-    }
+    
     return items.map((e,index)=>{
+      const Price =e.Price || 0;
+      const typeid = e.typeid || 0
+      if(typeid && typeid >0 )
+      var DiscountPrice =Price -  (Price * typeid / 100);
+      else DiscountPrice =undefined;
+
         return (
             <TouchableWithoutFeedback>
                 <View style={{flexDirection:"row", marginTop:14}}>
@@ -213,7 +206,25 @@ renderItem=()=>{
 
         <NativeBase.Text style={{fontSize:13, fontWeight:"bold"}}>{e.ItemName}</NativeBase.Text>
         <NativeBase.Text style={{fontSize:12,}}>{e.Description}</NativeBase.Text>
-        <NativeBase.Text style={{color:Colors.primaryColor}}>{numeral(e.Price).format("0,0") +" ₫"}</NativeBase.Text>
+
+
+         <Layout row>
+            {DiscountPrice && ( <NativeBase.Text style={{
+      fontSize:12, color:Colors.primaryColor, fontWeight:"bold",marginEnd:10,
+      marginVertical:3
+    }}>{numeral(DiscountPrice).format("0,0")+" ₫"}</NativeBase.Text>)}
+               <NativeBase.Text style={{
+         
+      fontSize:DiscountPrice?10:12, 
+      color:DiscountPrice?"black":Colors.primaryColor,
+      fontWeight:DiscountPrice?undefined:"bold", 
+      opacity:DiscountPrice?0.4:1,
+      marginVertical:3,
+      textDecorationLine: DiscountPrice?'line-through': "none", textDecorationStyle: 'solid', alignSelf:"center"
+    }}>{numeral(Price).format("0,0")+" ₫"}</NativeBase.Text>
+            </Layout><NativeBase.Text style={{color:Colors.primaryColor}}>{numeral(e.Price).format("0,0") +" ₫"}</NativeBase.Text>
+
+
                         <Layout row style={{borderWidth:0.5, borderColor:"gray", marginVertical:5, marginHorizontal:1, alignSelf:"flex-start"}}>
                          <TouchableOpacity
                          onPress={()=>this.changeQuantity(-1,index)}

@@ -185,10 +185,14 @@ getBanner =()=>{
        
    // console.log("banner", res,err);
     if(res){
-      const banners = res.data;
-      console.log(res,"banner");
+      const data = res.data;
+      if(!data.err){
+        console.log(res,"banner");
+        this.setState({banners:data?data:[]})
+      }
       
-      this.setState({banners})
+      
+    
        
     }
       else{
