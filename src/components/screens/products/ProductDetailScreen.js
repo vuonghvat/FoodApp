@@ -351,6 +351,7 @@ renderQA=()=>{
     const traloi = e.traloi
     if(index < 2)
     return ( <TouchableOpacity onPress={()=>{
+      console.log(StaticUser.getCurrentUser(),"----------------------------------");
       this.props.navigation.navigate("QAScreen",{
         QA:e
       })
@@ -952,7 +953,7 @@ renderReview=(data)=>{
       return;
     }
     const data = {
-      CustomerID: product.CustomerID ,
+      CustomerID: StaticUser.getCurrentUser().CustomerID ,
       SourceOfItemsID: product.SourceOfItemsID,
       question,
     }

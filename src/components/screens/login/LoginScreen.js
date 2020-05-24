@@ -95,7 +95,7 @@ class LoginScreen extends Component {
              StaticUser.currentUser.email = user.CustomerEmail;
              StaticUser.currentUser.name = user.CustomerName;
              StaticUser.currentUser.CustomerID = user.CustomerID
-            // console.log(StaticUser.getCurrentUser(),"----------------------------------");
+             console.log(StaticUser.getCurrentUser(),"----------------------------------");
              
        
 

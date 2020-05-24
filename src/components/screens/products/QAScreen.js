@@ -120,10 +120,12 @@ addComment =() =>{
     console.log(this.props);
     
     const {params } = this.props.route;
+    console.log(StaticUser.getCurrentUser(),"----------------------------------");
+    
     const data ={
         CustomerID : StaticUser.getCurrentUser().CustomerID,
         anser: this.state.comment,
-         QnAID: this.state.QA.ID
+         QnAID: params.QA.cauhoi.ID
     }
  request((res,err)=>{
  

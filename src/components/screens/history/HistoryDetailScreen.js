@@ -53,41 +53,44 @@ class HistoryDetailScreen extends Component {
 
 
 componentDidMount(){
-    const {params} = this.props.route;
-    const OrderID = params?params.OrderID|| undefined:undefined
-  request((res,err)=>{
-      
-       
-    console.log("history detail", res,err);
-    if(res){
-      const data = res.data;
-     // console.log("-------",res,err);
-      if(data.err && data.err =="timeout"){
+    this.getDetails()
+}
+getDetails = ()=>{
+  const {params} = this.props.route;
+  const OrderID = params?params.OrderID|| undefined:undefined
+request((res,err)=>{
+    
      
-        this.setState({isLoading:false})
-        this.props.dispatch(loggedIn(false))
-        return;
-        
-      }else{
+  console.log("history detail", res,err);
+  if(res){
+    const data = res.data;
+   // console.log("-------",res,err);
+    if(data.err && data.err =="timeout"){
+   
+      this.setState({isLoading:false})
+      this.props.dispatch(loggedIn(false))
+      return;
       
-        const Partner = data.Partner || undefined;
-        const ListItems =data.ListItems || [];
-        this.setState({Partner,ListItems})
-      
-      }
-       
+    }else{
+    
+      const Partner = data.Partner || undefined;
+      const ListItems =data.ListItems || [];
+      this.setState({Partner,ListItems})
+    
     }
-      else{
-        Toast.show("Kiểm tra kết nối", Toast.LONG);
-        this.setState({...this.state,isLoading:false})
-      }
+     
+  }
+    else{
+      Toast.show("Kiểm tra kết nối", Toast.LONG);
+      this.setState({...this.state,isLoading:false})
+    }
 
-        
       
-      
-  
+    
+    
 
-  }).get(URL.UrlHistoryDetail+`${OrderID}`,null)
+
+}).get(URL.UrlHistoryDetail+`${OrderID}`,null)
 }
   render() {
    // data:
@@ -122,9 +125,8 @@ componentDidMount(){
         const PartnerEmail= Partner?Partner.PartnerEmail || "":""
         const PartnerPhone= Partner?Partner.PartnerPhone || "":""
         const PartnerDescription= Partner?Partner.PartnerDescription || "":""
-        const StatusID =  Partner?Partner.StatusID || "":""
-        
-
+        const order_status =  Partner?Partner.order_status || "":""
+      
 
     return (
       <Layout style={styles.container}>
@@ -202,11 +204,11 @@ componentDidMount(){
             Tình trạng:
             </NativeBase.Text>
             <NativeBase.Text style={{fontSize:13,textAlign:"right",fontWeight:"bold", maxHeight:2*height/3}}>
-            {this.getStatus(StatusID)}
+            {this.getStatus(order_status)}
             </NativeBase.Text>
             </Layout>
               <Layout row content="flex-end" items="flex-end">
-              {(StatusID == 6 || StatusID == 1)  && (
+              {(order_status == 6 || order_status == 1)  && (
                   <TouchableOpacity 
                   onPress={this.cancelOrder}
                   style={{alignSelf:"flex-end", marginTop:15}}>
@@ -270,15 +272,16 @@ componentDidMount(){
             const data = res.data;
            // console.log("-------",res,err);
             if(data.err && data.err =="timeout"){
-           
+             // this.get
               this.setState({isLoading:false})
+           
               this.props.dispatch(loggedIn(false))
               return;
               
             }else{
               if(data.status){
                 let {Partner} = this.state;
-                Partner.StatusID = 3;
+                Partner.order_status = 3;
                 this.setState({Partner})
                 Toast.show("Hủy thành công", Toast.LONG);
               }else{
