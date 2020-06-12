@@ -22,7 +22,7 @@ import {PagerTabIndicator, IndicatorViewPager, PagerTitleIndicator, PagerDotIndi
 import ImageAsset from "../../../assets/images/ImageAsset";
 const  height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
-import firebase from 'react-native-firebase';
+
 import AsyncStorageApp from "../../../utils/AsyncStorageApp";
 import Toolbar from "../../customizes/Toolbar";
 import StaticUser from "../../../utils/StaticUser";

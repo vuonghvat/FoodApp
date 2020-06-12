@@ -23,7 +23,8 @@ import FastImage from "react-native-fast-image"
 import ImageAsset from "../../../assets/images/ImageAsset";
 const  height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
-import firebase from 'react-native-firebase';
+
+import auth from '@react-native-firebase/auth';
 import Toolbar from "../../customizes/Toolbar";
 
 class VerifyNumberPhoneScreen extends Component {
@@ -47,7 +48,7 @@ onSend =()=>{
   
     if(!this.state.confirmResult && this.state.phoneNumber !=="")
     {
-        firebase.auth().signInWithPhoneNumber("+84"+this.state.phoneNumber)
+        auth().signInWithPhoneNumber("+84"+this.state.phoneNumber)
         .then(confirmResult =>{
           console.log(confirmResult);
           this.setState({confirmResult})

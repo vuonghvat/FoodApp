@@ -351,7 +351,7 @@ renderQA=()=>{
     const traloi = e.traloi
     if(index < 2)
     return ( <TouchableOpacity onPress={()=>{
-      console.log(StaticUser.getCurrentUser(),"----------------------------------");
+     
       this.props.navigation.navigate("QAScreen",{
         QA:e
       })

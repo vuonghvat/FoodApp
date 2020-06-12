@@ -23,7 +23,7 @@ import FastImage from "react-native-fast-image"
 import ImageAsset from "../../../assets/images/ImageAsset";
 const  height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
-import firebase from 'react-native-firebase';
+
 import Toolbar from "../../customizes/Toolbar";
 import URL from "../../../api/URL";
 import request from "../../../api/request"

@@ -169,7 +169,7 @@ getProductData = (CityID)=>{
   this.getProducts(CityID,"all");
  }
 async componentDidMount(){
-  console.log(StaticUser.getCurrentUser(),"----------------------------------");
+ 
   this.getBanner();
   this.getCity();
   this.getProductData(this.state.CityID);
