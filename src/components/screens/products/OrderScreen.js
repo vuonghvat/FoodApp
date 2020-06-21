@@ -289,7 +289,7 @@ getCurrentPosition = () => {
          onPress={()=>{
           this.setState({isShip: true})
          }} checked={this.state.isShip}/>
-          <NativeBase.Text style={{fontSize:13, marginLeft:15}}>Nhận hang tại địa chỉ</NativeBase.Text>
+          <NativeBase.Text style={{fontSize:13, marginLeft:15}}>Nhận hàng tại địa chỉ</NativeBase.Text>
           </Layout>)}
         
          <Layout height={100} radius={6} hidden bgColor={"white"} margin={[15]}>
@@ -422,12 +422,24 @@ getCurrentPosition = () => {
     )
   }
   onOrderPress = ()=>{
-//     const { star, comment,product} = this.state;
-//     if(star ==0){
-//       Toast.show("Vui lòng chọn Star Rating", Toast.LONG);
-//       return;
-//     }
-
+    Alert.alert(
+      '',
+      `Đơn hàng của bạn sẽ tự động bị huỷ nếu sao 30 phút kể từ thời gian đặt hàng thành công, bạn chưa nhận được đồ. Bạn có chắc chắn muốn đặt`,
+      [
+        {text: 'Có', onPress: () => {
+          this.orderAPI()
+        }},
+   
+        {text: 'Không', onPress: () => {
+         
+        }},
+      ],
+      { cancelable: false }
+    )
+    
+   
+  }
+  orderAPI = ()=>{
     const {items,partner} = this.state;
     let itemsClone = [...items];
     let orderDetail =[];

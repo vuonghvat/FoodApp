@@ -23,7 +23,7 @@ import ImageAsset from "../../../assets/images/ImageAsset";
 const  height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 
-
+import Toast from 'react-native-simple-toast';
 class FutureScreen extends Component {
   
 

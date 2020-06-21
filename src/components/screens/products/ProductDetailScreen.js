@@ -312,6 +312,13 @@ getProductDetails = ()=>{
 }
 onQuantityPress =(value)=>{
   let { quantity , product } = this.state;
+      if(product.Summary <0){
+        product.Summary =0  
+      }
+      // if(  product.Summary  == 0){
+      //   Toast.show("Sản phẩm hết hàng", Toast.LONG);
+      //   return;
+      // }
     if(value > 0 && product.Summary == 0)
     {
       Toast.show("Không thể đặt thêm", Toast.LONG);
@@ -417,8 +424,13 @@ renderReview=(data)=>{
 }
   addToCard =()=>{
     
-    const { product} = this.state;
-   
+    let { product} = this.state;
+     if(product.Summary <0) product.Summary =0;
+     if(product.Summary ==0 )
+     {
+      Toast.show("Không có hàng để thêm", Toast.LONG);
+       return;
+     }
     const data ={
       CustomerID:StaticUser.getCurrentUser().CustomerID,
       SourceOfItemsID:product.SourceOfItemsID,
@@ -531,7 +543,15 @@ renderReview=(data)=>{
   }
   onOrderPress =()=>{
   
-    const { product} = this.state;
+    let { product} = this.state;
+  
+    if(product.Summary <0){
+      product.Summary =0  
+    }
+    if(  product.Summary  == 0){
+      Toast.show("Sản phẩm hết hàng, không thể đặt", Toast.LONG);
+      return;
+    }
 
     let items =[];
     const item = {
@@ -623,7 +643,8 @@ renderReview=(data)=>{
     const like = product?product.like || 0:0;
     const Name = product?product.ItemName || "":"";
     const rate = product?product.rate || []:[];
-    const Summary = product?product.Summary || 0:0
+    let Summary = product?product.Summary || 0:0
+    if(Number(Summary) <0) Summary =0;
 
 
     

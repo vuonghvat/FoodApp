@@ -23,9 +23,11 @@ import FastImage from "react-native-fast-image"
 import ImageAsset from "../../../assets/images/ImageAsset";
 const  height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
-
+import Toast from 'react-native-simple-toast';
 import auth from '@react-native-firebase/auth';
 import Toolbar from "../../customizes/Toolbar";
+import request from "../../../api/request";
+import URL from "../../../api/URL";
 
 class VerifyNumberPhoneScreen extends Component {
   
@@ -43,40 +45,77 @@ class VerifyNumberPhoneScreen extends Component {
   }
  
   
-
-onSend =()=>{
-  
-    if(!this.state.confirmResult && this.state.phoneNumber !=="")
-    {
-        auth().signInWithPhoneNumber("+84"+this.state.phoneNumber)
-        .then(confirmResult =>{
-          console.log(confirmResult);
-          this.setState({confirmResult})
+phoneConfirm = ()=>{
+   
+  if(!this.state.confirmResult && this.state.phoneNumber !=="")
+  {
+      auth().signInWithPhoneNumber("+84"+this.state.phoneNumber)
+      .then(confirmResult =>{
+        console.log(confirmResult);
+        this.setState({confirmResult})
+        
+      })// save confirm result to use with the manual verification code)
+      .catch(error => {
+          console.log(error);
           
-        })// save confirm result to use with the manual verification code)
-        .catch(error => {
-            console.log(error);
+      });
+      return;
+  }
+  if(this.state.confirmResult){
+          this.state.confirmResult.confirm(this.state.verificationCode)
+          .then(user =>{
             
-        });
-        return;
-    }
-    if(this.state.confirmResult){
-            this.state.confirmResult.confirm(this.state.verificationCode)
-            .then(user =>{
-              
-                //alert("success")
-              this.props.navigation.navigate("SignupInfoScreen",{
-                  phoneNumber: this.state.phoneNumber
-              })
-                
+              //alert("success")
+            this.props.navigation.navigate("SignupInfoScreen",{
+                phoneNumber: this.state.phoneNumber
             })
-            .catch(error => {
-                alert("Invalid Code")
-                
-            });
-    }
+              
+          })
+          .catch(error => {
+       
+              Toast.show("Mã xác thực không chính xác. Vui lòng nhập lại!", Toast.LONG);
+          });
+  }
+}
+onSend =()=>{
  
+  this.phoneConfirm();
+   request((res,err)=>{
+      
+      
+      if(res){
+        console.log(res);
+      
+        const data = res.data;
+        if(data.errors){
+          const errors =  data.errors;
+          if(errors.length >0){
+         
+            Toast.show(errors[0].msg, Toast.LONG);
+            this.setState({...this.state,isLoading:false})
+          }
+          
+        }
+        if(data){
+          if(data.status == 1){
+      
+            Toast.show(data.msg, Toast.LONG);
+          }else{
+            
+          }
+    
+        }
+        
+      }else{
+        console.log(err);
+        this.setState({isLoading:false})
+        
+      }
 
+    }).get(URL.UrlCheckPhoneNumber+`0${this.state.phoneNumber}`,null)
+
+    
+   
 
  
 }
@@ -85,13 +124,13 @@ onSend =()=>{
      
    
      if(this.timesSend== 0 ){
-         alert("Thử lại sau 10 phút")
-
+     
+         Toast.show("Thử lại sau it phút", Toast.LONG);
          return;
      }
     
-
-        firebase.auth().signInWithPhoneNumber("+84"+this.state.phoneNumber)
+  
+       auth().signInWithPhoneNumber("+84"+this.state.phoneNumber)
         .then(confirmResult =>{
           console.log(confirmResult);
           this.setState({confirmResult})

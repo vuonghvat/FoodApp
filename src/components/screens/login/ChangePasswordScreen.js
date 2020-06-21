@@ -30,20 +30,16 @@ import request from "../../../api/request"
 import URL from "../../../api/URL";
 import ProgressDialog from "../../customizes/ProgressDialog";
 import Toast from 'react-native-simple-toast';
-class SignupInfoScreen extends Component {
+import StaticUser from "../../../utils/StaticUser";
+class ChangePasswordScreen extends Component {
   
 
   constructor(props) {
     super(props);
     this.state = {
- 
-      mail:"",
-      username:"",
-      pass:"",
-      pass2:"",
-      isError:false,
-      errorMessage: "",
-      isIncorrect:false,
+        newPassword:"",
+        reNewPassword:"",
+        oldPassword:"",
       isLoading:false
     };
    
@@ -51,50 +47,26 @@ class SignupInfoScreen extends Component {
   }
  
   
-  onSignUp =()=>{
+  onChangePassword =()=>{
    
     
-    
-   const  { params} = this.props.route;
-    const { mail, username,pass,pass2} = this.state;
-    const phone = params.phoneNumber;
-
-    if( username=="" || pass =="" || pass2 == ""){
-  
-      this.setState({
-        isError: true,
-        errorMessage:"Không thể để trống"
-      })
-      return;
+    const { oldPassword, newPassword, reNewPassword} = this.state;
+    if(oldPassword =="" || newPassword =="" || reNewPassword == ""){
+        
+        Toast.show("Các trường không được để trống!", Toast.LONG);
+        return;
+    }   
+    if(newPassword !== reNewPassword){
+        Toast.show("Mật khẩu không khớp", Toast.LONG);
+        return;
     }
-    console.log("run2");
-    if(pass !== "" && pass2 !=="" && pass !== pass2){
-      this.setState({
-        isIncorrect: true,
-        errorMessage:"Password incorrect"
-      })
-      return;
-    }
-  
-    this.setState({
-      isIncorrect:false,
-      isError:false,
-      isLoading:true
-    })
     
-    const data ={
-     
-      mail,
-      phone:"0"+phone,
-      username,
-      pass,
-      pass2
+    const data = {
+        oldPass:oldPassword,
+        newPass:newPassword,
+        rePass:reNewPassword,
+        id: StaticUser.getCurrentUser().CustomerID
     }
-   
-  
-    console.log("run3",data);
-    
-
     request((res,err)=>{
       
       
@@ -111,13 +83,13 @@ class SignupInfoScreen extends Component {
           }
           
         }
-        if(data){
-          if(data.affectedRows === 1){
-            Toast.show("Login successfully!", Toast.LONG);
-            this.setState({...this.state,isLoading:false})
-            this.props.navigation.navigate('LoginScreen')
-
-          }
+        if(data.type =="success"){
+            Toast.show("Thay đổi thành công!", Toast.LONG);
+  
+        }else{
+            console.log(data.msg[0]);
+            
+            Toast.show(data.msg[0], Toast.LONG);
         }
         
       }else{
@@ -126,10 +98,10 @@ class SignupInfoScreen extends Component {
         
       }
 
-    }).post(URL.UrlSignUp,data)
+    }).post(URL.UrlChangePassword,data)
 
     
-   
+    
 
   }
   render() {
@@ -156,89 +128,61 @@ class SignupInfoScreen extends Component {
         <NativeBase.Content
         contentContainerStyle={{paddingBottom:30}}
          style={{padding:20}}  >
-        <NativeBase.Text style={{color:Colors.primaryColor, fontSize:26, fontWeight:"bold", textAlign:"left"}}>Tạo tài khoản{"\n"}</NativeBase.Text>
+        <NativeBase.Text style={{color:Colors.primaryColor, fontSize:26, fontWeight:"bold", textAlign:"left"}}>Thay mật khẩu{"\n"}</NativeBase.Text>
           <Layout  flex={1}>
-          <Layout height={50} bgColor={Colors.white} style={{ elevation:2, paddingHorizontal:12}} radius={30} hidden margin={[20]}>
-              
-           <NativeBase.Input
-              value={this.state.mail}
-              onChangeText ={(mail)=>this.setState({mail})}
-              maxLength={32}
-               numberOfLines={1}
-               placeholderTextColor={"gray"}
-               placeholder={"Email"}
-              
-               style={{
-                 
-              }}/>
+       
           
-          </Layout>
-         
           <Layout height={50} bgColor={Colors.white} style={{ elevation:2, paddingHorizontal:12}} radius={30} hidden margin={[20]}>
               
               <NativeBase.Input
-              value={this.state.username}
-              onChangeText ={(username)=>this.setState({username})}
+                   secureTextEntry={true}
+              value={this.state.oldPassword}
+              onChangeText ={(oldPassword)=>this.setState({oldPassword})}
               maxLength={32}
                numberOfLines={1}
                placeholderTextColor={"gray"}
-               placeholder={"Tên người dùng"}
+               placeholder={"Mật khẩu cũ"}
               
                style={{
                  
               }}/>
           </Layout>
-          {this.state.username ==="" && this.state.isError && (  <NativeBase.Text style={{color:"red", fontSize:12, marginLeft:20}}>
-          {this.state.errorMessage}
-
-              </NativeBase.Text>)}
           <Layout height={50} bgColor={Colors.white} style={{ elevation:2, paddingHorizontal:12}} radius={30} hidden margin={[20]}>
               
               <NativeBase.Input
-              value={this.state.pass}
-              secureTextEntry ={true}
-              onChangeText ={(pass)=>this.setState({pass})}
+                   secureTextEntry={true}
+              value={this.state.newPassword}
+              onChangeText ={(newPassword)=>this.setState({newPassword})}
               maxLength={32}
                numberOfLines={1}
                placeholderTextColor={"gray"}
-               placeholder={"Mật khẩu"}
+               placeholder={"Mật khẩu mới"}
               
                style={{
                  
               }}/>
           </Layout>
-          {this.state.pass ==="" && this.state.isError && (  <NativeBase.Text style={{color:"red", fontSize:12, marginLeft:20}}>
-                {this.state.errorMessage}
-              </NativeBase.Text>)}
           <Layout height={50} bgColor={Colors.white} style={{ elevation:2, paddingHorizontal:12}} radius={30} hidden margin={[20]}>
               
               <NativeBase.Input
-              value={this.state.pass2}
-              onChangeText ={(pass2)=>this.setState({pass2})}
+                   secureTextEntry={true}
+              value={this.state.reNewPassword}
+              onChangeText ={(reNewPassword)=>this.setState({reNewPassword})}
               maxLength={32}
                numberOfLines={1}
-               secureTextEntry ={true}
                placeholderTextColor={"gray"}
-               placeholder={"Nhập lại mật khẩu"}
+               placeholder={"Xác nhận mật khẩu"}
               
                style={{
                  
               }}/>
           </Layout>
-          {this.state.pass2 ==="" && this.state.isError && (  <NativeBase.Text style={{color:"red", fontSize:12, marginLeft:20}}>
-                {this.state.errorMessage}
-              </NativeBase.Text>)}
-              {this.state.isIncorrect && (  <NativeBase.Text style={{color:"red", fontSize:12, marginLeft:20}}>
-                {"Password incorrect"}
-              </NativeBase.Text>)}
-          
-           <Layout bgColor={Colors.white} style={{ elevation:2}} radius={30} hidden margin={[20]}>
-              <NativeBase.Button onPress={this.onSignUp} style={{backgroundColor:Colors.primaryColor, justifyContent:"center"}}>
-               <NativeBase.Text uppercase={false}>{"Đăng ký"}</NativeBase.Text>
+          </Layout>
+          <Layout bgColor={Colors.white} style={{ elevation:2}} radius={30} hidden margin={[20]}>
+              <NativeBase.Button onPress={this.onChangePassword} style={{backgroundColor:Colors.primaryColor, justifyContent:"center"}}>
+               <NativeBase.Text uppercase={false}>{"Xác nhận"}</NativeBase.Text>
               </NativeBase.Button>
            </Layout>
-          </Layout>
-        
            </NativeBase.Content>
            
               <ProgressDialog isShow={this.state.isLoading}/>
@@ -259,4 +203,4 @@ const mapStateToProps = state =>{
     isLogged : state.appReducer.isLogged
   }
 }
-export default connect(mapStateToProps)(SignupInfoScreen);
+export default connect(mapStateToProps)(ChangePasswordScreen);

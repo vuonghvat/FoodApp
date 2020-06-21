@@ -185,13 +185,15 @@ changeCheck =(index)=>{
 }
 renderItem=()=>{
     const {items} = this.state;
-    
+ 
+      
     return items.map((e,index)=>{
       const Price =e.Price || 0;
       const typeid = e.typeid || 0
       if(typeid && typeid >0 )
       var DiscountPrice =Price -  (Price * typeid / 100);
       else DiscountPrice =undefined;
+      console.log("itemmmmmmmmmmmmmmmmmmmmmmmmmm", e);
 
         return (
             <TouchableWithoutFeedback>

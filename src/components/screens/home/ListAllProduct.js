@@ -23,7 +23,7 @@ import {PagerTabIndicator, IndicatorViewPager, PagerTitleIndicator, PagerDotIndi
 import ImageAsset from "../../../assets/images/ImageAsset";
 const  height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
-
+import Toast from 'react-native-simple-toast';
 import URL from "../../../api/URL";
 import request from "../../../api/request";
 import StaticUser from "../../../utils/StaticUser";

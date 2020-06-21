@@ -22,7 +22,7 @@ import {PagerTabIndicator, IndicatorViewPager, PagerTitleIndicator, PagerDotIndi
 import ImageAsset from "../../../assets/images/ImageAsset";
 const  height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
-
+import Toast from 'react-native-simple-toast';
 import AsyncStorageApp from "../../../utils/AsyncStorageApp";
 import Toolbar from "../../customizes/Toolbar";
 import StaticUser from "../../../utils/StaticUser";
@@ -62,16 +62,25 @@ class MoreScreen extends Component {
               {StaticUser.getCurrentUser().userName}
             </NativeBase.Text>
           </Layout>
+          <Layout margin ={[20,0,10,0]}>
+            <TouchableOpacity
+           onPress={this.changePassword}><NativeBase.Text style={{fontWeight:"bold"}}>Thay đổi mật khẩu</NativeBase.Text>
+          </TouchableOpacity>
+            </Layout>
             <Layout margin ={[20,0,10,0]}>
             <TouchableOpacity
            onPress={()=>{
             AsyncStorageApp.clearAll("user_login")
             this.props.dispatch(loggedIn(false));
-          }}><NativeBase.Text style={{fontWeight:"bold"}}>Log out</NativeBase.Text></TouchableOpacity>
+          }}><NativeBase.Text style={{fontWeight:"bold"}}>Đăng xuất</NativeBase.Text>
+          </TouchableOpacity>
             </Layout>
              </Layout>
       </Layout>
     );
+  }
+  changePassword =()=>{
+    this.props.navigation.navigate("ChangePasswordScreen")
   }
 }
 

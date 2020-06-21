@@ -40,6 +40,7 @@ import StaticUser from "../../../utils/StaticUser";
 import HistoryDetailScreen from "../history/HistoryDetailScreen";
 import ListAllProduct from "../home/ListAllProduct";
 import QAScreen from "../products/QAScreen";
+import ChangePasswordScreen from "../login/ChangePasswordScreen";
 
 
 
@@ -174,6 +175,7 @@ componentDidMount(){
               <Stack.Screen name="HistoryDetailScreen" component= {HistoryDetailScreen}/>
               <Stack.Screen name="ListAllProduct" component= {ListAllProduct}/>
               <Stack.Screen name="QAScreen" component= {QAScreen}/>
+              <Stack.Screen name="ChangePasswordScreen" component= {ChangePasswordScreen}/> 
             </Stack.Navigator>
             
                 
