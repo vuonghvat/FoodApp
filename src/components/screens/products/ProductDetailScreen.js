@@ -567,7 +567,11 @@ renderReview=(data)=>{
       "Summary":product.Summary,
       "amount":this.state.quantity,
       "isChecked":true,
-      "view":product.view
+      "view":product.view,
+      conditionid: product.conditionid,
+      Price: product.Price,
+      defaultprice: product.defaultprice,
+      typeid: product.typeid
    }
      items.push(item)
 
@@ -644,6 +648,9 @@ renderReview=(data)=>{
     const Name = product?product.ItemName || "":"";
     const rate = product?product.rate || []:[];
     let Summary = product?product.Summary || 0:0
+ 
+    const conditionid = product?product.conditionid || 0 : 0
+
     if(Number(Summary) <0) Summary =0;
 
 
@@ -678,6 +685,11 @@ renderReview=(data)=>{
                 textDecorationLine: DiscountPrice?'line-through': "none", textDecorationStyle: 'solid', alignSelf:"center"
               }}>{numeral(Price).format("0,0")+" ₫"}</NativeBase.Text>
             </Layout>
+              <Layout>
+                <NativeBase.Text style={{fontSize:13, color:"red"}}>
+                  {`Giảm ${typeid}% cho tổng giá trị đơn hàng từ ${numeral(conditionid).format("0,00")}`}
+                </NativeBase.Text>
+              </Layout>
                 <Layout row>
                   <FastImage resizeMode="contain" source ={ImageAsset.TrackIcon} style={{ height:16, width:16, alignSelf:"center"}} />
                   <NativeBase.Text style={{ marginVertical:5,opacity:0.5, alignSelf:"center", fontSize:12}}>

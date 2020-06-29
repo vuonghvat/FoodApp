@@ -79,7 +79,9 @@ phoneConfirm = ()=>{
 }
 onSend =()=>{
  
-  this.phoneConfirm();
+//   this.props.navigation.navigate("SignupInfoScreen",{
+//     phoneNumber: this.state.phoneNumber
+// })  this.phoneConfirm();
    request((res,err)=>{
       
       
@@ -99,9 +101,9 @@ onSend =()=>{
         if(data){
           if(data.status == 1){
       
-            Toast.show(data.msg, Toast.LONG);
+            Toast.show("Số điện thoại đã được đăng ký", Toast.LONG);
           }else{
-            
+            this.phoneConfirm();
           }
     
         }
@@ -125,7 +127,7 @@ onSend =()=>{
    
      if(this.timesSend== 0 ){
      
-         Toast.show("Thử lại sau it phút", Toast.LONG);
+         Toast.show("Mã xác nhận đã được gửi lại", Toast.LONG);
          return;
      }
     

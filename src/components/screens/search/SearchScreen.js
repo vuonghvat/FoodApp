@@ -140,11 +140,13 @@ class SearchScreen extends Component {
   renderItem =()=>{
     const {products} = this.state;
   return  products.map((e,index)=>{
-    const Price =e.Price || 0;
-    const typeid = e.typeid || 0
-    if(typeid && typeid >0 )
-    var DiscountPrice =Price -  (Price * typeid / 100);
-    else DiscountPrice =undefined;
+    const Price =e.defaultprice || 0;
+    const DiscountPrice = e.Price || 0;
+    // const Price =e.Price || 0;
+    // const typeid = e.typeid || 0
+    // if(typeid && typeid >0 )
+    // var DiscountPrice =Price -  (Price * typeid / 100);
+    // else DiscountPrice =undefined;
       return (
         <TouchableWithoutFeedback 
         onPress={()=>{

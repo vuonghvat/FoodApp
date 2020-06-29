@@ -94,6 +94,7 @@ class CardScreen extends Component {
       isShowPopupReview:false,
       page:1,
       TotalPrice:0,
+      DiscountTotalPrice:0,
       isCheckAll:false,
       partner:undefined
 
@@ -139,10 +140,13 @@ getAllItems =(page) =>{
      
      const  partner =data.Partner
      let TotalPrice =0;
-      if(data.ListItems)
-       TotalPrice =  data.ListItems.length >0 ?this.totalHandle(data.ListItems):0;
-  
-      this.setState({items:data.ListItems,partner,isLoading:false, TotalPrice:TotalPrice})
+     let DiscountTotalPrice =0;
+      if(data.ListItems){
+        TotalPrice =  data.ListItems.length >0 ?this.totalHandle(data.ListItems,partner).TotalPrice:0;
+        DiscountTotalPrice =data.ListItems.length >0 ?this.totalHandle(data.ListItems,partner).DiscountTotalPrice:0;
+      }
+
+      this.setState({items:data.ListItems,partner,isLoading:false, TotalPrice,DiscountTotalPrice})
     
     }
     
@@ -162,37 +166,62 @@ getAllItems =(page) =>{
  //SourceOfItemsID/:limit/:offset
 }).get(URL.UrlGetItemCard +`${params.CustomerID}`,null)
 }
-totalHandle=(data)=>{
+totalHandle=(data,partner)=>{
+ 
+  const conditionid = partner? partner.conditionid || 0: 0;
+  const typeid = partner?partner.typeid || 0:0;
     let TotalPrice =0;
+    let DiscountTotalPrice = 0;
     data.forEach(element => {
-        TotalPrice += Number(element.Price) * Number(element.amount)
+      if(element.isChecked){
+        TotalPrice += Number(element.Price) * Number(element.amount);
+        DiscountTotalPrice += Number(element.Price) * Number(element.amount);
+      }
+     
     });
-    return TotalPrice;
+  
+    if(DiscountTotalPrice >= Number(conditionid)){
+      DiscountTotalPrice =TotalPrice -  (TotalPrice * Number(typeid)/100 )
+    }else{
+      DiscountTotalPrice = 0
+    }
+ 
+    
+    
+
+    return {
+      TotalPrice,
+      DiscountTotalPrice
+    };
 }
 onStarRatingPress = () => {
     
 };
-changeCheck =(index)=>{
-  let { items} = this.state;
+changeCheck =  (index)=>{
+  let { items,partner} = this.state;
 
     if(items[index].isChecked){
       items[index].isChecked =false
     }else{
       items[index].isChecked =true
     }
-    this.setState({items})
-
+    const {TotalPrice, DiscountTotalPrice} =  this.totalHandle(items,partner); 
+   
+   this.setState({items,DiscountTotalPrice,TotalPrice})
+ 
 }
 renderItem=()=>{
     const {items} = this.state;
  
       
     return items.map((e,index)=>{
-      const Price =e.Price || 0;
-      const typeid = e.typeid || 0
-      if(typeid && typeid >0 )
-      var DiscountPrice =Price -  (Price * typeid / 100);
-      else DiscountPrice =undefined;
+      const Price =e.defaultprice || 0;
+      const DiscountPrice = e.Price || 0;
+      // const Price =e.Price || 0;
+      // const typeid = e.typeid || 0
+      // if(typeid && typeid >0 )
+      // var DiscountPrice =Price -  (Price * typeid / 100);
+      // else DiscountPrice =undefined;
       console.log("itemmmmmmmmmmmmmmmmmmmmmmmmmm", e);
 
         return (
@@ -224,7 +253,8 @@ renderItem=()=>{
       marginVertical:3,
       textDecorationLine: DiscountPrice?'line-through': "none", textDecorationStyle: 'solid', alignSelf:"center"
     }}>{numeral(Price).format("0,0")+" ₫"}</NativeBase.Text>
-            </Layout><NativeBase.Text style={{color:Colors.primaryColor}}>{numeral(e.Price).format("0,0") +" ₫"}</NativeBase.Text>
+            </Layout>
+            
 
 
                         <Layout row style={{borderWidth:0.5, borderColor:"gray", marginVertical:5, marginHorizontal:1, alignSelf:"flex-start"}}>
@@ -248,18 +278,18 @@ renderItem=()=>{
 
 
 changeQuantity =(value,index)=>{
-    let { items } = this.state;
+    let { items,partner } = this.state;
     if(value <0 && items[index].amount <= 1){
       value = 0;
     }
     items[index].amount +=  value;
-    const TotalPrice = this.totalHandle(items);
-    this.setState({items,TotalPrice})
+    const {TotalPrice, DiscountTotalPrice} = this.totalHandle(items,partner);
+    this.setState({items,TotalPrice,DiscountTotalPrice})
   
   }
   
   checkAll =()=>{
-    let { items, isCheckAll} = this.state;
+    let { items, isCheckAll,partner} = this.state;
    
       var cloneData = JSON.parse(JSON.stringify(items));
     
@@ -272,8 +302,11 @@ changeQuantity =(value,index)=>{
     })
     
   
+    const {TotalPrice, DiscountTotalPrice} =  this.totalHandle(cloneData,partner); 
+   
+    this.setState({items:cloneData,DiscountTotalPrice,TotalPrice,isCheckAll: false})
 
-    this.setState({items:cloneData, isCheckAll: false});
+  
   }else{
    cloneData.map(e=>{
      
@@ -282,8 +315,10 @@ changeQuantity =(value,index)=>{
   
   })
  
-  
-  this.setState({items:cloneData, isCheckAll: true});
+  const {TotalPrice, DiscountTotalPrice} =  this.totalHandle(cloneData,partner); 
+   
+  this.setState({items:cloneData,DiscountTotalPrice,TotalPrice,isCheckAll: true})
+ 
   }
 
   }
@@ -322,8 +357,13 @@ changeQuantity =(value,index)=>{
           <NativeBase.Text style={{fontSize:13, marginLeft:15}}>Chọn tất cả</NativeBase.Text></Layout>
           <Layout row >
          <NativeBase.Text style={{marginLeft:10}}>Tổng tiền:</NativeBase.Text>
-        <NativeBase.Text style={{fontWeight:"bold"}}>{numeral(this.state.TotalPrice).format("0,0") +" ₫"}</NativeBase.Text>
+        <NativeBase.Text style={{fontWeight:"bold", textDecorationLine: this.state.DiscountTotalPrice >0? 'line-through':'none', textDecorationStyle: 'solid',}}>{numeral(this.state.TotalPrice).format("0,0") +" ₫"}</NativeBase.Text>
          </Layout>
+         {this.state.DiscountTotalPrice >0 && ( <Layout row >
+         <NativeBase.Text style={{marginLeft:10}}>Tổng tiền khuyến mãi:</NativeBase.Text>
+        <NativeBase.Text style={{fontWeight:"bold"}}>{numeral(this.state.DiscountTotalPrice).format("0,0") +" ₫"}</NativeBase.Text>
+         </Layout>)}
+        
           </Layout>
         
           <Layout row>
@@ -356,7 +396,7 @@ changeQuantity =(value,index)=>{
   }
 
   onOrderPress = ()=>{
-    let { items} = this.state;
+    let { items,DiscountTotalPrice} = this.state;
    // let orderItems = [];
     if(this.checkHasProduct()){
       items = items.filter(e=>{
@@ -368,7 +408,8 @@ changeQuantity =(value,index)=>{
    
 
       this.props.navigation.navigate("OrderScreen",{
-        partner : this.state.partner
+        partner : this.state.partner,
+        DiscountTotalPrice
       });
       return;
     }

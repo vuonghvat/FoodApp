@@ -577,11 +577,13 @@ getCity =()=>{
   // typeid: "20"
   // typename: "Giảm 20%"
   //Price: 5000
-  const Price =item.item.Price || 0;
-  const typeid = item.item.typeid || 0
-  if(typeid && typeid >0 )
-  var DiscountPrice =Price -  (Price * typeid / 100);
-  else DiscountPrice =undefined;
+  const Price =item.item.defaultprice || 0;
+  const DiscountPrice = item.item.Price || 0;
+
+  // const typeid = item.item.typeid || 0
+  // if(typeid && typeid >0 )
+  // var DiscountPrice =Price -  (Price * typeid / 100);
+  // else DiscountPrice =undefined;
 
     return (
       <TouchableWithoutFeedback onPress={()=>{

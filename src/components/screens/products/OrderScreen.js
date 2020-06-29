@@ -66,7 +66,8 @@ class OrderScreen extends Component {
       isFromDetail:false,
       partner:undefined,
       address:"",
-      listRecommend:[]
+      listRecommend:[],
+      DiscountTotalPrice: 0
    
     };
    
@@ -131,6 +132,8 @@ class OrderScreen extends Component {
 // view: 2
 // isChecked: true
       return items.map((e,index)=>{
+        const Price =e.defaultprice || 0;
+        const DiscountPrice = e.Price || 0;
         return (
             <TouchableWithoutFeedback>
             <View style={{flexDirection:"row", marginTop:14}}>
@@ -143,7 +146,22 @@ class OrderScreen extends Component {
     
     <NativeBase.Text  numberOfLines={1} ellipsizeMode="tail" style={{fontSize:13, fontWeight:"bold"}}>{e.ItemName}</NativeBase.Text>
     <NativeBase.Text numberOfLines={1} ellipsizeMode="tail" style={{fontSize:12,}}>{e.Description}</NativeBase.Text>
-    <NativeBase.Text style={{color:Colors.primaryColor}}>{numeral(e.Price).format("0,0")+" ₫"}</NativeBase.Text>
+
+    <Layout row>
+            {DiscountPrice && ( <NativeBase.Text style={{
+      fontSize:12, color:Colors.primaryColor, fontWeight:"bold",marginEnd:10,
+      marginVertical:3
+    }}>{numeral(DiscountPrice).format("0,0")+" ₫"}</NativeBase.Text>)}
+               <NativeBase.Text style={{
+         
+      fontSize:DiscountPrice?10:12, 
+      color:DiscountPrice?"black":Colors.primaryColor,
+      fontWeight:DiscountPrice?undefined:"bold", 
+      opacity:DiscountPrice?0.4:1,
+      marginVertical:3,
+      textDecorationLine: DiscountPrice?'line-through': "none", textDecorationStyle: 'solid', alignSelf:"center"
+    }}>{numeral(Price).format("0,0")+" ₫"}</NativeBase.Text>
+            </Layout>
                    
                 </Layout>
                
@@ -158,7 +176,10 @@ class OrderScreen extends Component {
                 if(items.length>1){
                     items.splice(index, 1);
                     AsyncStorageApp.storeData("order_product",JSON.stringify(items));
-                    this.setState({items})
+                     const {TotalPrice, DiscountTotalPrice } = this.totalHandle(items, this.state.partner );
+         
+      
+                    this.setState({items,TotalPrice,DiscountTotalPrice})
                 }else{
                         this.props.navigation.goBack();
                 }
@@ -188,29 +209,50 @@ if(params){
   }
   if(params.partner){
    
-    
-    this.setState({partner:params.partner})
+    AsyncStorageApp._retrieveData("order_product",res=>{
+      if(res){
+          const {TotalPrice, DiscountTotalPrice } = this.totalHandle(res, params.partner );
+          this.setState({items:res, TotalPrice,DiscountTotalPrice, partner:params.partner})
+      }
+      
+  })
+   
   }
 }
 
 
 //isFromDetail
-AsyncStorageApp._retrieveData("order_product",res=>{
-    if(res){
-        const TotalPrice = this.totalHandle(res);
-        this.setState({items:res, TotalPrice})
-    }
-    
-})
-}
-totalHandle=(data)=>{
-    let TotalPrice =0;
-    data.forEach(element => {
-        TotalPrice += Number(element.Price) * Number(element.amount)
-    });
-    return TotalPrice;
-}
 
+}
+totalHandle=(data,partner)=>{
+  console.log(partner);
+  
+  const conditionid = partner? partner.conditionid || 0: 0;
+  const typeid = partner?partner.typeid || 0:0;
+    let TotalPrice =0;
+    let DiscountTotalPrice = 0;
+    data.forEach(element => {
+      if(element.isChecked){
+        TotalPrice += Number(element.Price) * Number(element.amount);
+        DiscountTotalPrice += Number(element.Price) * Number(element.amount);
+      }
+     
+    });
+  
+    if(DiscountTotalPrice >= Number(conditionid)){
+      DiscountTotalPrice =TotalPrice -  (TotalPrice * Number(typeid)/100 )
+    }else{
+      DiscountTotalPrice = 0
+    }
+ 
+    
+    
+
+    return {
+      TotalPrice,
+      DiscountTotalPrice
+    };
+}
 getCurrentPosition = () => {
   Geolocation.getCurrentPosition(info => {
       // this.setLocation(info)
@@ -365,8 +407,8 @@ getCurrentPosition = () => {
 
      
           <Layout row >
-         <NativeBase.Text style={{marginLeft:10}}>Tổng tiền:</NativeBase.Text>
-        <NativeBase.Text style={{fontWeight:"bold"}}>{numeral(this.state.TotalPrice).format("0,0")+" ₫"}</NativeBase.Text>
+         <NativeBase.Text style={{marginLeft:10}}>Tổng tiền cần thanh toán:</NativeBase.Text>
+        <NativeBase.Text style={{fontWeight:"bold"}}>{numeral(this.state.DiscountTotalPrice).format("0,0")+" ₫"}</NativeBase.Text>
          </Layout>
           </Layout>
         
@@ -440,7 +482,7 @@ getCurrentPosition = () => {
    
   }
   orderAPI = ()=>{
-    const {items,partner} = this.state;
+    const {items,partner,DiscountTotalPrice} = this.state;
     let itemsClone = [...items];
     let orderDetail =[];
     console.log(partner);
@@ -450,7 +492,7 @@ getCurrentPosition = () => {
       let product = {
         SourceOfItemsID:e.SourceOfItemsID,
         Total:e.amount,
-        Price:e.Price,
+        Price:DiscountTotalPrice,
         Ship:1,
         Description:e.Description
       

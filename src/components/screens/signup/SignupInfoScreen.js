@@ -83,7 +83,6 @@ class SignupInfoScreen extends Component {
     })
     
     const data ={
-     
       mail,
       phone:"0"+phone,
       username,
@@ -158,21 +157,7 @@ class SignupInfoScreen extends Component {
          style={{padding:20}}  >
         <NativeBase.Text style={{color:Colors.primaryColor, fontSize:26, fontWeight:"bold", textAlign:"left"}}>Tạo tài khoản{"\n"}</NativeBase.Text>
           <Layout  flex={1}>
-          <Layout height={50} bgColor={Colors.white} style={{ elevation:2, paddingHorizontal:12}} radius={30} hidden margin={[20]}>
-              
-           <NativeBase.Input
-              value={this.state.mail}
-              onChangeText ={(mail)=>this.setState({mail})}
-              maxLength={32}
-               numberOfLines={1}
-               placeholderTextColor={"gray"}
-               placeholder={"Email"}
-              
-               style={{
-                 
-              }}/>
-          
-          </Layout>
+         
          
           <Layout height={50} bgColor={Colors.white} style={{ elevation:2, paddingHorizontal:12}} radius={30} hidden margin={[20]}>
               
@@ -231,12 +216,27 @@ class SignupInfoScreen extends Component {
               {this.state.isIncorrect && (  <NativeBase.Text style={{color:"red", fontSize:12, marginLeft:20}}>
                 {"Password incorrect"}
               </NativeBase.Text>)}
-          
+              <Layout height={50} bgColor={Colors.white} style={{ elevation:2, paddingHorizontal:12}} radius={30} hidden margin={[20]}>
+              
+              <NativeBase.Input
+                 value={this.state.mail}
+                 onChangeText ={(mail)=>this.setState({mail})}
+                 maxLength={32}
+                  numberOfLines={1}
+                  placeholderTextColor={"gray"}
+                  placeholder={"Email"}
+                 
+                  style={{
+                    
+                 }}/>
+             
+             </Layout>
            <Layout bgColor={Colors.white} style={{ elevation:2}} radius={30} hidden margin={[20]}>
               <NativeBase.Button onPress={this.onSignUp} style={{backgroundColor:Colors.primaryColor, justifyContent:"center"}}>
                <NativeBase.Text uppercase={false}>{"Đăng ký"}</NativeBase.Text>
               </NativeBase.Button>
            </Layout>
+          
           </Layout>
         
            </NativeBase.Content>
