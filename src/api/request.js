@@ -15,7 +15,7 @@ axios.defaults.withCredentials = true;
 const request = callback => {
 
   return {
-    get: (url, data, options = {}) =>
+    get: (url, data, options = {timeout:4000}) =>
       reqf(methods.GET, url, data, (options = {}), callback),
     post: (url, data, options) =>
       reqf(methods.POST, url, data, options, callback),
@@ -42,22 +42,17 @@ const reqf = (method, url, data, options, callback) => {
       url: url,
       data:  ContentType === 'application/x-www-form-urlencoded'?qs.stringify(data):data,
       headers: headers,
+      timeout: 15000,
       options,
     });
-   // alert(ContentType)
-    console.log({
-      method: method,
-      url: url,
-      data:  ContentType === 'application/x-www-form-urlencoded'?qs.stringify(data):data,
-      headers: headers,
-      options,
-    });
+  
+    console.log(headers);
     
 
     req
       .then(resp => {
-        console.log(resp,"resssssssss");
-        
+      
+
         const data = resp.data;
        
         if(data.err && data.err =="timeout"){
@@ -66,7 +61,7 @@ const reqf = (method, url, data, options, callback) => {
         callback(resp, undefined);
       })
       .catch(err => {
-        console.log(err,"errrr");
+    
         callback(undefined, err);
       });
   });

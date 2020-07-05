@@ -187,7 +187,7 @@ getBanner =()=>{
     if(res){
       const data = res.data;
       if(!data.err){
-        console.log(res,"banner");
+       // console.log(res,"banner");
         this.setState({banners:data?data:[]})
       }
       
@@ -210,8 +210,10 @@ getBanner =()=>{
 getProducts = (CityID, type)=>{
 
   this.setState({isLoading:true})
+  console.log(URL.UrlGetProducts+`${CityID}/all/${type}/all/10/0`);
   request((res,err)=>{
       
+     // console.log(res,err);
       
        
         
@@ -260,6 +262,8 @@ getProducts = (CityID, type)=>{
   
 
   }).get(URL.UrlGetProducts+`${CityID}/all/${type}/all/10/0`,null)
+
+  
 
 }
 getCity =()=>{

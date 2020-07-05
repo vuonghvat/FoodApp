@@ -100,7 +100,9 @@ class ProductDetailScreen extends Component {
       isRating:false,
       listRecommend:[],
       qas:[],
-      question:""
+      question:"",
+      rootSumary: 0 
+
 
     
 
@@ -289,7 +291,8 @@ getProductDetails = ()=>{
           CustomerID:data.CustomerID
          }
         this.hasRating(dataCheck);
-        this.setState({product:data})
+        const rootSumary = data.Summary;
+        this.setState({product:data,rootSumary})
       
       }
       
@@ -312,6 +315,7 @@ getProductDetails = ()=>{
 }
 onQuantityPress =(value)=>{
   let { quantity , product } = this.state;
+
       if(product.Summary <0){
         product.Summary =0  
       }
@@ -543,12 +547,12 @@ renderReview=(data)=>{
   }
   onOrderPress =()=>{
   
-    let { product} = this.state;
+    let { product,rootSumary } = this.state;
   
-    if(product.Summary <0){
-      product.Summary =0  
-    }
-    if(  product.Summary  == 0){
+    // if(product.Summary <0){
+    //   product.Summary = 0  
+    // }
+    if(  rootSumary  <= 0){
       Toast.show("Sản phẩm hết hàng, không thể đặt", Toast.LONG);
       return;
     }

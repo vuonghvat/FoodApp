@@ -110,7 +110,7 @@ getProducts = (CityID, type)=>{
         
     
   
-    }).get(URL.UrlGetProducts+`${CityID}/all/${type}/all/1000/0`,null)
+    }).get(URL.UrlGetProducts+`${CityID}/all/${type}/all/100/0`,null)
   
   }
   render() {

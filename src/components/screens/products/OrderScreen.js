@@ -466,7 +466,7 @@ getCurrentPosition = () => {
   onOrderPress = ()=>{
     Alert.alert(
       '',
-      `Đơn hàng của bạn sẽ tự động bị huỷ nếu sao 30 phút kể từ thời gian đặt hàng thành công, bạn chưa nhận được đồ. Bạn có chắc chắn muốn đặt`,
+      `Đơn hàng của bạn sẽ tự động bị huỷ nếu sau 30 phút kể từ thời gian đặt hàng thành công, bạn chưa nhận được đồ. Bạn có chắc chắn muốn đặt`,
       [
         {text: 'Có', onPress: () => {
           this.orderAPI()
