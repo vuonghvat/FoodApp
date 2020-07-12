@@ -580,7 +580,7 @@ renderReview=(data)=>{
      items.push(item)
 
     AsyncStorageApp.storeData("order_product",JSON.stringify(items));
-    //console.log("ITEMS ORDER: ", items);
+    console.log("ITEMS ORDER: ", items);
  
     const partner ={
      
@@ -596,6 +596,8 @@ renderReview=(data)=>{
         CityID: product.CityID,
         ship:  product.ship,
         StatusID: product.StatusID,
+        conditionid: product.conditionid,
+        typeid:product.typeid
 
     }
     this.props.navigation.navigate("OrderScreen", {
@@ -605,40 +607,15 @@ renderReview=(data)=>{
   }
   render() {
 
-    let a ={
-      itemName: "item 7",
-      SourceOfItemsID: "sourceofitems0000004",
-      ItemID: "items000000000000008",
-      Summary: 100,
-      Image: "https://firebasestorage.googleapis.com/v0/b/foodapp-5c233.appspot.com/o/images%2Ffood2.jpg?alt=media&token=3008e35c-cc1f-4751-92e8-c16811a199d2",
-      Price: 50000,
-      StartTime: "2020-03-14T01:27:21.000Z",
-      EndTime: "2020-12-31T00:00:00.000Z",
-      Description: "ergdsfgsdfgsdfgdsfgdsfgdsfg",
-      FeeID: null,
-      view: null,
-      PartnerID: "partner0000000000001",
-      CustomerID: "customer000000000002",
-      PartnerName: "NaBe shop1",
-      PartnerAddress: "Xom Ca, Nguyen Xa, Bac Tu Liem",
-      PartnerEmail: "tdhoang96@gmail.com",
-      PartnerPhone: 957463887,
-      PartnerDescription: "chuyen buon ban giay the thao",
-      PartnerImage: "https://www.uplevo.com/img/designbox/hinh-nen-dien-thoai-dep-simpson.jpg",
-      PartnerTypeID: 0,
-      CityID: 1,
-      StatusID: 1,
-      star: null,
-      like: null
-    }
     const  { product} = this.state;
     const Image = product?product.Image || "":"";
-    const Price = product?product.Price || 0:0;
+
     
     const typeid = product?product.typeid || 0:0
-    if(typeid && typeid >0 )
-    var DiscountPrice =Price -  (Price * typeid / 100);
-    else DiscountPrice =undefined;
+    
+    const Price =product?product.defaultprice || 0:0;
+    const DiscountPrice = product?product.Price || undefined:undefined;
+
     const Description = product?product.Description || "":"";
     const view = product?product.view || "":"";
     const PartnerName = product?product.PartnerName || "":"";
@@ -652,7 +629,7 @@ renderReview=(data)=>{
     const Name = product?product.ItemName || "":"";
     const rate = product?product.rate || []:[];
     let Summary = product?product.Summary || 0:0
- 
+
     const conditionid = product?product.conditionid || 0 : 0
 
     if(Number(Summary) <0) Summary =0;
@@ -674,25 +651,23 @@ renderReview=(data)=>{
           <NativeBase.Text style={{fontSize:20, fontWeight:"bold", marginVertical:5}}>
                 {Name}
                 </NativeBase.Text>
-                 <Layout row>
+                <Layout row>
             {DiscountPrice && ( <NativeBase.Text style={{
-                fontSize:12, color:Colors.primaryColor, fontWeight:"bold",marginEnd:10,
-                marginVertical:3
-              }}>{numeral(DiscountPrice).format("0,0")+" ₫"}</NativeBase.Text>)}
-                        <NativeBase.Text style={{
-                  
-                fontSize:DiscountPrice?10:12, 
-                color:DiscountPrice?"black":Colors.primaryColor,
-                fontWeight:DiscountPrice?undefined:"bold", 
-                opacity:DiscountPrice?0.4:1,
-                marginVertical:3,
-                textDecorationLine: DiscountPrice?'line-through': "none", textDecorationStyle: 'solid', alignSelf:"center"
-              }}>{numeral(Price).format("0,0")+" ₫"}</NativeBase.Text>
+      fontSize:12, color:Colors.primaryColor, fontWeight:"bold",marginEnd:10,
+      marginVertical:3
+    }}>{numeral(DiscountPrice).format("0,0")+" ₫"}</NativeBase.Text>)}
+               <NativeBase.Text style={{
+         
+      fontSize:DiscountPrice?10:12, color:DiscountPrice?"black":Colors.primaryColor,fontWeight:DiscountPrice?undefined:"bold", opacity:DiscountPrice?0.4:1,
+      marginVertical:3,textDecorationLine: DiscountPrice?'line-through': "none", textDecorationStyle: 'solid', alignSelf:"center"
+    }}>{numeral(Price).format("0,0")+" ₫"}</NativeBase.Text>
             </Layout>
+    
               <Layout>
-                <NativeBase.Text style={{fontSize:13, color:"red"}}>
+                {typeid >0 && ( <NativeBase.Text style={{fontSize:13, color:"red"}}>
                   {`Giảm ${typeid}% cho tổng giá trị đơn hàng từ ${numeral(conditionid).format("0,00")}`}
-                </NativeBase.Text>
+                </NativeBase.Text>)}
+               
               </Layout>
                 <Layout row>
                   <FastImage resizeMode="contain" source ={ImageAsset.TrackIcon} style={{ height:16, width:16, alignSelf:"center"}} />
@@ -753,7 +728,7 @@ renderReview=(data)=>{
       
             <Layout>
               <NativeBase.Text style={{fontWeight:"bold"}}>Mô tả </NativeBase.Text>
-              <NativeBase.Text style={{margin:5, textAlign:"left", fontSize:13}}> Ngon bổ và rẻ vô cùng{"\n"}  maiz o mại zoo</NativeBase.Text>
+                 <NativeBase.Text style={{margin:5, textAlign:"left", fontSize:13}}> {Description}</NativeBase.Text>
             </Layout>
            </Layout>
            <Layout>

@@ -103,7 +103,8 @@ class HomeScreen extends Component {
       allProducts:[],
       banners:[],
       address:"",
-      isShowModalLocation:true
+      isShowModalLocation:false,
+      // isInitModal: true
 
    
     };
@@ -128,6 +129,7 @@ renderModalLocation =()=>{
       onPress={()=>{
         this.setState({isShowModalLocation:false, CityID:1,location:"Hà Nội"})
         this.getProductData(1);
+        AsyncStorageApp.storeData("location",JSON.stringify(1))
       }}
        style={{backgroundColor:Colors.primaryColor, marginTop:10, padding:4}}>
       <NativeBase.Text style={{textAlign:"center", color:"white", fontWeight:"bold"}}>
@@ -138,6 +140,7 @@ renderModalLocation =()=>{
          onPress={()=>{
           this.setState({isShowModalLocation:false, CityID:2,location:"Hồ Chí Minh"})
           this.getProductData(2);
+          AsyncStorageApp.storeData("location",JSON.stringify(2))
         }}
        style={{backgroundColor:Colors.primaryColor, marginTop:10, padding:4}}>
       <NativeBase.Text style={{textAlign:"center", color:"white", fontWeight:"bold"}}>
@@ -146,8 +149,9 @@ renderModalLocation =()=>{
       </TouchableOpacity>
       <TouchableOpacity
          onPress={()=>{
-          this.setState({isShowModalLocation:false, CityID:2,location:"Đà Nẵng"})
+          this.setState({isShowModalLocation:false, CityID:3,location:"Đà Nẵng"})
           this.getProductData(2);
+          AsyncStorageApp.storeData("location",JSON.stringify(3))
         }}
        style={{backgroundColor:Colors.primaryColor, marginTop:10, padding:4}}>
       <NativeBase.Text style={{textAlign:"center", color:"white", fontWeight:"bold"}}>
@@ -169,10 +173,18 @@ getProductData = (CityID)=>{
   this.getProducts(CityID,"all");
  }
 async componentDidMount(){
- 
+  
+  AsyncStorageApp._retrieveData("location",res=>{
+    if(res){
+      this.getProductData(res);
+      this.setState({isShowModalLocation:false,CityID :res  })
+    }else{
+      this.setState({isShowModalLocation:true})
+    }
+  })
   this.getBanner();
   this.getCity();
-  this.getProductData(this.state.CityID);
+
 
  
 
@@ -575,7 +587,7 @@ getCity =()=>{
 
 
   renderItem =(item)=>{
-  // console.log(item);
+
   // conditionid: "20"
   // conditionname: "Tổng giá trị hóa đơn từ 200.000 vnd"
   // typeid: "20"

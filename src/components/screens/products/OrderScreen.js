@@ -49,6 +49,7 @@ import StarRating from "react-native-star-rating";
 import CustomModal from "../../customizes/CustomModal";
 import StaticUser from "../../../utils/StaticUser";
 import Geolocation from '@react-native-community/geolocation';
+import RNAndroidLocationEnabler from "react-native-android-location-enabler";
 
 class OrderScreen extends Component {
   
@@ -202,7 +203,7 @@ componentDidMount(){
 //  this.getAllItems(this.state.page);
 this.getListRecommend()
 const { params} = this.props.route;
-console.log(this.props);
+
 if(params){
   if(params.isFromDetail){
     this.setState({isFromDetail : params.isFromDetail})
@@ -211,7 +212,10 @@ if(params){
    
     AsyncStorageApp._retrieveData("order_product",res=>{
       if(res){
+        console.log("ress",res,params.partner);
+        
           const {TotalPrice, DiscountTotalPrice } = this.totalHandle(res, params.partner );
+
           this.setState({items:res, TotalPrice,DiscountTotalPrice, partner:params.partner})
       }
       
@@ -229,16 +233,19 @@ totalHandle=(data,partner)=>{
   
   const conditionid = partner? partner.conditionid || 0: 0;
   const typeid = partner?partner.typeid || 0:0;
+
     let TotalPrice =0;
     let DiscountTotalPrice = 0;
+
     data.forEach(element => {
-      if(element.isChecked){
+     
         TotalPrice += Number(element.Price) * Number(element.amount);
         DiscountTotalPrice += Number(element.Price) * Number(element.amount);
-      }
+      
      
     });
-  
+   
+    
     if(DiscountTotalPrice >= Number(conditionid)){
       DiscountTotalPrice =TotalPrice -  (TotalPrice * Number(typeid)/100 )
     }else{
@@ -247,7 +254,7 @@ totalHandle=(data,partner)=>{
  
     
     
-
+    console.log("TotalPrice",TotalPrice,DiscountTotalPrice);
     return {
       TotalPrice,
       DiscountTotalPrice
@@ -263,7 +270,7 @@ getCurrentPosition = () => {
       };
       
       Geocoder.geocodePosition(NY).then(res => {
-        console.log(res);
+        console.log("res",res);
         this.setState({address: res[0].formattedAddress})
         
       })
@@ -274,8 +281,9 @@ getCurrentPosition = () => {
           console.log('error', error);
           if (Platform.ios !== 'ios') {
               console.log('error', error);
-              RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({ interval: 1500, fastInterval: 1500 })
+              RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({ interval: 200, fastInterval: 1500 })
                   .then(data => {
+                    console.log('data', data);
                      this.getCurrentPosition();
                   }).catch(err => {
                   });
@@ -408,7 +416,7 @@ getCurrentPosition = () => {
      
           <Layout row >
          <NativeBase.Text style={{marginLeft:10}}>Tổng tiền cần thanh toán:</NativeBase.Text>
-        <NativeBase.Text style={{fontWeight:"bold"}}>{numeral(this.state.DiscountTotalPrice).format("0,0")+" ₫"}</NativeBase.Text>
+        <NativeBase.Text style={{fontWeight:"bold"}}>{ this.state.DiscountTotalPrice !== 0 ?numeral(this.state.DiscountTotalPrice).format("0,0")+" ₫":numeral(this.state.TotalPrice).format("0,0")+" ₫"}</NativeBase.Text>
          </Layout>
           </Layout>
         
@@ -430,6 +438,8 @@ getCurrentPosition = () => {
     </Layout>)
   }
   renderItem =(item)=>{
+    const Price =item.item.defaultprice || 0;
+    const DiscountPrice = item.item.Price || 0;
     return (
       <TouchableWithoutFeedback onPress={()=>{
         console.log(this.props);
@@ -446,15 +456,17 @@ getCurrentPosition = () => {
           <NativeBase.Text style={{fontSize:13, fontWeight:"bold"}}>
             {item.item.ItemName}
           </NativeBase.Text>
-    <NativeBase.Text style={{
-      fontSize:12, color:"black", opacity:0.4,
+          <Layout row>
+            {DiscountPrice && ( <NativeBase.Text style={{
+      fontSize:12, color:Colors.primaryColor, fontWeight:"bold",marginEnd:10,
       marginVertical:3
-    }}>{numeral(item.item.Price).format("0,0")+" ₫"}</NativeBase.Text>
-          <NativeBase.Text  numberOfLines={1}
-           ellipsizeMode="tail"
-           style={{fontSize:13,color:Colors.Black, opacity:0.3,}}>
-            {item.item.address}
-          </NativeBase.Text>
+    }}>{numeral(DiscountPrice).format("0,0")+" ₫"}</NativeBase.Text>)}
+               <NativeBase.Text style={{
+         
+      fontSize:DiscountPrice?10:12, color:DiscountPrice?"black":Colors.primaryColor,fontWeight:DiscountPrice?undefined:"bold", opacity:DiscountPrice?0.4:1,
+      marginVertical:3,textDecorationLine: DiscountPrice?'line-through': "none", textDecorationStyle: 'solid', alignSelf:"center"
+    }}>{numeral(Price).format("0,0")+" ₫"}</NativeBase.Text>
+            </Layout>
         
         </Layout>
       </Layout>

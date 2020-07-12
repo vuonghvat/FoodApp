@@ -61,7 +61,12 @@ phoneConfirm = ()=>{
       });
       return;
   }
-  if(this.state.confirmResult){
+  if(this.state.confirmResult  ){
+      if(!this.state.verificationCode) 
+      {
+        Toast.show("Vui lòng nhập mã xác thực", Toast.LONG);
+        return;
+      }
           this.state.confirmResult.confirm(this.state.verificationCode)
           .then(user =>{
             
@@ -81,7 +86,7 @@ onSend =()=>{
  
 //   this.props.navigation.navigate("SignupInfoScreen",{
 //     phoneNumber: this.state.phoneNumber
-// })  this.phoneConfirm();
+//  this.phoneConfirm();
    request((res,err)=>{
       
       

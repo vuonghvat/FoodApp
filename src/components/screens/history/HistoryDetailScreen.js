@@ -34,6 +34,8 @@ import Toolbar from "../../customizes/Toolbar";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import SmartImage from "../../customizes/SmartImage";
 import moment from "moment";
+import { NavigationActions, StackActions } from 'react-navigation';
+ 
 
 class HistoryDetailScreen extends Component {
   
@@ -250,8 +252,7 @@ request((res,err)=>{
     }
   }
   cancelOrder =()=>{
-
-
+    
     Alert.alert(
       '',
       `Bạn có chắc chắn muốn hủy đơn hàng này không?`,
@@ -263,7 +264,8 @@ request((res,err)=>{
         {text: 'Xác nhận', onPress: () => {
           const {params} = this.props.route;
           const OrderID = params?params.OrderID|| undefined:undefined
-      
+          console.log(URL.UrlCancelOrder+`${OrderID}`);
+          
         request((res,err)=>{
             
              
@@ -283,7 +285,10 @@ request((res,err)=>{
                 let {Partner} = this.state;
                 Partner.order_status = 3;
                 this.setState({Partner})
-                Toast.show("Hủy thành công", Toast.LONG);
+                Toast.show("Bạn đã hủy thành công", Toast.LONG);
+                this.props.navigation.replace("TabScreen");
+
+       
               }else{
                 Toast.show("Hủy không thành công", Toast.LONG);
               }

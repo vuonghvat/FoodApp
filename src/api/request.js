@@ -46,7 +46,7 @@ const reqf = (method, url, data, options, callback) => {
       options,
     });
   
-    console.log(headers);
+   // console.log(headers);
     
 
     req
