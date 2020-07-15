@@ -92,7 +92,7 @@ class ProductDetailScreen extends Component {
     this.state = {
       product:undefined,
       isLoading:false,
-      quantity:1,
+      quantity:0,
       isShowPopupReview:false,
       isShowPopupQA:false,
       star:0,
@@ -610,7 +610,7 @@ renderReview=(data)=>{
     const  { product} = this.state;
     const Image = product?product.Image || "":"";
 
-    
+  
     const typeid = product?product.typeid || 0:0
     
     const Price =product?product.defaultprice || 0:0;
@@ -650,6 +650,9 @@ renderReview=(data)=>{
 
           <NativeBase.Text style={{fontSize:20, fontWeight:"bold", marginVertical:5}}>
                 {Name}
+                </NativeBase.Text>
+                <NativeBase.Text style={{fontSize:15, marginVertical:5}}>
+                {PartnerName}
                 </NativeBase.Text>
                 <Layout row>
             {DiscountPrice && ( <NativeBase.Text style={{
