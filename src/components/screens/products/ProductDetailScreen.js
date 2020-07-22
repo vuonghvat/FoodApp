@@ -226,7 +226,7 @@ hasRating =(data) =>{
 
  request((res,err)=>{
  
-  //console.log("-----",URL.UrlCheckHasRating,res,err);
+  console.log("-----",URL.UrlCheckHasRating,res,err,data);
   if(res){
 
    
@@ -288,7 +288,7 @@ getProductDetails = ()=>{
       }else{
         const dataCheck =  {
           SourceOfItemsID:data.SourceOfItemsID,
-          CustomerID:data.CustomerID
+          CustomerID:StaticUser.getCurrentUser().CustomerID
          }
         this.hasRating(dataCheck);
         const rootSumary = data.Summary;
@@ -428,12 +428,16 @@ renderReview=(data)=>{
 }
   addToCard =()=>{
     
-    let { product} = this.state;
+    let { product,quantity} = this.state;
      if(product.Summary <0) product.Summary =0;
      if(product.Summary ==0 )
      {
       Toast.show("Không có hàng để thêm", Toast.LONG);
        return;
+     }
+     if(quantity ==0 ){
+      Toast.show("Vui lòng chọn số lượng", Toast.LONG);
+      return;
      }
     const data ={
       CustomerID:StaticUser.getCurrentUser().CustomerID,
@@ -547,7 +551,7 @@ renderReview=(data)=>{
   }
   onOrderPress =()=>{
   
-    let { product,rootSumary } = this.state;
+    let { product,rootSumary,quantity } = this.state;
   
     // if(product.Summary <0){
     //   product.Summary = 0  
@@ -557,7 +561,12 @@ renderReview=(data)=>{
       return;
     }
 
+    if(quantity ==0 ){
+      Toast.show("Vui lòng chọn số lượng", Toast.LONG);
+      return;
+     }
     let items =[];
+
     const item = {
       "Description":product.Description,
       "EndTime":product.EndTime,
@@ -597,7 +606,8 @@ renderReview=(data)=>{
         ship:  product.ship,
         StatusID: product.StatusID,
         conditionid: product.conditionid,
-        typeid:product.typeid
+        typeid:product.typeid,
+        promotionid:product.promotionid 
 
     }
     this.props.navigation.navigate("OrderScreen", {
@@ -628,7 +638,8 @@ renderReview=(data)=>{
     const like = product?product.like || 0:0;
     const Name = product?product.ItemName || "":"";
     const rate = product?product.rate || []:[];
-    let Summary = product?product.Summary || 0:0
+    let Summary = product?product.Summary || 0:0;
+
 
     const conditionid = product?product.conditionid || 0 : 0
 

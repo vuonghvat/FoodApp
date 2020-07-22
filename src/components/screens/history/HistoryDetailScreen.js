@@ -46,7 +46,9 @@ class HistoryDetailScreen extends Component {
       data: [],
       isLoading:false,
       Partner:undefined,
-      ListItems:[]
+      ListItems:[],
+      TotalPrice:0,
+      DiscountTotalPrice:0
       
     };
 
@@ -77,7 +79,11 @@ request((res,err)=>{
     
       const Partner = data.Partner || undefined;
       const ListItems =data.ListItems || [];
-      this.setState({Partner,ListItems})
+      
+      const TotalPrice =this.totalHandle(ListItems,Partner).TotalPrice
+      const DiscountTotalPrice =this.totalHandle(ListItems,Partner).DiscountTotalPrice
+      console.log(this.totalHandle(ListItems,Partner));
+      this.setState({Partner,ListItems,DiscountTotalPrice,TotalPrice})
     
     }
      
@@ -93,6 +99,35 @@ request((res,err)=>{
 
 
 }).get(URL.UrlHistoryDetail+`${OrderID}`,null)
+}
+totalHandle=(ListItems,partner)=>{
+ 
+  const conditionid = partner? partner.conditionid || 0: 0;
+  const typeid = partner?partner.typeid || 0:0;
+    let TotalPrice =0;
+    let DiscountTotalPrice = 0;
+    console.log(ListItems);
+    ListItems.forEach(element => {
+  
+        TotalPrice += Number(element.price) * Number(element.total);
+        DiscountTotalPrice += Number(element.price) * Number(element.total);
+
+     
+    });
+  
+    if(DiscountTotalPrice >= Number(conditionid)){
+      DiscountTotalPrice =TotalPrice -  (TotalPrice * Number(typeid)/100 )
+    }else{
+      DiscountTotalPrice = 0
+    }
+ 
+    
+    
+
+    return {
+      TotalPrice,
+      DiscountTotalPrice
+    };
 }
   render() {
    // data:
@@ -201,6 +236,17 @@ request((res,err)=>{
             <NativeBase.Text style={{fontWeight:"bold"}}>
             Thông tin đơn hàng:
             </NativeBase.Text>
+            <Layout row margin={[10]}>
+            <NativeBase.Text style={{fontSize:13, flex:1}}>
+            Tổng tiền:
+            </NativeBase.Text> 
+            <NativeBase.Text style={{fontSize:13,textAlign:"right",fontWeight:"bold", maxHeight:2*height/3}}>
+            { this.state.DiscountTotalPrice !== 0 ?
+          numeral(this.state.DiscountTotalPrice).format("0,0")+" ₫"
+          :
+          numeral(this.state.TotalPrice).format("0,0")+" ₫"}
+            </NativeBase.Text>
+            </Layout>
             <Layout row margin={[10]}>
             <NativeBase.Text style={{fontSize:13, flex:1}}>
             Tình trạng:

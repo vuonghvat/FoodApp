@@ -411,13 +411,30 @@ getCurrentPosition = () => {
           </Layout>
         </NativeBase.Content>
         <Layout row style={{padding:15, backgroundColor:"#f3f3f3"}}>
-          <Layout flex={1} content={"center"} items ="center">
+         
 
-     
-          <Layout row >
-         <NativeBase.Text style={{marginLeft:10}}>Tổng tiền cần thanh toán:</NativeBase.Text>
-        <NativeBase.Text style={{fontWeight:"bold"}}>{ this.state.DiscountTotalPrice !== 0 ?numeral(this.state.DiscountTotalPrice).format("0,0")+" ₫":numeral(this.state.TotalPrice).format("0,0")+" ₫"}</NativeBase.Text>
+
+       
+       
+          <Layout row  flex={1}>
+       
+         <NativeBase.Text style={{marginLeft:0}}>Tổng tiền:   </NativeBase.Text>
+      <Layout>
+       
+         {this.state.DiscountTotalPrice > 0 && (<NativeBase.Text style={{fontWeight:"bold", textDecorationLine:"line-through"}}>
+         
+         { numeral(this.state.TotalPrice).format("0,0")+" ₫"}
+        </NativeBase.Text>) }
+        
+        <NativeBase.Text style={{fontWeight:"bold"}}>
+          { this.state.DiscountTotalPrice !== 0 ?
+          numeral(this.state.DiscountTotalPrice).format("0,0")+" ₫"
+          :
+          numeral(this.state.TotalPrice).format("0,0")+" ₫"}
+        </NativeBase.Text>
+       
          </Layout>
+
           </Layout>
         
           <Layout row>
@@ -494,9 +511,10 @@ getCurrentPosition = () => {
    
   }
   orderAPI = ()=>{
-    const {items,partner,DiscountTotalPrice} = this.state;
+    const {items,partner,DiscountTotalPrice, TotalPrice} = this.state;
     let itemsClone = [...items];
     let orderDetail =[];
+    const promotionid = partner.promotionid || ""
     console.log(partner);
     
     itemsClone.forEach(e=>{
@@ -504,7 +522,7 @@ getCurrentPosition = () => {
       let product = {
         SourceOfItemsID:e.SourceOfItemsID,
         Total:e.amount,
-        Price:DiscountTotalPrice,
+        Price:DiscountTotalPrice ==0?TotalPrice :DiscountTotalPrice ,
         Ship:1,
         Description:e.Description
       
@@ -518,7 +536,8 @@ getCurrentPosition = () => {
         Ship:this.state.isShip?1:0,
         shipAddress:this.state.address,
         orderDetail:orderDetail,
-        PartnerID:partner.PartnerID
+        PartnerID:partner.PartnerID,
+        promotionid
 
     }
     this.setState({isLoading:true})

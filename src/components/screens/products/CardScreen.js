@@ -126,7 +126,7 @@ getAllItems =(page) =>{
   this.setState({...this.state,isLoading:false})
   if(res){
 
-   
+    console.log(res);
    
     const data = res.data;
 
