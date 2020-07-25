@@ -929,7 +929,7 @@ renderReview=(data)=>{
         return;
       }
       const data = {
-        CustomerID: product.CustomerID ,
+        CustomerID: StaticUser.getCurrentUser().CustomerID ,
         SourceOfItemsID: product.SourceOfItemsID,
         Rate: star,
         Comment: comment
@@ -939,7 +939,7 @@ renderReview=(data)=>{
      request((res,err)=>{
  // console.log("-----",URL.UrlCreateReview,res,err);
   if(res){
-
+      console.log(res);
     const data = res.data;
     if(data.err && data.err =="timeout"){
   

@@ -245,13 +245,13 @@ totalHandle=(data,partner)=>{
      
     });
    
-    
-    if(DiscountTotalPrice >= Number(conditionid)){
+  
+    if( typeid !==0 && DiscountTotalPrice >= Number(conditionid)){
       DiscountTotalPrice =TotalPrice -  (TotalPrice * Number(typeid)/100 )
     }else{
       DiscountTotalPrice = 0
     }
- 
+    console.log('hahah',DiscountTotalPrice,TotalPrice,Number(conditionid));
     
     
     console.log("TotalPrice",TotalPrice,DiscountTotalPrice);

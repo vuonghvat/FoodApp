@@ -180,12 +180,12 @@ totalHandle=(data,partner)=>{
      
     });
   
-    if(DiscountTotalPrice >= Number(conditionid)){
+    
+    if( typeid !==0 && DiscountTotalPrice >= Number(conditionid)){
       DiscountTotalPrice =TotalPrice -  (TotalPrice * Number(typeid)/100 )
     }else{
       DiscountTotalPrice = 0
     }
- 
     
     
 

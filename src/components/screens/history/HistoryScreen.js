@@ -50,9 +50,13 @@ class HistoryScreen extends Component {
     console.log(props);
     
     if(props.isUpdate){
-    
-      this.getHistory()
-      this.props.dispatch(updateScreen(false))
+      try{
+        this.getHistory()
+        this.props.dispatch(updateScreen(false))
+      }catch(e){
+
+      }
+
     }
   }
 componentDidMount(){
