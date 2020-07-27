@@ -83,6 +83,7 @@ import SmartImage from "../../customizes/SmartImage";
 import StarRating from "react-native-star-rating";
 import CustomModal from "../../customizes/CustomModal";
 import StaticUser from "../../../utils/StaticUser";
+import moment from "moment";
 
 class ProductDetailScreen extends Component {
   
@@ -390,8 +391,10 @@ renderQA=()=>{
  
 }
 renderReview=(data)=>{
-
+  console.log("data review", data);
   return data.map((e,index)=>{
+    const CreateDate = e.CreateDate
+    
     if(index < 2)
     return ( <Layout bgColor="white" style={{elevation:4, padding:8, marginTop:10}}>
     <Layout row> 
@@ -403,7 +406,7 @@ renderReview=(data)=>{
    <StarRating
        starStyle={{}}
        disabled={false}
-       maxStars={5}
+       maxStars={5} 
        rating={e.rate}
        starSize={13}
        fullStarColor={"#eed816"}
@@ -414,7 +417,7 @@ renderReview=(data)=>{
    </Layout>
  <Layout flex={1}>
  <NativeBase.Text style={{fontSize:12, textAlign:"right"}}>
-     {"10/20/2020"}
+     {moment(CreateDate).format('DD/MM/YYYY')}
    </NativeBase.Text>
  </Layout>
 

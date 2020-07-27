@@ -82,6 +82,7 @@ import SmartImage from "../../customizes/SmartImage";
 import StarRating from "react-native-star-rating";
 import CustomModal from "../../customizes/CustomModal";
 import StaticUser from "../../../utils/StaticUser";
+import moment from "moment";
 
 class ReviewScreen extends Component {
   
@@ -163,7 +164,8 @@ renderReview =()=>{
     const {data} = this.state;
 
   return data.map((e,index)=>{
-    
+    const CreateDate = e.CreateDate
+ 
     return ( <Layout bgColor="white" style={{elevation:4, padding:8, marginTop:10}}>
     <Layout row> 
  <Layout flex={1}>
@@ -185,7 +187,7 @@ renderReview =()=>{
    </Layout>
  <Layout flex={1}>
  <NativeBase.Text style={{fontSize:12, textAlign:"right"}}>
-     {"10/20/2020"}
+ {moment(CreateDate).format('DD/MM/YYYY')}
    </NativeBase.Text>
  </Layout>
 
