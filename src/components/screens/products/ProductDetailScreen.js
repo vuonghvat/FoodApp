@@ -394,12 +394,14 @@ renderReview=(data)=>{
   console.log("data review", data);
   return data.map((e,index)=>{
     const CreateDate = e.CreateDate
+    const CustomerUsername  = e.CustomerUsername ;
+   // console.log(e);
     
     if(index < 2)
     return ( <Layout bgColor="white" style={{elevation:4, padding:8, marginTop:10}}>
     <Layout row> 
  <Layout flex={1}>
-  <NativeBase.Text style={{flex:1, fontSize:13}} >{e.CustomerName}</NativeBase.Text>
+  <NativeBase.Text style={{flex:1, fontSize:13}} >{CustomerUsername}</NativeBase.Text>
  </Layout>
 
    <Layout flex={1} content="center" items ="center">
@@ -1035,7 +1037,7 @@ if(res){
             <NativeBase.Text style={{fontSize:18, fontWeight:"bold"}}>
               Đánh giá
             </NativeBase.Text>
-    <NativeBase.Text style={{fontSize:13}}>{StaticUser.getCurrentUser().name}</NativeBase.Text>
+    <NativeBase.Text style={{fontSize:13}}>{StaticUser.getCurrentUser().userName}</NativeBase.Text>
           </View>
         </View>
         <View style={{ alignItems: "center", padding: 10 }}>

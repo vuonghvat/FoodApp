@@ -165,11 +165,11 @@ renderReview =()=>{
 
   return data.map((e,index)=>{
     const CreateDate = e.CreateDate
- 
+    const CustomerUsername  = e.CustomerUsername ;
     return ( <Layout bgColor="white" style={{elevation:4, padding:8, marginTop:10}}>
     <Layout row> 
  <Layout flex={1}>
-  <NativeBase.Text style={{flex:1, fontSize:13}} >{e.CustomerName}</NativeBase.Text>
+  <NativeBase.Text style={{flex:1, fontSize:13}} >{CustomerUsername}</NativeBase.Text>
  </Layout>
 
    <Layout flex={1} content="center" items ="center">
