@@ -1,4 +1,4 @@
-const Url = "http://34.92.167.188:4000/"
+const Url = "http://34.96.135.150:4000/"
  class URL {
     static UrlSignUp = Url+ "user";
     static UrlSignIn = Url+"signin";

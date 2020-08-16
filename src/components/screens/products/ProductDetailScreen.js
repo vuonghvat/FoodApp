@@ -371,7 +371,7 @@ renderQA=()=>{
       <Layout bgColor="white" style={{elevation:4, padding:8, marginTop:10}}>
       <Layout>
 
-        <NativeBase.Text style={{fontSize:13, fontWeight:"bold"}}>{cauhoi.CustomerName}</NativeBase.Text>
+        <NativeBase.Text style={{fontSize:13, fontWeight:"bold"}}>{cauhoi.CustomerUsername}</NativeBase.Text>
   <NativeBase.Text style={{fontSize:12,marginTop:5}}>{cauhoi.question}</NativeBase.Text>
       </Layout>
         {traloi.length >0 && (
@@ -896,7 +896,8 @@ renderReview=(data)=>{
   renderItem =(item)=>{
     return (
       <TouchableWithoutFeedback onPress={()=>{
-       this.props.navigation.replace("ProductDetailScreen",{
+      
+       this.props.navigation.push("ProductDetailScreen",{
         SourceOfItemsID: item.item.SourceOfItemsID,
        
        })
@@ -1108,7 +1109,7 @@ if(res){
             <NativeBase.Text style={{fontSize:18, fontWeight:"bold"}}>
               Thêm câu hỏi
             </NativeBase.Text>
-    <NativeBase.Text style={{fontSize:13}}>{StaticUser.getCurrentUser().name}</NativeBase.Text>
+    <NativeBase.Text style={{fontSize:13}}>{StaticUser.getCurrentUser().userName}</NativeBase.Text>
           </View>
         </View>
        

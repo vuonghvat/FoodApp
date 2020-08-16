@@ -202,7 +202,7 @@ addComment =() =>{
         
         />
       <Layout bgColor="white" style={{ padding:15, marginTop:10, flex:1}}>
-      <NativeBase.Text style={{fontSize:13, fontWeight:"bold"}}>{cauhoi?cauhoi.CustomerName :""}</NativeBase.Text>
+      <NativeBase.Text style={{fontSize:13, fontWeight:"bold"}}>{cauhoi?cauhoi.CustomerUsername :""}</NativeBase.Text>
         <Layout style={{borderRadius:6, marginTop:15,padding:10, backgroundColor:"#b3e0ff"}}>
 
        
