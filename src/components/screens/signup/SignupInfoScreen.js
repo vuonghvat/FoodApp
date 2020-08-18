@@ -30,6 +30,8 @@ import request from "../../../api/request"
 import URL from "../../../api/URL";
 import ProgressDialog from "../../customizes/ProgressDialog";
 import Toast from 'react-native-simple-toast';
+import StaticUser from "../../../utils/StaticUser"
+import AsyncStorageApp from "../../../utils/AsyncStorageApp";
 class SignupInfoScreen extends Component {
   
 
@@ -143,9 +145,9 @@ class SignupInfoScreen extends Component {
     }
     this.setState({isLoading:true})
     
-    console.log("run3",data);
+   
     request((res,err)=>{
-      
+      console.log("res",res,err);
       
       if(res){
         console.log(res);
@@ -156,14 +158,7 @@ class SignupInfoScreen extends Component {
           const user = data.user;
           if(token){
        console.log(token);
-      //  user:
-      //  CustomerID: "customer000000000006"
-      //  CustomerName: "Vuong Nguyen"
-      //  CustomerUsername: "vuong0978"
-      //  CustomerAddress: null
-      //  CustomerPhone: "0967100365"
-      //  CustomerEmail: "vuonghvat@gmail.com"
-      //  StatusID: 1
+     
         
              StaticUser.currentUser.userName = user.CustomerUsername;
              StaticUser.currentUser.phone = user.CustomerPhone;

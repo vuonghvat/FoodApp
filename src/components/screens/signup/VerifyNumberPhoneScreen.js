@@ -107,6 +107,7 @@ onSend =()=>{
           if(data.status == 1){
       
             Toast.show("Số điện thoại đã được đăng ký", Toast.LONG);
+           
           }else{
             this.phoneConfirm();
           }
