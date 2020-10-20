@@ -47,47 +47,17 @@ class SearchScreen extends Component {
  
   }
   
-  componentDidMount(){
-    const {params} = this.props.route;
-    if(params && params.CityID){
-      this.setState({CityID:params.CityID})
-    }
-  }
 
   onSearchHandler =(keySearch)=>{
    
 
-  const data ={
-    SearchText:keySearch ,
-    CityID:this.state.CityID
-  }
-  
-   request((res,err)=>{
-      
- 
-    console.log(res);
+        const data ={
+          SearchText:keySearch 
     
-    
-    if(res){
-      const data = res.data;
-        this.setState({products:data, isLoading:false})
-
-     // this.setState({banners})
-       
-    }
-      else{
-      
-        this.setState({ isLoading:false})
-      }
-
-        
-      
-      
-  
-
-  }).post(URL.UrlSearch,data,{
-    ContentType: 'application/json'
-})
+        }
+        // get from API
+        //setState
+   
 
   }
   render() {
@@ -142,11 +112,7 @@ class SearchScreen extends Component {
   return  products.map((e,index)=>{
     const Price =e.defaultprice || 0;
     const DiscountPrice = e.Price || 0;
-    // const Price =e.Price || 0;
-    // const typeid = e.typeid || 0
-    // if(typeid && typeid >0 )
-    // var DiscountPrice =Price -  (Price * typeid / 100);
-    // else DiscountPrice =undefined;
+    
       return (
         <TouchableWithoutFeedback 
         onPress={()=>{

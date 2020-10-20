@@ -84,13 +84,24 @@ import CustomModal from "../../customizes/CustomModal";
 import StaticUser from "../../../utils/StaticUser";
 import moment from "moment";
 
+const dataFake =[
+  {
+    comment:'Good'
+  },
+  {
+    comment:'Cool'
+  },
+  {
+    comment:'Cool'
+  }
+]
 class ReviewScreen extends Component {
   
 
   constructor(props) {
     super(props);
     this.state = {
-        data : [],
+        data : dataFake,
       isLoading:false,
      
       isShowPopupReview:false,
@@ -106,56 +117,6 @@ class ReviewScreen extends Component {
     this.pageCount=3;
   }
 
-componentDidMount(){
-
- this.getReviews(this.state.page);
-
- 
-}
-getReviews =(page) =>{
-    this.setState({isLoading:true})
-    
-    console.log(this.props);
-    
-    const {params } = this.props.route;
-
- request((res,err)=>{
- 
-  console.log("-----",URL.UrlGetAllReviews,res,err);
-  if(res){
-
-   
-
-    const data = res.data;
-
-    if(data.err && data.err =="timeout"){
-   
-      this.setState({...this.state,isLoading:false})
-      this.props.dispatch(loggedIn(false))
-      return;
-      
-    }else{
-
-      this.setState({data,isLoading:false})
-    
-    }
-    
-
-  
-     
-  }
-    else{
-      Toast.show("Kiểm tra kết nối", Toast.LONG);
-      this.setState({...this.state,isLoading:false})
-    }
-
-      
-    
-    
-
- //SourceOfItemsID/:limit/:offset
-}).get(URL.UrlGetAllReviews +`${params.SourceOfItemsID}/10/${(page -1)*10}`,null)
-}
 
 onStarRatingPress = () => {
     
@@ -164,12 +125,11 @@ renderReview =()=>{
     const {data} = this.state;
 
   return data.map((e,index)=>{
-    const CreateDate = e.CreateDate
-    const CustomerUsername  = e.CustomerUsername ;
+  
     return ( <Layout bgColor="white" style={{elevation:4, padding:8, marginTop:10}}>
     <Layout row> 
  <Layout flex={1}>
-  <NativeBase.Text style={{flex:1, fontSize:13}} >{CustomerUsername}</NativeBase.Text>
+  <NativeBase.Text style={{flex:1, fontSize:13}} >{'Vuong'}</NativeBase.Text>
  </Layout>
 
    <Layout flex={1} content="center" items ="center">
@@ -177,7 +137,7 @@ renderReview =()=>{
        starStyle={{}}
        disabled={false}
        maxStars={5}
-       rating={e.rate}
+       rating={4}
        starSize={13}
        fullStarColor={"#eed816"}
        halfStarColor={"#eed816"}
@@ -187,7 +147,7 @@ renderReview =()=>{
    </Layout>
  <Layout flex={1}>
  <NativeBase.Text style={{fontSize:12, textAlign:"right"}}>
- {moment(CreateDate).format('DD/MM/YYYY')}
+ {moment().format('DD/MM/YYYY')}
    </NativeBase.Text>
  </Layout>
 

@@ -68,8 +68,7 @@ class SignupInfoScreen extends Component {
         errorMessage:"Không thể để trống"
       })
       return;
-    }
-    console.log("run2");
+    }    console.log("run2")
     if(pass !== "" && pass2 !=="" && pass !== pass2){
       this.setState({
         isIncorrect: true,
@@ -78,131 +77,10 @@ class SignupInfoScreen extends Component {
       return;
     }
   
-    this.setState({
-      isIncorrect:false,
-      isError:false,
-      isLoading:true
-    })
-    
-    const data ={
-      mail,
-      phone:"0"+phone,
-      username,
-      pass,
-      pass2
-    }
-   
-  
-   
-    
-  //  return ;
-    request((res,err)=>{
-      
-      
-      if(res){
-        console.log(res);
-      
-        const data = res.data;
-        if(data.errors){
-          const errors =  data.errors;
-          if(errors.length >0){
-         
-            Toast.show(errors[0].msg, Toast.LONG);
-            this.setState({...this.state,isLoading:false})
-          }
-          
-        }
-        if(data){
-          if(data.affectedRows === 1){
-          //  Toast.show("Login successfully!", Toast.LONG);
-
-            //this.setState({...this.state,isLoading:false})
-          //  this.props.navigation.navigate('LoginScreen')
-          this.onSignIn("0"+phone,pass);
-
-          }
-        }
-        
-      }else{
-        console.log(err);
-        this.setState({isLoading:false})
-        
-      }
-
-    }).post(URL.UrlSignUp,data)
-
-    
    
 
   }
-  onSignIn=(phone, password)=>{
-    
-    // const= useContext(AuthContext);t { signIn 
-  
-    const data ={
-      phone,
-        password
-    }
-    this.setState({isLoading:true})
-    
-   
-    request((res,err)=>{
-      console.log("res",res,err);
-      
-      if(res){
-        console.log(res);
-      
-        const data = res.data;
-        if(data.success){
-          const token  = data.token;
-          const user = data.user;
-          if(token){
-       console.log(token);
-     
-        
-             StaticUser.currentUser.userName = user.CustomerUsername;
-             StaticUser.currentUser.phone = user.CustomerPhone;
-             StaticUser.currentUser.email = user.CustomerEmail;
-             StaticUser.currentUser.name = user.CustomerName;
-             StaticUser.currentUser.CustomerID = user.CustomerID
-             console.log(StaticUser.getCurrentUser(),"----------------------------------");
-             
-       
-
-
-         AsyncStorageApp.storeData("user_login",JSON.stringify({access_token:token, user }));
-
-
-            Toast.show("Đăng nhập thành công", Toast.LONG);
-            this.setState({...this.state,isLoading:false})
-         
-            this.props.dispatch(loggedIn(true));
-          }else{
-            Toast.show("Có lỗi xảy ra thử lại sau", Toast.LONG);
-            this.setState({...this.state,isLoading:false})
-         
-          }
-
-        }else{
-          Toast.show(data.msg, Toast.LONG);
-          this.setState({...this.state,isLoading:false})
-         
-        }
-         
-      }
-        else{
-          Toast.show("Kiểm tra kết nối", Toast.LONG);
-          this.setState({...this.state,isLoading:false})
-        }
-
-          
-        
-        
-    
-
-    }).post(URL.UrlSignIn,data)
-
-  }
+ 
   render() {
  
     return (

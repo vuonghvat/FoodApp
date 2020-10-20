@@ -45,110 +45,15 @@ class VerifyNumberPhoneScreen extends Component {
   }
  
   
-phoneConfirm = ()=>{
-   
-  if(!this.state.confirmResult && this.state.phoneNumber !=="")
-  {
-      auth().signInWithPhoneNumber("+84"+this.state.phoneNumber)
-      .then(confirmResult =>{
-        console.log(confirmResult);
-        this.setState({confirmResult})
-        
-      })// save confirm result to use with the manual verification code)
-      .catch(error => {
-          console.log(error);
-          
-      });
-      return;
-  }
-  if(this.state.confirmResult  ){
-      if(!this.state.verificationCode) 
-      {
-        Toast.show("Vui lòng nhập mã xác thực", Toast.LONG);
-        return;
-      }
-          this.state.confirmResult.confirm(this.state.verificationCode)
-          .then(user =>{
-            
-              //alert("success")
-            this.props.navigation.navigate("SignupInfoScreen",{
-                phoneNumber: this.state.phoneNumber
-            })
-              
-          })
-          .catch(error => {
-       
-              Toast.show("Mã xác thực không chính xác. Vui lòng nhập lại!", Toast.LONG);
-          });
-  }
-}
+
 onSend =()=>{
- 
-//   this.props.navigation.navigate("SignupInfoScreen",{
-//     phoneNumber: this.state.phoneNumber
-//  this.phoneConfirm();
-   request((res,err)=>{
-      
-      
-      if(res){
-        console.log(res);
-      
-        const data = res.data;
-        if(data.errors){
-          const errors =  data.errors;
-          if(errors.length >0){
-         
-            Toast.show(errors[0].msg, Toast.LONG);
-            this.setState({...this.state,isLoading:false})
-          }
-          
-        }
-        if(data){
-          if(data.status == 1){
-      
-            Toast.show("Số điện thoại đã được đăng ký", Toast.LONG);
-           
-          }else{
-            this.phoneConfirm();
-          }
-    
-        }
-        
-      }else{
-        console.log(err);
-        this.setState({isLoading:false})
-        
-      }
-
-    }).get(URL.UrlCheckPhoneNumber+`0${this.state.phoneNumber}`,null)
-
-    
-   
-
- 
+  this.props.navigation.navigate("SignupInfoScreen",{
+    phoneNumber: this.state.phoneNumber
+})
 }
  onResend=()=>{
 
-     
-   
-     if(this.timesSend== 0 ){
-     
-         Toast.show("Mã xác nhận đã được gửi lại", Toast.LONG);
-         return;
-     }
-    
-  
-       auth().signInWithPhoneNumber("+84"+this.state.phoneNumber)
-        .then(confirmResult =>{
-          console.log(confirmResult);
-          this.setState({confirmResult})
-          
-        })// save confirm result to use with the manual verification code)
-        .catch(error => {
-            console.log(error);
-            
-        });
-        this.timesSend --;
+
     
     }
   render() {

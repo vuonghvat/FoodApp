@@ -12,30 +12,23 @@ class SmartImage extends React.Component {
     }
 
     imageLoadProgress = (e) => {
-       // this.setState({ imageLoading: false })
+      
         this.props.onProgress && this.props.onProgress(e)
     }
     imageLoadError = () => {
-       // this.setState({ imageLoading: false })
+    
         this.props.onError && this.props.onError()
     }
 
     imageLoad = (e) => {
-       // this.setState({ imageLoading: true })
+      
         this.props.onLoad && this.props.onLoad(e)
     }
 
     render() {
      
         let { style, source } = this.props
-       // console.log("source", source);
-        
-        const { imageLoading } = this.state;
-
-
-        source = imageLoading? source.uri? source: this.props.placeholder || ImageAsset.PlaceHolderImage: this.props.placeholder ||  ImageAsset.PlaceHolderImage;
-     
-        
+        source =  source? source:  ImageAsset.PlaceHolderImage;
 
         return (
             <FastImage

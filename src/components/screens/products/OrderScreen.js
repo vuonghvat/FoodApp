@@ -50,14 +50,39 @@ import CustomModal from "../../customizes/CustomModal";
 import StaticUser from "../../../utils/StaticUser";
 import Geolocation from '@react-native-community/geolocation';
 import RNAndroidLocationEnabler from "react-native-android-location-enabler";
-
+const items = [
+  {
+    name: "Chicken",
+    image: ImageAsset.Food1,
+    address:"Ha Noi Viet Nam",
+    defaultprice:50,
+    Price:45,
+    amount:1,
+  },
+  {
+    name: "Hambeger",
+    image: ImageAsset.Food2,
+    address:"Hung Yen Viet Nam",
+    defaultprice:50,
+    Price:45,
+    amount:1,
+  },
+  {
+    name: "Eggs",
+    image: ImageAsset.Food3,
+    address:"Hai Dhong Viet Nam",
+    defaultprice:50,
+    Price:45,
+    amount:1,
+  },
+];
 class OrderScreen extends Component {
   
 
   constructor(props) {
     super(props);
     this.state = {
-        items : [],
+      items : items,
       isLoading:false,
       isShowPopupReview:false,
       page:1,
@@ -73,65 +98,9 @@ class OrderScreen extends Component {
     };
    
   }
-  getListRecommend = ()=>{
-    request((res,err)=>{
-   
-     // console.log("-----",URL.UrlGetProducts+params.SourceOfItemsID,res,err);
-      if(res){
   
-       
-          console.log(res);
-          
-        const data = res.data;
-    
-        if(data.err && data.err =="timeout"){
-       
-          this.setState({...this.state})
-          this.props.dispatch(loggedIn(false))
-          return;
-          
-        }else{
-          // const dataCheck =  {
-          //   SourceOfItemsID:data.SourceOfItemsID,
-          //   CustomerID:data.CustomerID
-          //  }
-          // this.hasRating(dataCheck);
-          // this.setState({product:data})
-          this.setState({listRecommend:data, isLoading:false})
-        
-        }
-        
-  
-      
-         
-      }
-        else{
-          Toast.show("Kiểm tra kết nối", Toast.LONG);
-          this.setState({...this.state})
-        }
-  
-          
-        
-        
-    
-  
-    }).get(URL.UrlGetRecommend+StaticUser.getCurrentUser().CustomerID,null)
-  }
   renderProducts = ()=>{
       let {items} = this.state;
-//       ItemName: "item 5"
-// amount: 4
-// SourceOfItemsID: "sourceofitems0000002"
-// ItemID: "items000000000000006"
-// Summary: 5
-// Image: "https://firebasestorage.googleapis.com/v0/b/foodapp-5c233.appspot.com/o/images%2Ffood4.jpg?alt=media&token=cead3aa7-4dbb-4735-8bb6-d966200e4e59"
-// Price: 5000
-// StartTime: "2020-03-14T01:27:21.000Z"
-// EndTime: "2020-12-31T00:00:00.000Z"
-// Description: "mô tả"
-// FeeID: 1
-// view: 2
-// isChecked: true
       return items.map((e,index)=>{
         const Price =e.defaultprice || 0;
         const DiscountPrice = e.Price || 0;
@@ -141,27 +110,27 @@ class OrderScreen extends Component {
          
                 <Layout flex={1} row>
                 <Layout>
-                    <SmartImage source={{uri: e.Image}} style={{ height:65, width:65}}/>
+                    <SmartImage source={e.image} style={{ height:65, width:65}}/>
                 </Layout>
                 <Layout flex={1} margin={[0,0,12,0]}>
     
-    <NativeBase.Text  numberOfLines={1} ellipsizeMode="tail" style={{fontSize:13, fontWeight:"bold"}}>{e.ItemName}</NativeBase.Text>
-    <NativeBase.Text numberOfLines={1} ellipsizeMode="tail" style={{fontSize:12,}}>{e.Description}</NativeBase.Text>
+        <NativeBase.Text  numberOfLines={1} ellipsizeMode="tail" style={{fontSize:13, fontWeight:"bold"}}>{e.name}</NativeBase.Text>
+        <NativeBase.Text numberOfLines={1} ellipsizeMode="tail" style={{fontSize:12,}}>{e.Description}</NativeBase.Text>
 
     <Layout row>
             {DiscountPrice && ( <NativeBase.Text style={{
-      fontSize:12, color:Colors.primaryColor, fontWeight:"bold",marginEnd:10,
-      marginVertical:3
-    }}>{numeral(DiscountPrice).format("0,0")+" ₫"}</NativeBase.Text>)}
-               <NativeBase.Text style={{
-         
-      fontSize:DiscountPrice?10:12, 
-      color:DiscountPrice?"black":Colors.primaryColor,
-      fontWeight:DiscountPrice?undefined:"bold", 
-      opacity:DiscountPrice?0.4:1,
-      marginVertical:3,
-      textDecorationLine: DiscountPrice?'line-through': "none", textDecorationStyle: 'solid', alignSelf:"center"
-    }}>{numeral(Price).format("0,0")+" ₫"}</NativeBase.Text>
+              fontSize:12, color:Colors.primaryColor, fontWeight:"bold",marginEnd:10,
+              marginVertical:3
+            }}>{numeral(DiscountPrice).format("0,0")+" ₫"}</NativeBase.Text>)}
+                      <NativeBase.Text style={{
+                
+              fontSize:DiscountPrice?10:12, 
+              color:DiscountPrice?"black":Colors.primaryColor,
+              fontWeight:DiscountPrice?undefined:"bold", 
+              opacity:DiscountPrice?0.4:1,
+              marginVertical:3,
+              textDecorationLine: DiscountPrice?'line-through': "none", textDecorationStyle: 'solid', alignSelf:"center"
+            }}>{numeral(Price).format("0,0")+" ₫"}</NativeBase.Text>
             </Layout>
                    
                 </Layout>
@@ -198,41 +167,13 @@ class OrderScreen extends Component {
       })
     
   }
-componentDidMount(){
-
-//  this.getAllItems(this.state.page);
-this.getListRecommend()
-const { params} = this.props.route;
-
-if(params){
-  if(params.isFromDetail){
-    this.setState({isFromDetail : params.isFromDetail})
-  }
-  if(params.partner){
-   
-    AsyncStorageApp._retrieveData("order_product",res=>{
-      if(res){
-        console.log("ress",res,params.partner);
-        
-          const {TotalPrice, DiscountTotalPrice } = this.totalHandle(res, params.partner );
-
-          this.setState({items:res, TotalPrice,DiscountTotalPrice, partner:params.partner})
-      }
-      
-  })
-   
-  }
-}
 
 
-//isFromDetail
 
-}
 totalHandle=(data,partner)=>{
   console.log(partner);
   
-  const conditionid = partner? partner.conditionid || 0: 0;
-  const typeid = partner?partner.typeid || 0:0;
+  
 
     let TotalPrice =0;
     let DiscountTotalPrice = 0;
@@ -246,52 +187,14 @@ totalHandle=(data,partner)=>{
     });
    
   
-    if( typeid !==0 && DiscountTotalPrice >= Number(conditionid)){
-      DiscountTotalPrice =TotalPrice -  (TotalPrice * Number(typeid)/100 )
-    }else{
-      DiscountTotalPrice = 0
-    }
-    console.log('hahah',DiscountTotalPrice,TotalPrice,Number(conditionid));
-    
-    
-    console.log("TotalPrice",TotalPrice,DiscountTotalPrice);
     return {
       TotalPrice,
       DiscountTotalPrice
     };
 }
-getCurrentPosition = () => {
-  Geolocation.getCurrentPosition(info => {
-      // this.setLocation(info)
-      console.log(info);
-      var NY = {
-        lat: info.coords.latitude,
-        lng: info.coords.longitude
-      };
-      
-      Geocoder.geocodePosition(NY).then(res => {
-        console.log("res",res);
-        this.setState({address: res[0].formattedAddress})
-        
-      })
-      .catch(err => console.log(err))
-
-      },
-      error => {
-          console.log('error', error);
-          if (Platform.ios !== 'ios') {
-              console.log('error', error);
-              RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({ interval: 200, fastInterval: 1500 })
-                  .then(data => {
-                    console.log('data', data);
-                     this.getCurrentPosition();
-                  }).catch(err => {
-                  });
-          }
-      },
-      { enableHighAccuracy: true, timeout: 5000, maximumAge: 10000 }
-  );
-};
+  getCurrentPosition = () => {
+  
+  };
   render() {
 
     
@@ -319,10 +222,7 @@ getCurrentPosition = () => {
         <NativeBase.Content contentContainerStyle={{ paddingBottom:60, paddingHorizontal:15}}>
           {this.renderProducts()}
           <Layout margin={[20]}>
-            {/* <Layout row>
-              <NativeBase.Text style={{fontSize:13, fontWeight:"bold"}}>Địa chỉ: </NativeBase.Text>
-              <NativeBase.Text  style={{flex:1,alignSelf:"flex-end", textAlign:"right", fontSize:13, }}>Hong van an thi hung Yen sdkjaskd j ksjadsakjd</NativeBase.Text>
-            </Layout> */}
+       
           </Layout>
             <Layout row margin={[20]}> 
          <NativeBase.CheckBox 
@@ -401,7 +301,7 @@ getCurrentPosition = () => {
               marginTop:10
           
             }}
-            data={this.state.listRecommend}
+            data={items}
             showsHorizontalScrollIndicator={false}
             renderItem={item => (
               <BaseItemList renderView={this.renderItem(item)} />
@@ -461,17 +361,14 @@ getCurrentPosition = () => {
       <TouchableWithoutFeedback onPress={()=>{
         console.log(this.props);
         
-       this.props.navigation.push("ProductDetailScreen",{
-        SourceOfItemsID: item.item.SourceOfItemsID,
-       
-       })
+       this.props.navigation.push("ProductDetailScreen")
       }}>
         <View>
       <Layout style={{height:height/5, width:height/6}} margin={[0,0,0,15]} radius={3} hidden>
-        <SmartImage source={ { uri: item.item.Image}} style={{height:90, width:"100%"}} />
+        <SmartImage source={  item.item.image} style={{height:90, width:"100%"}} />
         <Layout>
           <NativeBase.Text style={{fontSize:13, fontWeight:"bold"}}>
-            {item.item.ItemName}
+            {item.item.name}
           </NativeBase.Text>
           <Layout row>
             {DiscountPrice && ( <NativeBase.Text style={{
@@ -498,6 +395,7 @@ getCurrentPosition = () => {
       `Đơn hàng của bạn sẽ tự động bị huỷ nếu sau 30 phút kể từ thời gian đặt hàng thành công, bạn chưa nhận được đồ. Bạn có chắc chắn muốn đặt`,
       [
         {text: 'Có', onPress: () => {
+
           this.orderAPI()
         }},
    
@@ -511,92 +409,20 @@ getCurrentPosition = () => {
    
   }
   orderAPI = ()=>{
-    const {items,partner,DiscountTotalPrice, TotalPrice} = this.state;
-    let itemsClone = [...items];
-    let orderDetail =[];
-    const promotionid = partner.promotionid || ""
-    console.log(partner);
+  Alert.alert(
+        '',
+        `Bạn đã đặt hàng thành công. Mã đơn hàng của bạn là ${"123456"}. Vui lòng cung cấp mã đơn hàng khi đến cửa hàng lấy đồ!`,
+        [
+          {text: 'Chi tiết', onPress: () => {
+            this.props.navigation.replace("HistoryDetailScreen")
+          }},
     
-    itemsClone.forEach(e=>{
- 
-      let product = {
-        SourceOfItemsID:e.SourceOfItemsID,
-        Total:e.amount,
-        Price:DiscountTotalPrice ==0?TotalPrice :DiscountTotalPrice ,
-        Ship:1,
-        Description:e.Description
-      
-      }
-      orderDetail.push(product);
-    })
-    const data = {
-        CustomerID:StaticUser.getCurrentUser().CustomerID,
-        OrderNote:this.state.note,
-        OrderPayment:"1",
-        Ship:this.state.isShip?1:0,
-        shipAddress:this.state.address,
-        orderDetail:orderDetail,
-        PartnerID:partner.PartnerID,
-        promotionid
-
-    }
-    this.setState({isLoading:true})
- console.log(data);
- 
-request((res,err)=>{
-
-  console.log(res,err);
-
-  
-if(res){
-  const data = res.data;
-
-  if(data.err && data.err =="timeout"){
- 
-    this.setState({...this.state,isLoading:false})
-    this.props.dispatch(loggedIn(false))
-    return;
-    
-  }else{
-    
-    this.setState({isLoading:false});
-    if(!this.state.isFromDetail)
-    this.deleteCard();
-    this.props.dispatch(updateScreen(true))
-    
-    Alert.alert(
-      '',
-      `Bạn đã đặt hàng thành công. Mã đơn hàng của bạn là ${data.message}. Vui lòng cung cấp mã đơn hàng khi đến cửa hàng lấy đồ!`,
-      [
-        {text: 'Chi tiết', onPress: () => {
-          this.props.navigation.replace("HistoryDetailScreen", {
-            OrderID : data.message
-          })
-        }},
-   
-        {text: 'Quay về Home', onPress: () => {
-          this.props.navigation.navigate("TabScreen")
-        }},
-      ],
-      { cancelable: false }
-    )
-   // this.getProductDetails();
-  
-  }  
-}
-  else{
-    Toast.show("Kiểm tra kết nối", Toast.LONG);
-    this.setState({...this.state,isLoading:false})
-  }
-
-    
-  
-  
-
-
-}).post(URL.UrlOrder,data,{
-    ContentType: 'application/json'
-})
+          {text: 'Quay về Home', onPress: () => {
+            this.props.navigation.navigate("TabScreen")
+          }},
+        ],
+        { cancelable: false }
+      )
   }
 //  CustomerID, SourceOfItemsID, amount
 

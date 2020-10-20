@@ -52,7 +52,7 @@ class LoginScreen extends Component {
  
   onSignIn=()=>{
     
-    // const= useContext(AuthContext);t { signIn 
+   
     const  { phone,password} =this.state;
     if(phone == ""){
       Toast.show("Username cannot be empty!", Toast.LONG);
@@ -64,74 +64,12 @@ class LoginScreen extends Component {
     }
     const data ={
       phone,
-        password
+     password
     }
     this.setState({isLoading:true})
-    
-
-    request((res,err)=>{
+    this.props.dispatch(loggedIn(true));
       
-      
-      if(res){
-        console.log(res);
-      
-        const data = res.data;
-        if(data.success){
-          const token  = data.token;
-          const user = data.user;
-          if(token){
-       console.log(token);
-      //  user:
-      //  CustomerID: "customer000000000006"
-      //  CustomerName: "Vuong Nguyen"
-      //  CustomerUsername: "vuong0978"
-      //  CustomerAddress: null
-      //  CustomerPhone: "0967100365"
-      //  CustomerEmail: "vuonghvat@gmail.com"
-      //  StatusID: 1
-        
-             StaticUser.currentUser.userName = user.CustomerUsername;
-             StaticUser.currentUser.phone = user.CustomerPhone;
-             StaticUser.currentUser.email = user.CustomerEmail;
-             StaticUser.currentUser.name = user.CustomerName;
-             StaticUser.currentUser.CustomerID = user.CustomerID
-             console.log(StaticUser.getCurrentUser(),"----------------------------------");
-             
-       
-
-
-         AsyncStorageApp.storeData("user_login",JSON.stringify({access_token:token, user }));
-
-
-            Toast.show("Đăng nhập thành công", Toast.LONG);
-            this.setState({...this.state,isLoading:false})
-         
-            this.props.dispatch(loggedIn(true));
-          }else{
-            Toast.show("Có lỗi xảy ra thử lại sau", Toast.LONG);
-            this.setState({...this.state,isLoading:false})
-         
-          }
-
-        }else{
-          Toast.show(data.msg, Toast.LONG);
-          this.setState({...this.state,isLoading:false})
-         
-        }
-         
-      }
-        else{
-          Toast.show("Kiểm tra kết nối", Toast.LONG);
-          this.setState({...this.state,isLoading:false})
-        }
-
-          
-        
-        
-    
-
-    }).post(URL.UrlSignIn,data)
-
+   
   }
 
   render() {

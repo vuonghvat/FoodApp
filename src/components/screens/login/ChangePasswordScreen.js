@@ -40,7 +40,7 @@ class ChangePasswordScreen extends Component {
         newPassword:"",
         reNewPassword:"",
         oldPassword:"",
-      isLoading:false
+       isLoading:false
     };
    
   
@@ -67,41 +67,7 @@ class ChangePasswordScreen extends Component {
         rePass:reNewPassword,
         id: StaticUser.getCurrentUser().CustomerID
     }
-    request((res,err)=>{
-      
-      
-      if(res){
-        console.log(res);
-      
-        const data = res.data;
-        if(data.errors){
-          const errors =  data.errors;
-          if(errors.length >0){
-         
-            Toast.show(errors[0].msg, Toast.LONG);
-            this.setState({...this.state,isLoading:false})
-          }
-          
-        }
-        if(data.type =="success"){
-            Toast.show("Thay đổi thành công!", Toast.LONG);
-  
-        }else{
-            console.log(data.msg[0]);
-            
-            Toast.show(data.msg[0], Toast.LONG);
-        }
-        
-      }else{
-        console.log(err);
-        this.setState({isLoading:false})
-        
-      }
-
-    }).post(URL.UrlChangePassword,data)
-
-    
-    
+   
 
   }
   render() {

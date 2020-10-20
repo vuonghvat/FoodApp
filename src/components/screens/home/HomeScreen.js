@@ -35,45 +35,66 @@ const data = [
   {
   name: "Chicken",
   image: ImageAsset.Food1,
-  address:"Ha Noi Viet Nam"
+  address:"Ha Noi Viet Nam",
+  defaultprice:50,
+  Price:45
 },
 {
   name: "Hambeger",
 image: ImageAsset.Food2,
-address:"Hung Yen Viet Nam"
+address:"Hung Yen Viet Nam",
+defaultprice:50,
+Price:45
 },
 {
   name: "Eggs",
 image: ImageAsset.Food3,
-address:"Hai Dhong Viet Nam"
+address:"Hai Dhong Viet Nam",
+defaultprice:50,
+Price:45
 },
 {
   name: "Sheet Cake",
 image: ImageAsset.Food4,
-address:"Nam Dinh Viet Nam"
+address:"Nam Dinh Viet Nam",
+defaultprice:50,
+Price:45
 },
 {
   name: "Hot dog",
 image: ImageAsset.Food1,
-address:"Ca Mau Viet Nam"
+address:"Ca Mau Viet Nam",
+defaultprice:50,
+Price:45
 },
 {
 name: "Xuc xich",
 image: ImageAsset.Food2,
-address:"Kien Giang Viet Nam"
+address:"Kien Giang Viet Nam",
+defaultprice:50,
+Price:45
 },
 {
 name: "Chicken",
 image: ImageAsset.Food3,
-address:"Ha Noi Viet Nam"
+address:"Ha Noi Viet Nam",
+defaultprice:50,
+Price:45
 },
 {
 name: "Chicken",
 image: ImageAsset.Food4,
-address:"Hoang Mai Ha Noi dasdsadas đâsdas"
+address:"Hoang Mai Ha Noi",
+defaultprice:50,
+Price:45
 }
 
 ];
+const banners =[
+  ImageAsset.Food1, ImageAsset.Food3,
+  ImageAsset.Food2
+
+]
 import URL from "../../../api/URL";
 import request from "../../../api/request"
 
@@ -86,6 +107,24 @@ import Geocoder from "react-native-geocoder";
 
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import CustomModal from "../../customizes/CustomModal";
+const cities =[
+  {
+    name: 'Hà Nội',
+  },
+  {
+    name: 'Hải Phòng',
+  },
+  {
+    name: 'Hưng Yên',
+  },
+  {
+    name: 'Hòa Bình',
+  },
+  {
+    name: 'Nam Định',
+  },
+
+]
 class HomeScreen extends Component {
   
 
@@ -95,16 +134,12 @@ class HomeScreen extends Component {
       isLogged:false,
       keySearch:"",
       location:"Hà Nội",
-      cities:[],
-      CityID: 1,
+      cities:cities,
+      locationFilted:[],
       isLoading:false,
-      lastestProducts:[],
-      viewMostProducts:[],
-      allProducts:[],
-      banners:[],
       address:"",
       isShowModalLocation:false,
-      // isInitModal: true
+    
 
    
     };
@@ -127,9 +162,8 @@ renderModalLocation =()=>{
       </NativeBase.Text>
       <TouchableOpacity 
       onPress={()=>{
-        this.setState({isShowModalLocation:false, CityID:1,location:"Hà Nội"})
-        this.getProductData(1);
-        AsyncStorageApp.storeData("location",JSON.stringify(1))
+        this.setState({isShowModalLocation:false})
+     
       }}
        style={{backgroundColor:Colors.primaryColor, marginTop:10, padding:4}}>
       <NativeBase.Text style={{textAlign:"center", color:"white", fontWeight:"bold"}}>
@@ -166,141 +200,8 @@ renderModalLocation =()=>{
 );
 }
 
-getProductData = (CityID)=>{
-  
-  this.getProducts(CityID,"Lastest");
-  this.getProducts(CityID,"MostView");
-  this.getProducts(CityID,"all");
- }
-async componentDidMount(){
-  
-  AsyncStorageApp._retrieveData("location",res=>{
-    if(res){
-      this.getProductData(res);
-      this.setState({isShowModalLocation:false,CityID :res  })
-    }else{
-      this.setState({isShowModalLocation:true})
-    }
-  })
-  this.getBanner();
-  this.getCity();
 
 
- 
-
- 
-}
-
-getBanner =()=>{
-  request((res,err)=>{
-      
-       
-   // console.log("banner", res,err);
-    if(res){
-      const data = res.data;
-      if(!data.err){
-       // console.log(res,"banner");
-        this.setState({banners:data?data:[]})
-      }
-      
-      
-    
-       
-    }
-      else{
-        Toast.show("Kiểm tra kết nối", Toast.LONG);
-        this.setState({...this.state,isLoading:false})
-      }
-
-        
-      
-      
-  
-
-  }).get(URL.UrlGetBanner,null)
-}
-getProducts = (CityID, type)=>{
-
-  this.setState({isLoading:true})
-  console.log(URL.UrlGetProducts+`${CityID}/all/${type}/all/10/0`);
-  request((res,err)=>{
-      
-     // console.log(res,err);
-      
-       
-        
-    if(res){
-
-      // const cities = res.data;
-      // console.log(cities);
-      // this.setState({cities:cities?cities||[]:[]})
-      // err: "auth_fail"
-      // msg: "Xác thực không thành công. Vui lòng đăng nhập lại!"
-      const data = res.data;
-     // console.log("-------",res,err);
-      if(data.err && data.err =="timeout"){
-     
-        this.setState({...this.state,isLoading:false})
-        this.props.dispatch(loggedIn(false))
-        return;
-        
-      }else{
-
-        if(type =="Lastest"){
-       
-          this.setState({lastestProducts:data,isLoading:false})
-        }else if(type == "MostView"){
-      
-          this.setState({viewMostProducts:data,isLoading:false})
-        }else{
-        
-          this.setState({allProducts:data,isLoading:false})
-        }
-      
-      }
-      
-
-    
-       
-    }
-      else{
-        Toast.show("Kiểm tra kết nối", Toast.LONG);
-        this.setState({...this.state,isLoading:false})
-      }
-
-        
-      
-      
-  
-
-  }).get(URL.UrlGetProducts+`${CityID}/all/${type}/all/10/0`,null)
-
-  
-
-}
-getCity =()=>{
-  request((res,err)=>{
-      
-       
-        
-    if(res){
-      const cities = res.data;
-    //  console.log(cities);
-      this.setState({cities:cities?cities||[]:[]})
-       
-    }
-      else{
-        Toast.show("Kiểm tra kết nối", Toast.LONG);
-        this.setState({...this.state,isLoading:false})
-      }
-
-        
-      
-      
-  
-
-  }).get(URL.UrlGetCity,null)
-}
   render() {
  
     return (
@@ -348,21 +249,19 @@ getCity =()=>{
            <NativeBase.Content style={{marginTop:15}}>
            <Layout>
             <IndicatorViewPager
-                // autoPlayEnable
-           
                 initialPage={0}
                 ref={this.viewPager}
-              
+
                     style={{height:height/4}}
                     indicator={this._renderDotIndicator()}
                 >
 
-                  {this.state.banners.map(e=>{
+                  {banners.map(e=>{
                     return (     
                          <Layout  style={{backgroundColor:Colors.BackgroundColor}}  content="center" items="center">
                     <FastImage
                       resizeMode="cover"
-                     source={{uri:e}} style={{width:width-30, height:height/4, marginVertical:20}}/>
+                       source={e} style={{width:width-30, height:height/4, marginVertical:20}}/>
                     
                 
                 </Layout>)
@@ -376,7 +275,7 @@ getCity =()=>{
             
             
             
-            {this.state.lastestProducts.length > 0 && (<Layout>
+            {data.length > 0 && (<Layout>
               <Layout margin={[0,0,15,15]}>
          <Layout row> 
            <NativeBase.Text style={{flex:1}}>
@@ -385,10 +284,7 @@ getCity =()=>{
             <Layout row>
             <NativeBase.Text onPress={()=>{
         
-               this.props.navigation.navigate("ListAllProduct",{
-                 type: "Lastest",
-                 CityID:this.state.CityID
-               })
+               this.props.navigation.navigate("ListAllProduct")
             }} style={{ fontSize:12, alignSelf:"center"}}>
               Thêm
             </NativeBase.Text>
@@ -402,7 +298,7 @@ getCity =()=>{
               marginTop:10
           
             }}
-            data={this.state.lastestProducts}
+            data={data}
             showsHorizontalScrollIndicator={false}
             renderItem={item => (
               <BaseItemList renderView={this.renderItem(item)} />
@@ -415,7 +311,7 @@ getCity =()=>{
 
 
 
-              {this.state.viewMostProducts.length  >0 && (<Layout>
+              {data.length  >0 && (<Layout>
                 <Layout margin={[0,0,15,15]}>
          <Layout row> 
            <NativeBase.Text style={{flex:1}}>
@@ -424,10 +320,7 @@ getCity =()=>{
             <Layout row>
             <NativeBase.Text onPress={()=>{
               
-                this.props.navigation.navigate("ListAllProduct",{
-                  type: "MostView",
-                  CityID:this.state.CityID
-                })
+                this.props.navigation.navigate("ListAllProduct")
             }} style={{ fontSize:12, alignSelf:"center"}}>
               Thêm
             </NativeBase.Text>
@@ -442,7 +335,7 @@ getCity =()=>{
               marginTop:10
              
             }}
-            data={this.state.viewMostProducts}
+            data={data}
             showsHorizontalScrollIndicator={false}
             renderItem={item => (
               <BaseItemList renderView={this.renderItem(item)} />
@@ -454,7 +347,7 @@ getCity =()=>{
               </Layout>)}
 
 
-              {this.state.allProducts.length>0 && (<Layout>
+              {data.length>0 && (<Layout>
                     
           <Layout margin={[0,0,15,15]}>
          <Layout row> 
@@ -464,10 +357,7 @@ getCity =()=>{
             <Layout row>
             <NativeBase.Text onPress={()=>{
        
-              this.props.navigation.navigate("ListAllProduct",{
-                type: "all",
-                CityID:this.state.CityID
-              })
+              this.props.navigation.navigate("ListAllProduct")
             }} style={{ fontSize:12, alignSelf:"center"}}>
               Thêm
             </NativeBase.Text>
@@ -483,7 +373,7 @@ getCity =()=>{
               marginTop:10
            
             }}
-            data={this.state.allProducts}
+            data={data}
             showsHorizontalScrollIndicator={false}
             renderItem={item => (
               <BaseItemList renderView={this.renderItem(item)} />
@@ -534,17 +424,17 @@ getCity =()=>{
     );
   }
   renderLocationItem =()=>{
-    const { cities } = this.state;
-    return cities.map((e,index)=>{
+    const { cities, locationFilted ,keySearch} = this.state;
+    const arrToMap = keySearch == ''?cities:locationFilted
+    return arrToMap.map((e,index)=>{
       return (
         <TouchableOpacity onPress={()=>{
-          this.getProductData(e.CityID)
           this.setState({location: e.CityName});
           this.bottomSheetRef.close();
         }}>
           <Layout padding={[15,15]}>
         <NativeBase.Text>
-        {e.CityName}
+        {e.name}
         </NativeBase.Text>
       </Layout>
         </TouchableOpacity>
@@ -565,7 +455,19 @@ getCity =()=>{
           <FastImage source={ImageAsset.SearchIcon} style={{ width:20, height:20,alignSelf:"center", marginHorizontal:10 }}/>
           <NativeBase.Input 
           value={this.state.keySearch}
-          onChangeText={keySearch=>this.setState({keySearch})}
+          onChangeText={keySearch=>{
+            const {cities,locationFilted} = this.state;
+            if(keySearch == ''){
+              this.setState({keySearch, cities});
+              return;
+
+            }
+     
+            const arrFilter = [...cities].filter(e=>e.name.toLowerCase().trim().indexOf(keySearch.toLowerCase().trim()) >-1)
+          
+            this.setState({keySearch, locationFilted:arrFilter});
+
+          }}
           placeholder={"Search"}
           style={{fontSize:13,height:40, color:Colors.Black , opacity:0.4, flex:1, textAlign:"left", alignSelf:"center"}}/>
           {this.state.keySearch!=="" && (
@@ -588,32 +490,21 @@ getCity =()=>{
 
   renderItem =(item)=>{
 
-  // conditionid: "20"
-  // conditionname: "Tổng giá trị hóa đơn từ 200.000 vnd"
-  // typeid: "20"
-  // typename: "Giảm 20%"
-  //Price: 5000
   const Price =item.item.defaultprice || 0;
   const DiscountPrice = item.item.Price || 0;
-
-  // const typeid = item.item.typeid || 0
-  // if(typeid && typeid >0 )
-  // var DiscountPrice =Price -  (Price * typeid / 100);
-  // else DiscountPrice =undefined;
+  const image= item.item.image;
+  const name = item.item.name;
 
     return (
       <TouchableWithoutFeedback onPress={()=>{
-       this.props.navigation.navigate("ProductDetailScreen",{
-        SourceOfItemsID: item.item.SourceOfItemsID,
-       
-       })
+       this.props.navigation.navigate("ProductDetailScreen")
       }}>
         <View>
       <Layout style={{width:height/6}} margin={[0,0,0,15]} radius={3} hidden>
-        <SmartImage source={ { uri: item.item.Image}} style={{height:90, width:"100%"}} />
+        <SmartImage source={image} style={{height:90, width:"100%"}} />
         <Layout>
           <NativeBase.Text numberOfLines={2} ellipsizeMode="tail" style={{fontSize:13, fontWeight:"bold", height:50}}>
-            {item.item.ItemName}
+            {name}
           </NativeBase.Text>
             <Layout row>
             {DiscountPrice && ( <NativeBase.Text style={{

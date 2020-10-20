@@ -32,13 +32,25 @@ import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import SmartImage from "../../customizes/SmartImage";
 import moment from "moment";
 import Toast from 'react-native-simple-toast';
+const data =[
+{
+  OrderID:'123456',
+  PartnerName:'Store 1'
+
+},
+{
+  OrderID:'88888',
+  PartnerName:'Store 2'
+
+}
+]
 class HistoryScreen extends Component {
   
 
   constructor(props) {
     super(props);
     this.state = {
-      data: [],
+      data: data,
       isLoading:false
       
     };
@@ -46,55 +58,7 @@ class HistoryScreen extends Component {
   }
  
 
-  componentWillReceiveProps = (props)=>{
-    console.log(props);
-    
-    if(props.isUpdate){
-      try{
-        this.getHistory()
-        this.props.dispatch(updateScreen(false))
-      }catch(e){
-
-      }
-
-    }
-  }
-componentDidMount(){
- this.getHistory();
-}
-getHistory =()=>{
-  request((res,err)=>{
-      
-       
-    console.log("history", res,err);
-    if(res){
-      const data = res.data;
-     // console.log("-------",res,err);
-      if(data.err && data.err =="timeout"){
-     
-        this.setState({isLoading:false})
-        this.props.dispatch(loggedIn(false))
-        return;
-        
-      }else{
-
-        this.setState({data})
-      
-      }
-       
-    }
-      else{
-        Toast.show("Kiểm tra kết nối", Toast.LONG);
-        this.setState({...this.state,isLoading:false})
-      }
-
-        
-      
-      
-  
-
-  }).get(URL.UrlGetHistory+`${StaticUser.getCurrentUser().CustomerID}`,null)
-}
+ 
   render() {
  
     return (
@@ -126,20 +90,11 @@ getHistory =()=>{
  
   renderItem =()=>{
     const {data} = this.state;
-//     OrderID: "6y478l2s0k8x2r2bi"
-// StatusID: 1
-// CreateDate: "2020-04-12T13:19:06.000Z"
-// ship: 0
-// shipAddress: "Hung Yen Viet nam"
-// OrderNote: "Hang ok"
-// OrderPayment: 1
     return data.map((e,index)=>{
       return (
         <TouchableWithoutFeedback 
         onPress={()=>{
-          this.props.navigation.navigate("HistoryDetailScreen",{
-            OrderID:e.OrderID
-          })
+          this.props.navigation.navigate("HistoryDetailScreen")
         }} style={{padding:10}}>
           <View style={{backgroundColor:"white",elevation:2, padding:10}}>
         

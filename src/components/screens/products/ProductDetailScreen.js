@@ -28,7 +28,6 @@ import Toolbar from "../../customizes/Toolbar";
 import { FlatList } from "react-native-gesture-handler";
 import BaseItemList from "../../customizes/BaseItemList";
 import numeral from "numeral"
-
 import RBSheet from "react-native-raw-bottom-sheet";
 import AsyncStorageApp from "../../../utils/AsyncStorageApp";
 const data = [
@@ -85,6 +84,30 @@ import CustomModal from "../../customizes/CustomModal";
 import StaticUser from "../../../utils/StaticUser";
 import moment from "moment";
 
+const qas =[
+  {
+    cauhoi:{ question:'What is your name?'},
+    traloi:[
+      {
+        answer:"My name is Vuong"
+      },
+      {
+        answer:"My name is Tan"
+      },
+    ]
+  }
+]
+const rates =[
+  {
+    comment:'Good'
+  },
+  {
+    comment:'Cool'
+  },
+  {
+    comment:'Cool'
+  }
+]
 class ProductDetailScreen extends Component {
   
 
@@ -100,9 +123,10 @@ class ProductDetailScreen extends Component {
       comment:"",
       isRating:false,
       listRecommend:[],
-      qas:[],
+      qas:qas,
       question:"",
-      rootSumary: 0 
+      rootSumary: 12,
+      rate:rates
 
 
     
@@ -111,234 +135,26 @@ class ProductDetailScreen extends Component {
     };
     this.pageCount=3;
   }
-  _renderDotIndicator() {
-    return <PagerDotIndicator 
-    style={{position:"absolute", bottom:0, right:0, left:0}}
-    
-    selectedDotStyle={{backgroundColor:Colors.Black, width:10, height:10, borderRadius:10, opacity:0.5}}
-    pageCount={this.pageCount} />;
-}
-componentWillReceiveProps =(props)=>{
-  if(props.isUpdate){
-    this.getProductDetails();
-    this.getListRecommend();
-    this.getQA();
-    this.props.dispatch(updateScreen(false))
+    _renderDotIndicator() {
+      return <PagerDotIndicator 
+      style={{position:"absolute", bottom:0, right:0, left:0}}
+      
+      selectedDotStyle={{backgroundColor:Colors.Black, width:10, height:10, borderRadius:10, opacity:0.5}}
+      pageCount={this.pageCount} />;
   }
-}
-componentDidMount(){
 
- this.getProductDetails();
- this.getListRecommend();
- this.getQA();
-
- 
-}
-getQA =()=>{
-  
-  const { params } = this.props.route;
-
-  
-
- 
-
-
-  request((res,err)=>{
- 
-    
-    if(res){
-
-      const qas = res.data;
-        console.log(res,"qaaaaaaaaaaaaaaaaaaaa");
-        
-      if(data.err && data.err =="timeout"){
-     
-        this.setState({...this.state,isLoading:false})
-        this.props.dispatch(loggedIn(false))
-        return;
-        
-      }else{
-        this.setState({qas,isLoading:false})
-        
-       // this.addToCard();
-  
-    
-       
-    }
-  }
-      else{
-        Toast.show("Kiểm tra kết nối", Toast.LONG);
-        this.setState({...this.state,isLoading:false})
-      }
-  
-        
-      
-      
-  
-  
-  }).get(URL.UrlGetQA+`${params.SourceOfItemsID}/2/0`,null)
-
-}
-getListRecommend = ()=>{
-  request((res,err)=>{
- 
-   // console.log("-----",URL.UrlGetProducts+params.SourceOfItemsID,res,err);
-    if(res){
-
-     
-      //  console.log(res);
-        
-      const data = res.data;
-  
-      if(data.err && data.err =="timeout"){
-     
-        this.setState({...this.state})
-        this.props.dispatch(loggedIn(false))
-        return;
-        
-      }else{
-        // const dataCheck =  {
-        //   SourceOfItemsID:data.SourceOfItemsID,
-        //   CustomerID:data.CustomerID
-        //  }
-        // this.hasRating(dataCheck);
-        // this.setState({product:data})
-        this.setState({listRecommend:data, isLoading:false})
-      
-      }
-      
-
-    
-       
-    }
-      else{
-        Toast.show("Kiểm tra kết nối", Toast.LONG);
-        this.setState({...this.state})
-      }
-
-        
-      
-      
-  
-
-  }).get(URL.UrlGetRecommend+StaticUser.getCurrentUser().CustomerID,null)
-}
-hasRating =(data) =>{
-
- request((res,err)=>{
- 
-  console.log("-----",URL.UrlCheckHasRating,res,err,data);
-  if(res){
-
-   
-
-    const data = res.data;
-
-    if(data.err && data.err =="timeout"){
-   
-      this.setState({...this.state,isLoading:false})
-      this.props.dispatch(loggedIn(false))
-      return;
-      
-    }else{
-
-      this.setState({isRating:data,isLoading:false})
-    
-    }
-    
-
-  
-     
-  }
-    else{
-      Toast.show("Kiểm tra kết nối", Toast.LONG);
-      this.setState({...this.state,isLoading:false})
-    }
-
-      
-    
-    
-
-
-}).post(URL.UrlCheckHasRating,data)
-}
-getProductDetails = ()=>{
-
- // console.log(this.props);
-  const { params } = this.props.route;
-
-  
-  this.setState({isLoading:true})
- 
-  request((res,err)=>{
- 
-   // console.log("-----",URL.UrlGetProducts+params.SourceOfItemsID,res,err);
-    if(res){
-
-     
- console.log(res);
- 
-      const data = res.data;
-  
-      if(data.err && data.err =="timeout"){
-     
-        this.setState({...this.state})
-        this.props.dispatch(loggedIn(false))
-        return;
-        
-      }else{
-        const dataCheck =  {
-          SourceOfItemsID:data.SourceOfItemsID,
-          CustomerID:StaticUser.getCurrentUser().CustomerID
-         }
-        this.hasRating(dataCheck);
-        const rootSumary = data.Summary;
-        this.setState({product:data,rootSumary})
-      
-      }
-      
-
-    
-       
-    }
-      else{
-        Toast.show("Kiểm tra kết nối", Toast.LONG);
-        this.setState({...this.state})
-      }
-
-        
-      
-      
-  
-
-  }).get(URL.UrlGetProducts+params.SourceOfItemsID,null)
-
-}
 onQuantityPress =(value)=>{
-  let { quantity , product } = this.state;
+  let {  quantity,rootSumary } = this.state;
+  if(rootSumary <= 0 && value > 0)
+  return;
+  if(quantity == 0 && value < 0 )
+  return;
+  
+    rootSumary -=  value;
+    quantity += value;
+  this.setState({rootSumary,quantity})
+  
 
-      if(product.Summary <0){
-        product.Summary =0  
-      }
-      // if(  product.Summary  == 0){
-      //   Toast.show("Sản phẩm hết hàng", Toast.LONG);
-      //   return;
-      // }
-    if(value > 0 && product.Summary == 0)
-    {
-      Toast.show("Không thể đặt thêm", Toast.LONG);
-      return;
-    }
-
-  if(value <0 && quantity <= 1){
-    value = 0;
-  }
- 
-
-  quantity +=  value;
-  product.Summary -= value;
-
-  this.setState({quantity,product})
 
 }
 
@@ -348,15 +164,6 @@ onStarRatingPress = () => {
 
 renderQA=()=>{
   const {qas} = this.state;
- // const cauhoi = 
-//   cauhoi:
-// CreateDate: "2020-04-19T14:51:33.000Z"
-// CustomerName: "tran duc hoang"
-// CustomerUsername: "hoangtd"
-// ID: "1"
-// question: "Câu hỏi 1"
-// __proto__: Object
-// traloi: []
 
   return qas.map((e,index)=>{
     const cauhoi = e.cauhoi;
@@ -371,14 +178,14 @@ renderQA=()=>{
       <Layout bgColor="white" style={{elevation:4, padding:8, marginTop:10}}>
       <Layout>
 
-        <NativeBase.Text style={{fontSize:13, fontWeight:"bold"}}>{cauhoi.CustomerUsername}</NativeBase.Text>
+        <NativeBase.Text style={{fontSize:13, fontWeight:"bold"}}>{'Vuong'}</NativeBase.Text>
   <NativeBase.Text style={{fontSize:12,marginTop:5}}>{cauhoi.question}</NativeBase.Text>
       </Layout>
         {traloi.length >0 && (
           <Layout row style={{marginTop:5}}>
           <View style={{width:0.5, height:"100%", alignSelf:"center", backgroundColor:"gray", marginEnd:15}}/>
           <Layout flex={1} style={{ height:"100%"}}>
-        <NativeBase.Text style={{fontSize:12,textAlign:"left", color:"gray"}}>{traloi[0].anser}</NativeBase.Text>
+        <NativeBase.Text style={{fontSize:12,textAlign:"left", color:"gray"}}>{traloi[0].answer}</NativeBase.Text>
           </Layout>
           
         </Layout>
@@ -391,17 +198,15 @@ renderQA=()=>{
  
 }
 renderReview=(data)=>{
-  console.log("data review", data);
+
   return data.map((e,index)=>{
     const CreateDate = e.CreateDate
     const CustomerUsername  = e.CustomerUsername ;
-   // console.log(e);
-    
     if(index < 2)
     return ( <Layout bgColor="white" style={{elevation:4, padding:8, marginTop:10}}>
     <Layout row> 
  <Layout flex={1}>
-  <NativeBase.Text style={{flex:1, fontSize:13}} >{CustomerUsername}</NativeBase.Text>
+  <NativeBase.Text style={{flex:1, fontSize:13}} >{'Vuong Nguyen'}</NativeBase.Text>
  </Layout>
 
    <Layout flex={1} content="center" items ="center">
@@ -409,7 +214,7 @@ renderReview=(data)=>{
        starStyle={{}}
        disabled={false}
        maxStars={5} 
-       rating={e.rate}
+       rating={5}
        starSize={13}
        fullStarColor={"#eed816"}
        halfStarColor={"#eed816"}
@@ -419,12 +224,12 @@ renderReview=(data)=>{
    </Layout>
  <Layout flex={1}>
  <NativeBase.Text style={{fontSize:12, textAlign:"right"}}>
-     {moment(CreateDate).format('DD/MM/YYYY')}
+     {moment().format('DD/MM/YYYY')}
    </NativeBase.Text>
  </Layout>
 
    </Layout>
-  <NativeBase.Text style={{fontSize:13}}>{e.Comment}</NativeBase.Text>
+  <NativeBase.Text style={{fontSize:13}}>{e.comment}</NativeBase.Text>
  </Layout>
    
    )
@@ -556,108 +361,21 @@ renderReview=(data)=>{
   }
   onOrderPress =()=>{
   
-    let { product,rootSumary,quantity } = this.state;
-  
-    // if(product.Summary <0){
-    //   product.Summary = 0  
-    // }
-    if(  rootSumary  <= 0){
-      Toast.show("Sản phẩm hết hàng, không thể đặt", Toast.LONG);
-      return;
-    }
-
-    if(quantity ==0 ){
-      Toast.show("Vui lòng chọn số lượng", Toast.LONG);
-      return;
-     }
-    let items =[];
-
-    const item = {
-      "Description":product.Description,
-      "EndTime":product.EndTime,
-      "FeeID":product.FeeID,
-      "Image":product.Image,
-      "ItemID":product.ItemID,
-      "ItemName":product.ItemName,
-      "Price":product.Price,
-      "SourceOfItemsID":product.SourceOfItemsID,
-      "StartTime":product.StartTime,
-      "Summary":product.Summary,
-      "amount":this.state.quantity,
-      "isChecked":true,
-      "view":product.view,
-      conditionid: product.conditionid,
-      Price: product.Price,
-      defaultprice: product.defaultprice,
-      typeid: product.typeid
-   }
-     items.push(item)
-
-    AsyncStorageApp.storeData("order_product",JSON.stringify(items));
-    console.log("ITEMS ORDER: ", items);
- 
-    const partner ={
-     
-        PartnerID: product.PartnerID,
-        CustomerID: product.CustomerID,
-        PartnerName: product.PartnerName,
-        PartnerAddress: product.PartnerAddress,
-        PartnerEmail:product.PartnerEmail,
-        PartnerPhone:product.PartnerPhone,
-        PartnerDescription: product.PartnerDescription,
-        PartnerImage: product.PartnerImage,
-        PartnerTypeID:  product.PartnerTypeID,
-        CityID: product.CityID,
-        ship:  product.ship,
-        StatusID: product.StatusID,
-        conditionid: product.conditionid,
-        typeid:product.typeid,
-        promotionid:product.promotionid 
-
-    }
-    this.props.navigation.navigate("OrderScreen", {
-      isFromDetail:true,
-      partner 
-    });
+    this.props.navigation.navigate("OrderScreen");
   }
   render() {
 
-    const  { product} = this.state;
-    const Image = product?product.Image || "":"";
+    const  { product,rate} = this.state;
+    const DiscountPrice = 30;
+    const Price =25;
+    const Description ="tuyet voi"
 
-  
-    const typeid = product?product.typeid || 0:0
-    
-    const Price =product?product.defaultprice || 0:0;
-    const DiscountPrice = product?product.Price || undefined:undefined;
-
-    const Description = product?product.Description || "":"";
-    const view = product?product.view || "":"";
-    const PartnerName = product?product.PartnerName || "":"";
-    const PartnerAddress = product?product.PartnerAddress || "":"";
-    const PartnerEmail = product?product.PartnerEmail || "":"";
-    const PartnerPhone = product?product.PartnerPhone || "":"";
-    const PartnerDescription = product?product.PartnerDescription || "":"";
-    const PartnerImage = product?product.PartnerImage || "":"";
-    const star = product?product.star || 0:0;
-    const like = product?product.like || 0:0;
-    const Name = product?product.ItemName || "":"";
-    const rate = product?product.rate || []:[];
-    let Summary = product?product.Summary || 0:0;
-
-
-    const conditionid = product?product.conditionid || 0 : 0
-
-    if(Number(Summary) <0) Summary =0;
-
-
-    
     return (
       <Layout style={styles.container}>
       
         <NativeBase.Content contentContainerStyle={{ paddingBottom:60}}>
         <Layout height={height/3.2}>
-            <SmartImage source = {{ uri : Image}} style={{flex:1}}/>
+            <SmartImage source = {ImageAsset.Food3} style={{flex:1}}/>
 
          </Layout>
           <Layout style={{paddingHorizontal:15}}>
@@ -665,10 +383,10 @@ renderReview=(data)=>{
          <Layout>
 
           <NativeBase.Text style={{fontSize:20, fontWeight:"bold", marginVertical:5}}>
-                {Name}
+                {"Nguyen Vuong"}
                 </NativeBase.Text>
                 <NativeBase.Text style={{fontSize:15, marginVertical:5}}>
-                {PartnerName}
+                {"Tho Ngoc"}
                 </NativeBase.Text>
                 <Layout row>
             {DiscountPrice && ( <NativeBase.Text style={{
@@ -683,15 +401,15 @@ renderReview=(data)=>{
             </Layout>
     
               <Layout>
-                {typeid >0 && ( <NativeBase.Text style={{fontSize:13, color:"red"}}>
-                  {`Giảm ${typeid}% cho tổng giá trị đơn hàng từ ${numeral(conditionid).format("0,00")}`}
-                </NativeBase.Text>)}
+                <NativeBase.Text style={{fontSize:13, color:"red"}}>
+                  {`Giảm ${10}% cho tổng giá trị đơn hàng từ ${numeral(200000).format("0,00")}`}
+                </NativeBase.Text>
                
               </Layout>
                 <Layout row>
                   <FastImage resizeMode="contain" source ={ImageAsset.TrackIcon} style={{ height:16, width:16, alignSelf:"center"}} />
                   <NativeBase.Text style={{ marginVertical:5,opacity:0.5, alignSelf:"center", fontSize:12}}>
-                  {PartnerAddress}
+                  {'ha Noi Viet Nam'}
                 </NativeBase.Text>
                 </Layout>
          </Layout>
@@ -702,7 +420,7 @@ renderReview=(data)=>{
               Còn lại: 
              </NativeBase.Text>
                   <NativeBase.Text style={{fontWeight:"bold"}}>
-                    {Summary}
+                    {this.state.rootSumary}
                   </NativeBase.Text>
            </Layout>
            <Layout row>
@@ -712,7 +430,7 @@ renderReview=(data)=>{
              <Layout row>
                 <TouchableOpacity 
                 onPress={()=>{
-                  this.onQuantityPress(-1)
+                 this.onQuantityPress(-1)
                 }}
                 style={{alignSelf:"center"}}>
                 <FastImage 
@@ -725,7 +443,7 @@ renderReview=(data)=>{
                </NativeBase.Text>
                <TouchableOpacity
                    onPress={()=>{
-                    this.onQuantityPress(1)
+                   this.onQuantityPress(1)
                   }}
                style={{alignSelf:"center"}}>
                 <FastImage
@@ -767,9 +485,7 @@ renderReview=(data)=>{
                { rate.length > 2 && (<View style={{ width:1, height:"100%", backgroundColor:"gray"}}/>)}
                 {rate.length > 2  && ( <TouchableWithoutFeedback
                 onPress ={()=>{
-                  this.props.navigation.navigate("ReviewScreen",{
-                    SourceOfItemsID: product.SourceOfItemsID
-                  })
+                  this.props.navigation.navigate("ReviewScreen")
                 }}
                 >
              
@@ -833,7 +549,7 @@ renderReview=(data)=>{
               marginTop:10
           
             }}
-            data={this.state.listRecommend}
+            data={data}
             showsHorizontalScrollIndicator={false}
             renderItem={item => (
               <BaseItemList renderView={this.renderItem(item)} />
@@ -904,7 +620,7 @@ renderReview=(data)=>{
       }}>
         <View>
       <Layout style={{height:height/5, width:height/6}} margin={[0,0,0,15]} radius={3} hidden>
-        <SmartImage source={ { uri: item.item.Image}} style={{height:90, width:"100%"}} />
+        <SmartImage source={ImageAsset.Food1} style={{height:90, width:"100%"}} />
         <Layout>
           <NativeBase.Text style={{fontSize:13, fontWeight:"bold"}}>
             {item.item.ItemName}
@@ -929,101 +645,35 @@ renderReview=(data)=>{
   
   onSubmitReview = ()=>{
 
-      const { star, comment,product} = this.state;
+      const { rate} = this.state;
       if(star ==0){
         Toast.show("Vui lòng chọn Star Rating", Toast.LONG);
         return;
       }
-      const data = {
-        CustomerID: StaticUser.getCurrentUser().CustomerID ,
-        SourceOfItemsID: product.SourceOfItemsID,
-        Rate: star,
-        Comment: comment
+      const dataReview = {
+        comment:'Nice'
       }
-
-      this.setState({isLoading:true})
-     request((res,err)=>{
- // console.log("-----",URL.UrlCreateReview,res,err);
-  if(res){
-      console.log(res);
-    const data = res.data;
-    if(data.err && data.err =="timeout"){
-  
-      this.setState({...this.state,isLoading:false})
-      this.props.dispatch(loggedIn(false))
-      return;
+      rate.push(dataReview);
+      this.setState({rate})
       
-    }else{
-      this.setState({isShowPopupReview:false,isLoading:false})
-      this.getProductDetails();
-    
-    }
-    
-
-  
-     
-  }
-    else{
-      Toast.show("Kiểm tra kết nối", Toast.LONG);
-      this.setState({...this.state,isLoading:false})
-    }
-
-      
-    
-    
-
-
-}).post(URL.UrlCreateReview,data)
-      
-    
   }
   addQuestion = ()=>{
 
-    const { question,product} = this.state;
+    let { question,qas} = this.state;
     if(question ==""){
       Toast.show("Vui lòng nhập câu hỏi", Toast.LONG);
       return;
+    };
+    const newQuestion = {
+      cauhoi:{ question:'What is your fullname?'},
+      traloi:[]
     }
-    const data = {
-      CustomerID: StaticUser.getCurrentUser().CustomerID ,
-      SourceOfItemsID: product.SourceOfItemsID,
-      question,
-    }
-    
-    this.setState({isLoading:true})
-   request((res,err)=>{
-// console.log("-----",URL.UrlCreateReview,res,err);
-if(res){
-
-  const data = res.data;
-  if(data.err && data.err =="timeout"){
-
-    this.setState({...this.state,isLoading:false})
-    this.props.dispatch(loggedIn(false))
-    return;
-    
-  }else{
-    this.setState({isShowPopupQA:false,isLoading:false})
-    this.getQA()
-  
-  }
-  
-
-
-   
-}
-  else{
-    Toast.show("Kiểm tra kết nối", Toast.LONG);
-    this.setState({...this.state,isLoading:false})
-  }
+    qas.push(newQuestion);
+    console.log(qas);
+    this.setState({qas, isShowPopupQA:false})
 
     
   
-  
-
-
-}).post(URL.UrlAddQuestion,data)
-    
   
 }
   renderModalReview =()=>{
@@ -1109,7 +759,7 @@ if(res){
             <NativeBase.Text style={{fontSize:18, fontWeight:"bold"}}>
               Thêm câu hỏi
             </NativeBase.Text>
-    <NativeBase.Text style={{fontSize:13}}>{StaticUser.getCurrentUser().userName}</NativeBase.Text>
+    <NativeBase.Text style={{fontSize:13}}>{'Admin'}</NativeBase.Text>
           </View>
         </View>
        

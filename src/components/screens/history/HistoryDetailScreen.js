@@ -56,114 +56,8 @@ class HistoryDetailScreen extends Component {
  
 
 
-componentDidMount(){
-    this.getDetails()
-}
-getDetails = ()=>{
-  const {params} = this.props.route;
-  const OrderID = params?params.OrderID|| undefined:undefined
-request((res,err)=>{
-    
-     
-  console.log("history detail", res,err);
-  if(res){
-    const data = res.data;
-   // console.log("-------",res,err);
-    if(data.err && data.err =="timeout"){
-   
-      this.setState({isLoading:false})
-      this.props.dispatch(loggedIn(false))
-      return;
-      
-    }else{
-    
-      const Partner = data.Partner || undefined;
-      const ListItems =data.ListItems || [];
-      
-      const TotalPrice =this.totalHandle(ListItems,Partner).TotalPrice
-      const DiscountTotalPrice =this.totalHandle(ListItems,Partner).DiscountTotalPrice
-      console.log(this.totalHandle(ListItems,Partner));
-      this.setState({Partner,ListItems,DiscountTotalPrice,TotalPrice})
-    
-    }
-     
-  }
-    else{
-      Toast.show("Kiểm tra kết nối", Toast.LONG);
-      this.setState({...this.state,isLoading:false})
-    }
-
-      
-    
-    
-
-
-}).get(URL.UrlHistoryDetail+`${OrderID}`,null)
-}
-totalHandle=(ListItems,partner)=>{
- 
-  const conditionid = partner? partner.conditionid || 0: 0;
-  const typeid = partner?partner.typeid || 0:0;
-    let TotalPrice =0;
-    let DiscountTotalPrice = 0;
-    console.log(ListItems);
-    ListItems.forEach(element => {
-  
-        TotalPrice += Number(element.price) * Number(element.total);
-        DiscountTotalPrice += Number(element.price) * Number(element.total);
-
-     
-    });
-  
-   
-    if( typeid !==0 && DiscountTotalPrice >= Number(conditionid)){
-      DiscountTotalPrice =TotalPrice -  (TotalPrice * Number(typeid)/100 )
-    }else{
-      DiscountTotalPrice = 0
-    }
-    
-    
-    
-
-    return {
-      TotalPrice,
-      DiscountTotalPrice
-    };
-}
   render() {
-   // data:
-        // Partner:
-        // PartnerID: "partner0000000000001"
-        // CustomerID: "customer000000000002"
-        // PartnerName: "NaBe shop1"
-        // PartnerAddress: "Xom Ca, Nguyen Xa, Bac Tu Liem"
-        // PartnerEmail: "tdhoang96@gmail.com"
-        // PartnerPhone: "957463887"
-        // PartnerDescription: "chuyen buon ban giay the thao"
-        // PartnerImage: "https://i.imgur.com/MkIXW51.png"
-        // PartnerTypeID: 0
-        // CityID: 1
-        // ship: 1
-        // StatusID: 1
-        // __proto__: Object
-        // ListItems: Array(1)
-        // 0:
-        // ItemName: "KHOAI TÂY LẮC"
-        // total: 1
-        // price: 50000
-        // SourceOfItemsID: "sourceofitems0000004"
-        // ItemID: "items000000000000008"
-        // Image: "https://firebasestorage.googleapis.com/v0/b/foodapp-5c233.appspot.com/o/images%2Ffood2.jpg?alt=media&token=3008e35c-cc1f-4751-92e8-c16811a199d2"
-        // Description: "ergdsfgsdfgsdfgdsfgdsfgdsfg"
-        // __proto__: Object
-        const {Partner} = this.state;
-        
-        const PartnerName= Partner?Partner.PartnerName || "":""
-        const PartnerAddress= Partner?Partner.PartnerAddress || "":""
-        const PartnerEmail= Partner?Partner.PartnerEmail || "":""
-        const PartnerPhone= Partner?Partner.PartnerPhone || "":""
-        const PartnerDescription= Partner?Partner.PartnerDescription || "":""
-        const order_status =  Partner?Partner.order_status || "":""
+  
       
 
     return (
@@ -194,7 +88,7 @@ totalHandle=(ListItems,partner)=>{
             Tên cửa hàng:
             </NativeBase.Text>
             <NativeBase.Text style={{fontSize:13,textAlign:"right", maxHeight:2*height/3}}>
-            {PartnerName}
+            {"PartnerName"}
             </NativeBase.Text>
             </Layout>
             <Layout row margin={[10]}>
@@ -202,7 +96,7 @@ totalHandle=(ListItems,partner)=>{
             Địa chỉ:
             </NativeBase.Text>
             <NativeBase.Text style={{fontSize:13,textAlign:"right", maxHeight:2*height/3}}>
-            {PartnerAddress}
+            {"PartnerAddress"}
             </NativeBase.Text>
             </Layout>
             <Layout row margin={[10]}>
@@ -210,7 +104,7 @@ totalHandle=(ListItems,partner)=>{
             Email:
             </NativeBase.Text>
             <NativeBase.Text style={{fontSize:13,textAlign:"right", maxHeight:2*height/3}}>
-            {PartnerEmail}
+            {"PartnerEmail"}
             </NativeBase.Text>
             </Layout>
             <Layout row margin={[10]}>
@@ -218,7 +112,7 @@ totalHandle=(ListItems,partner)=>{
             Số điện thoại:
             </NativeBase.Text>
             <NativeBase.Text style={{fontSize:13,textAlign:"right", maxHeight:2*height/3}}>
-            {PartnerPhone}
+            {"PartnerPhone"}
             </NativeBase.Text>
             </Layout>
            
@@ -227,7 +121,7 @@ totalHandle=(ListItems,partner)=>{
             Mô tả:
             </NativeBase.Text>
             <NativeBase.Text style={{fontSize:13,textAlign:"right", maxHeight:2*height/3}}>
-            {PartnerDescription}
+            {"PartnerDescription"}
             </NativeBase.Text>
             </Layout>
             
@@ -243,9 +137,9 @@ totalHandle=(ListItems,partner)=>{
             </NativeBase.Text> 
             <NativeBase.Text style={{fontSize:13,textAlign:"right",fontWeight:"bold", maxHeight:2*height/3}}>
             { this.state.DiscountTotalPrice !== 0 ?
-          numeral(this.state.DiscountTotalPrice).format("0,0")+" ₫"
-          :
-          numeral(this.state.TotalPrice).format("0,0")+" ₫"}
+            numeral(this.state.DiscountTotalPrice).format("0,0")+" ₫"
+            :
+            numeral(this.state.TotalPrice).format("0,0")+" ₫"}
             </NativeBase.Text>
             </Layout>
             <Layout row margin={[10]}>
@@ -253,20 +147,11 @@ totalHandle=(ListItems,partner)=>{
             Tình trạng:
             </NativeBase.Text>
             <NativeBase.Text style={{fontSize:13,textAlign:"right",fontWeight:"bold", maxHeight:2*height/3}}>
-            {this.getStatus(order_status)}
+            {this.getStatus()}
             </NativeBase.Text>
             </Layout>
               <Layout row content="flex-end" items="flex-end">
-              {(order_status == 6 || order_status == 1)  && (
-                  <TouchableOpacity 
-                  onPress={this.cancelOrder}
-                  style={{alignSelf:"flex-end", marginTop:15}}>
-                     <NativeBase.Text style={{fontSize:12, fontWeight:"bold"}}>
-                         Hủy đơn
-                     </NativeBase.Text>
-  
-                  </TouchableOpacity>
-              )}
+            
               </Layout>
             </Layout>
             <NativeBase.Content contentContainerStyle={{padding:15}}>
@@ -278,25 +163,11 @@ totalHandle=(ListItems,partner)=>{
       </Layout>
     );
   }
-  getStatus =(StatusID)=>{
-    switch(StatusID){
-      case 0:
+  getStatus =()=>{
+  
+      
         return "Chờ phê duyệt";
-        case 1:
-          return "Đang hoạt động";
-          case 2:
-            return "Ngưng hoạt động";
-            case 3:
-              return "Đã hủy";
-              case 4:
-                return "Hoàn thành";
-                case 5:
-                  return "Thất bại";
-                  case 6:
-                    return "Chờ lấy hàng";
-                   default :
-                    return "Unknown";
-    }
+        
   }
   cancelOrder =()=>{
     
