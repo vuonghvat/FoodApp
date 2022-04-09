@@ -21,7 +21,7 @@
     "@react-navigation/native": "^5.0.6",
     "@react-navigation/stack": "^5.0.6",
     "axios": "^0.19.2",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "native-base": "^2.13.8",
     "numeral": "^2.0.6",
     "qs": "^6.9.1",
