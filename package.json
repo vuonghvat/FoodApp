@@ -24,7 +24,7 @@
     "moment": "^2.24.0",
     "native-base": "^2.13.8",
     "numeral": "^2.0.6",
-    "qs": "^6.9.1",
+    "qs": "^6.9.7",
     "react": "16.9.0",
     "react-native": "^0.62.2",
     "react-native-android-location-enabler": "^1.2.1",
